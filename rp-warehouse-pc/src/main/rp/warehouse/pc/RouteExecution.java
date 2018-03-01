@@ -1,55 +1,44 @@
 package rp.warehouse.pc;
 
 public class RouteExecution implements RouteExecutionInterface {
-    private static int numberOfRobots = 1;
+    private static int numberOfRobots;
+    Robot[] robots = null;
+    
+    public RouteExecution(Robot[] _robots) {
+        robots=_robots;
+        numberOfRobots=robots.length;
+        run();
+    }
 
-    public static void main(String[] args) {
-        // JobInput job = new JobInput("filename");
-        // Reads everything into some kind of class
-        // should it return that class to then pass it to selection
-        
-        
-        // JobSellection select = new JobSelefction();
-        // accesses that class
-        
-        
-        // Array of robot IDs
-        Robot[] robots = new Robot[numberOfRobots];
-        
+    public void run () {   
         for (int i = 0; i < robots.length; i++) {// pass this
-            robots[i]=new Robot(i+"");
+            robots[i]=new Robot(i+"", null);
         }
-        
-
-        // Assignment jobs = new Assignment(robots); // type Robot[]
-        // should i pass map class as well
-        
-        // Planning plan = new Planning(robot, jobs);
+  
+        // Planning plan = new Planning(robot);
         
         //plan.plan;
 
+        RobotController[] robotControl = new RobotController[numberOfRobots];
+        int i =0;
         for (Robot nxt : robots) {
             // iterates through Robots and makes them move
-            RobotController robot1 = new RobotController(nxt);//pass Planning
-            robot1.start();
-            nxt.move(0);
+            robotControl[i]=new RobotController(nxt);//pass Planning
+            i++;
+            robotControl[i].start();
         }
         
-
-        
-        
-        
-        /*
+        //Send them to W MI
+         i =0;
+        for (Robot nxt : robots) { 
         try {
-            robot1.join();// waits for the thread to end
+            robotControl[i].join();// waits for the thread to end
+            i++;
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        */
-        // pick up (number)
-        
-        // cancel
+        }
         
 
     }
