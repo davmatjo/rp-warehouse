@@ -1,0 +1,41 @@
+# Java Binaries #
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# leJOS Binaries #
+*.nxj
+*.nxd
+
+# Eclipse Meta #
+.settings/
+.project
+.classpath
+
+# IntelliJ Meta #
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# NetBeans specific #
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# OS Specific #
+.DS_Store
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/bin/
