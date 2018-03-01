@@ -22,7 +22,7 @@ public class EstimatedPose extends Pose {
 	 * @param probability
 	 *            The probability of this pose being correct.
 	 */
-	public EstimatedPose(float x, float y, float heading, float probability) {
+	public EstimatedPose(final float x, final float y, final float heading, final float probability) {
 		super(x, y, heading);
 		this.prob = probability;
 	}
@@ -42,7 +42,7 @@ public class EstimatedPose extends Pose {
 	 * @param probability
 	 *            The new probability to set.
 	 */
-	public void setProbability(float probability) {
+	public void setProbability(final float probability) {
 		this.prob = probability;
 	}
 
