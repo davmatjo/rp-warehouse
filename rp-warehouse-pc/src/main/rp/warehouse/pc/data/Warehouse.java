@@ -10,12 +10,12 @@ import rp.robotics.mapping.LineMap;
 public class Warehouse {
 
 	public static GridMap build() {
-		float height = 2.44f;
-		float width = 3.67f;
+		final float height = 2.44f;
+		final float width = 3.67f;
 
-		float xInset = 0.17f, yInstet = 0.155f;
-		int gridWitdth = 12, gridHeight = 8;
-		float cellSize = 0.30f;
+		final float xInset = 0.17f, yInstet = 0.155f;
+		final int gridWitdth = 12, gridHeight = 8;
+		final float cellSize = 0.30f;
 
 		// First ins 36 39 56 188
 
