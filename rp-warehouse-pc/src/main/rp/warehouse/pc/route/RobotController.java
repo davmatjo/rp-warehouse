@@ -9,18 +9,19 @@ import rp.warehouse.pc.data.Robot;
  */
 public class RobotController extends Thread {
     
-    Robot nxtBrick = null;
-    public RobotController(Robot _nxtBrick) {
-        nxtBrick=_nxtBrick;
+    Robot robot = null;
+    public RobotController(Robot _robot) {
+        robot=_robot;
         // TODO Auto-generated constructor stub
     }
     
     @Override
     public void run() {
         // TODO Auto-generated method stub
+        
         //move();
         
-        //answer = getResponse();  // blocking
+        Object answer = robot.getResponse();  // blocking
         
         //if (!answer){plan.replan}
         //if(done){plan.more(Robot)}
