@@ -28,7 +28,10 @@ public class Communication implements Runnable {
         while (true) {
             try {
                 int command = fromPC.readInt();
+                switch (command) {
+                    case Protocol.NORTH:
 
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

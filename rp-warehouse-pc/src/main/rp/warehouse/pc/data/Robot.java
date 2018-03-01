@@ -6,10 +6,6 @@ import rp.warehouse.pc.communication.Communication;
 import java.util.Queue;
 
 public class Robot {
-    public enum Direction {
-        NORTH, EAST, SOUTH, WEST
-    }
-
     public enum Response {
         WAITING, OK, FAIL
     }
@@ -17,7 +13,7 @@ public class Robot {
     private final String ID;
     private final String name;
     private final Object lock = new Object();
-    private Queue<Direction> route;
+    private Queue<Integer> route;
     private Location location;
     private int currentJob;
     private final Communication comms;
@@ -59,11 +55,11 @@ public class Robot {
 
     }
 
-    public Queue<Direction> getRoute() {
+    public Queue<Integer> getRoute() {
         return route;
     }
 
-    public void setRoute(Queue<Direction> route) {
+    public void setRoute(Queue<Integer> route) {
         this.route = route;
     }
 

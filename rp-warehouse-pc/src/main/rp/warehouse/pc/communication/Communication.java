@@ -8,7 +8,7 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class Communication implements Runnable{
+public class Communication implements Runnable {
     private final String ID;
     private final String name;
     private final Robot robot;
