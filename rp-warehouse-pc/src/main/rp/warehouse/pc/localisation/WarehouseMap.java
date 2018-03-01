@@ -20,7 +20,7 @@ public class WarehouseMap {
 	 * @param point
 	 *            The point of which the ranges occur at.
 	 */
-	public void put(Ranges ranges, Point point) {
+	public void put(final Ranges ranges, final Point point) {
 		HashSet<Point> points = positions.getOrDefault(ranges, new HashSet<Point>());
 		points.add(point);
 		this.positions.put(ranges, points);
@@ -34,7 +34,7 @@ public class WarehouseMap {
 	 *            The ranges to check for.
 	 * @return The points matching the ranges given.
 	 */
-	public List<Point> getPoints(Ranges ranges) {
+	public List<Point> getPoints(final Ranges ranges) {
 		return new ArrayList<Point>(this.positions.get(ranges));
 	}
 
@@ -45,7 +45,7 @@ public class WarehouseMap {
 	 *            The point to retrieve.
 	 * @return The ranges of which occur at that point.
 	 */
-	public Ranges getRanges(Point point) {
+	public Ranges getRanges(final Point point) {
 		return this.ranges.get(point);
 	}
 
