@@ -23,7 +23,7 @@ public class LocalisationImpl implements Localisation {
 	 * @param warehouse
 	 *            The LineMap representation of the warehouse.
 	 */
-	public LocalisationImpl(LineMap warehouse) {
+	public LocalisationImpl(final LineMap warehouse) {
 		this.world = warehouse;
 		directionPoint[Ranges.FRONT] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
@@ -75,7 +75,7 @@ public class LocalisationImpl implements Localisation {
 	 *            The change in position from <b>initial</b> to <b>next</b>.
 	 * @return The new list of possible positions of the robot.
 	 */
-	private List<Point> filterPositions(List<Point> initial, List<Point> next, Point change) {
+	private List<Point> filterPositions(final List<Point> initial, List<Point> next, final Point change) {
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
 		next.removeIf(p -> !initial.contains(p.subtract(change)));

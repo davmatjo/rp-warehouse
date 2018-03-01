@@ -8,7 +8,7 @@ public class Ranges {
 	public final static int FRONT = 0, RIGHT = 1, BACK = 2, LEFT = 3;
 	private float[] ranges = new float[4];
 
-	public Ranges(float front, float right, float back, float left) {
+	public Ranges(final float front, final float right, final float back, final float left) {
 		this.ranges[0] = front;
 		this.ranges[1] = right;
 		this.ranges[2] = back;
@@ -22,7 +22,7 @@ public class Ranges {
 	 *            The direction of which to return the range.
 	 * @return The range in the given direction.
 	 */
-	public float get(int direction) {
+	public float get(final int direction) {
 		return ranges[direction];
 	}
 
@@ -57,7 +57,7 @@ public class Ranges {
 	 *            3 = 270
 	 * @return The rotated version of the ranges.
 	 */
-	public static Ranges rotate(Ranges ranges, int rot) {
+	public static Ranges rotate(final Ranges ranges, final int rot) {
 		float[] store = new float[4];
 		store[(FRONT + rot) % 4] = ranges.get(FRONT);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
