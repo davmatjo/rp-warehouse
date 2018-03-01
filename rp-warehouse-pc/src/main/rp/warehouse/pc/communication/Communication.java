@@ -1,13 +1,12 @@
-package rp.warehouse.pc;
+package rp.warehouse.pc.communication;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+import rp.warehouse.pc.data.Robot;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class Communication implements Runnable{
     private final String ID;

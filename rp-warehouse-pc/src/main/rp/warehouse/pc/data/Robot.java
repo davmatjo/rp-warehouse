@@ -1,6 +1,7 @@
-package rp.warehouse.pc;
+package rp.warehouse.pc.data;
 
 import lejos.util.Delay;
+import rp.warehouse.pc.communication.Communication;
 
 import java.util.Queue;
 
