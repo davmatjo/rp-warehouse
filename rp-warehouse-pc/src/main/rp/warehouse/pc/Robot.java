@@ -1,15 +1,33 @@
 package rp.warehouse.pc;
 
+import lejos.util.Delay;
+
+import java.util.Queue;
+
 public class Robot {
+    public enum Direction {
+        NORTH, EAST, SOUTH, WEST
+    }
+
+    public enum Response {
+        WAITING, OK, FAIL
+    }
+
     private final String ID;
+    private final String name;
+    private final Object lock = new Object();
+    private Queue<Direction> route;
     private Location location;
     private int currentJob;
     private final Communication comms;
+    private Response response = Response.WAITING;
+    private boolean fail = false;
 
-    public Robot(String ID) {
+    public Robot(String ID, String name) {
         this.ID = ID;
+        this.name = name;
         setLocation();
-        this.comms = new Communication(ID);
+        this.comms = new Communication(ID, name, this);
     }
 
     private void setLocation() {
@@ -36,7 +54,34 @@ public class Robot {
         this.currentJob = currentJob;
     }
 
-    public void move(int direction) {
+    public void move() {
+
+    }
+
+    public Queue<Direction> getRoute() {
+        return route;
+    }
+
+    public void setRoute(Queue<Direction> route) {
+        this.route = route;
+    }
+
+    public Response getResponse() {
+        while (response == Response.WAITING) {
+            Delay.msDelay(30);
+        }
+        synchronized (lock) {
+            return response;
+        }
+    }
+
+    public void setResponse(Response response) {
+        synchronized (lock) {
+            this.response = response;
+        }
+    }
+
+    public void cancelJob() {
 
     }
 }
