@@ -1,4 +1,4 @@
-package rp.warehouse.pc;
+package rp.warehouse.pc.data;
 
 public class Location {
     private int x;
