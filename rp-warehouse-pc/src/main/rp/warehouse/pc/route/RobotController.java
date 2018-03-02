@@ -14,20 +14,19 @@ public class RobotController extends Thread {
 
     public RobotController(Robot _robot) {
         robot = _robot;
-        // TODO Auto-generated constructor stub
+        
+        // Passes self
+        robot.addController(this);
     }
 
     @Override
     public void run() {
         Response answer = null;
         while (true) {
-            // check if there are more items in queue
-            //
+          
 
-            robot.getCurrentJob();// can't check if empty or not
-            // it doesn't return anything
-            
-            if (true) {// If nothing left in the currentRoute
+          // what value means no more items
+            if (robot.getCurrentJob()==-1) {// If nothing left in the currentRoute
                 switch (answer) {
                 case WAITING:
 
@@ -45,7 +44,7 @@ public class RobotController extends Thread {
             }
             
             robot.move();
-            robot.getResponse(); // blocking
+            answer= robot.getResponse(); // blocking
         }
     }
 
