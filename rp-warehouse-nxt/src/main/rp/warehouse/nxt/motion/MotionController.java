@@ -6,8 +6,6 @@ import lejos.robotics.navigation.DifferentialPilot;
 import rp.config.WheeledRobotConfiguration;
 import rp.systems.WheeledRobotSystem;
 import rp.util.Rate;
-import rp.warehouse.nxt.Movement;
-import rp.warehouse.nxt.Movement.Direction;
 
 public class MotionController implements Movement {
 

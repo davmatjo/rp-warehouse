@@ -1,4 +1,4 @@
-package rp.warehouse.nxt;
+package rp.warehouse.nxt.interaction;
 
 public interface RobotInterface	{
 	

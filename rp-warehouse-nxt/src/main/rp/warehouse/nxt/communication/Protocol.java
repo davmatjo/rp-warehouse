@@ -1,4 +1,4 @@
-package rp.warehouse.nxt;
+package rp.warehouse.nxt.communication;
 
 public class Protocol {
     public static final int WAITING = 0;

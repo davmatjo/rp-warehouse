@@ -1,7 +1,8 @@
-package rp.warehouse.nxt;
+package rp.warehouse.nxt.communication;
 
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
+import rp.warehouse.nxt.motion.Movement;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,10 +11,10 @@ import java.io.IOException;
 public class Communication implements Runnable {
     private final DataInputStream fromPC;
     private final DataOutputStream toPC;
-    // private final Movement robotMovement;
+    private final Movement robotMovement;
     // private final RobotInterface robotInterface;
 
-    public Communication() {
+    public Communication(Movement movement) {
         System.out.println("Waiting on bluetooth");
         BTConnection connection = Bluetooth.waitForConnection();
         System.out.println("Connected");
@@ -21,11 +22,10 @@ public class Communication implements Runnable {
         fromPC = connection.openDataInputStream();
         toPC = connection.openDataOutputStream();
 
-        // robotMovement = new Movement();
+        robotMovement = movement;
         // robotInterface = new RobotInterface(this);
 
-        Thread receive = new Thread(this);
-        receive.setDaemon(true);
+        new Thread(this);
     }
 
     @Override
@@ -35,16 +35,16 @@ public class Communication implements Runnable {
                 int command = fromPC.readInt();
                 switch (command) {
                     case Protocol.NORTH:
-                        //robotMovement.move(Movement.Direction.North);
+                        robotMovement.move(Movement.Direction.NORTH);
                         break;
                     case Protocol.EAST:
-                        //robotMovement.move(Movement.Direction.East);
+                        robotMovement.move(Movement.Direction.EAST);
                         break;
                     case Protocol.SOUTH:
-                        //robotMovement.move(Movement.Direction.East);
+                        robotMovement.move(Movement.Direction.SOUTH);
                         break;
                     case Protocol.WEST:
-                        //robotMovement.move(Movement.Direction.East);
+                        robotMovement.move(Movement.Direction.WEST);
                         break;
                 }
 
