@@ -32,7 +32,7 @@ public class LocalisationImpl implements Localisation {
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 
 		// Generate the warehouseMap values using world
-		
+		// One more problem with git and I'm making my own version control software.
 	}
 
 	@Override
