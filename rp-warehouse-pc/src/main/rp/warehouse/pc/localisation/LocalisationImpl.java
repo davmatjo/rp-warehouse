@@ -5,13 +5,15 @@ import java.util.Random;
 
 import lejos.geom.Point;
 import lejos.robotics.mapping.LineMap;
+import rp.robotics.mapping.GridMap;
+import rp.warehouse.pc.data.Warehouse;
 
 public class LocalisationImpl implements Localisation {
 
 	// Currently assumes that all robots are facing upwards relative to the map.
 
 	private final WarehouseMap warehouseMap = new WarehouseMap();
-	private final LineMap world;
+	private final GridMap world = Warehouse.build();
 	private Point[] directionPoint = new Point[4];
 	private final int MAX_RUNS = 10;
 	private int runCounter = 0;
@@ -24,7 +26,6 @@ public class LocalisationImpl implements Localisation {
 	 *            The LineMap representation of the warehouse.
 	 */
 	public LocalisationImpl(final LineMap warehouse) {
-		this.world = warehouse;
 		directionPoint[Ranges.FRONT] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.BACK] = new Point(0, -1);
