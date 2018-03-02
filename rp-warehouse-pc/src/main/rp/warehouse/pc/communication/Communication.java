@@ -8,11 +8,13 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 public class Communication implements Runnable {
     private final Robot robot;
     private final DataInputStream fromNXT;
     private final DataOutputStream toNXT;
+    private CountDownLatch waitForMovement = new CountDownLatch(1);
     private boolean open = true;
 
     public Communication(String ID, String name, Robot robot) {
@@ -54,7 +56,8 @@ public class Communication implements Runnable {
         }
     }
 
-    /** Loops indefinitely, reading data from the NXT. Calls appropriate methods according to protocol
+    /**
+     * Loops indefinitely, reading data from the NXT. Calls appropriate methods according to protocol
      *
      * @throws IOException If something goes wrong with the stream
      */
@@ -64,32 +67,55 @@ public class Communication implements Runnable {
             // Read input and act accordingly
             int input = fromNXT.readInt();
             switch (input) {
+
+                // Feedback from movement
                 case Protocol.OK:
-                    robot.setResponse(Robot.Response.OK);
+                case Protocol.FAIL: {
+                    waitForMovement.countDown();
+                    waitForMovement = new CountDownLatch(1);
                     break;
+                }
 
-                case Protocol.FAIL:
-                    robot.setResponse(Robot.Response.FAIL);
-                    break;
-
-                case Protocol.CANCEL:
+                // Commands from RobotInterface
+                case Protocol.CANCEL: {
                     robot.cancelJob();
                     break;
+                }
             }
         }
     }
 
-    /** Send data to the robot according to the protocol
+    /**
+     * Send data to the robot according to the protocol
      *
      * @param data int: defined in communication.Protocol
      */
-    public void sendData(int data) {
+    private void sendData(int data) {
         try {
             toNXT.write(data);
             toNXT.flush();
         } catch (IOException e) {
             System.err.println("Bluetooth IO Error in send: " + e.getMessage());
             open = false;
+        }
+    }
+
+    /**
+     * Sends a movement command to the NXT and waits for the command to finish
+     *
+     * @param direction - Protocol.NORTH, EAST, SOUTH, or WEST
+     */
+    public void sendMovement(int direction) {
+        assert direction >= Protocol.NORTH;
+        assert direction <= Protocol.SOUTH;
+
+        sendData(direction);
+
+        try {
+            waitForMovement.await();
+            waitForMovement = new CountDownLatch(1);
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted somehow: " + e.getMessage());
         }
     }
 
