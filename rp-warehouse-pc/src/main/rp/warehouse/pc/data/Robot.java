@@ -2,6 +2,7 @@ package rp.warehouse.pc.data;
 
 import lejos.util.Delay;
 import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.route.RobotController;
 
 import java.util.Queue;
 
@@ -19,12 +20,17 @@ public class Robot {
     private final Communication comms;
     private Response response = Response.WAITING;
     private boolean fail = false;
+    private RobotController controller;
 
     public Robot(String ID, String name) {
         this.ID = ID;
         this.name = name;
         setLocation();
         this.comms = new Communication(ID, name, this);
+    }
+    
+    public void addController(RobotController _controller) {
+        controller=_controller;
     }
 
     private void setLocation() {
