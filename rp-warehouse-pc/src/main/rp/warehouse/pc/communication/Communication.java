@@ -10,56 +10,93 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Communication implements Runnable {
-    private final String ID;
-    private final String name;
     private final Robot robot;
-    private DataOutputStream toNXT;
-
-    public enum Protocol{
-        FAIL, OK
-    }
+    private final DataInputStream fromNXT;
+    private final DataOutputStream toNXT;
+    private boolean open = true;
 
     public Communication(String ID, String name, Robot robot) {
-        this.ID = ID;
-        this.name = name;
         this.robot = robot;
+
+        NXTComm nxtComm = null;
+        try {
+
+            nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+            NXTInfo nxt = new NXTInfo(NXTCommFactory.BLUETOOTH, name, ID);
+            nxtComm.open(nxt);
+
+        } catch (NXTCommException e) {
+            System.err.println("Unable to open NXT Connection: " + e.getMessage());
+        }
+
+        assert (nxtComm != null);
+        fromNXT = new DataInputStream(nxtComm.getInputStream());
+        toNXT = new DataOutputStream(nxtComm.getOutputStream());
+
         new Thread(this);
     }
 
     /**
-     * This thread will loop indefinitely, attempting to receive data from the robot
+     * Runs the receiveData method, then cleans up once finished
      */
     @Override
     public void run() {
         try {
+            receiveData();
 
-            NXTComm comm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-            NXTInfo nxt = new NXTInfo(NXTCommFactory.BLUETOOTH, name, ID);
-            comm.open(nxt);
+            // When finished, flush and close
+            fromNXT.close();
+            toNXT.flush();
+            toNXT.close();
 
-            DataInputStream fromNXT = new DataInputStream(comm.getInputStream());
-            toNXT = new DataOutputStream(comm.getOutputStream());
-
-            // Read data, run appropriate methods
-            while (true) {
-                int input = fromNXT.readInt();
-                if (input <= 1) {
-                    robot.setResponse(input == 0 ? Robot.Response.OK : Robot.Response.FAIL);
-                } else if (input == 2){
-                    robot.cancelJob();
-                }
-            }
-        } catch (NXTCommException | IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Bluetooth IO Error: " + e.getMessage());
         }
     }
 
+    /** Loops indefinitely, reading data from the NXT. Calls appropriate methods according to protocol
+     *
+     * @throws IOException If something goes wrong with the stream
+     */
+    private void receiveData() throws IOException {
+        while (open) {
+
+            // Read input and act accordingly
+            int input = fromNXT.readInt();
+            switch (input) {
+                case Protocol.OK:
+                    robot.setResponse(Robot.Response.OK);
+                    break;
+
+                case Protocol.FAIL:
+                    robot.setResponse(Robot.Response.FAIL);
+                    break;
+
+                case Protocol.CANCEL:
+                    robot.cancelJob();
+                    break;
+            }
+        }
+    }
+
+    /** Send data to the robot according to the protocol
+     *
+     * @param data int: defined in communication.Protocol
+     */
     public void sendData(int data) {
         try {
             toNXT.write(data);
             toNXT.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Bluetooth IO Error in send: " + e.getMessage());
+            open = false;
         }
+    }
+
+    /**
+     * Close the connection and clean up
+     */
+    public void close() {
+        open = false;
     }
 }
