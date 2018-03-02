@@ -26,7 +26,7 @@ public class RobotController extends Thread {
 
 
           // what value means no more items
-            if (robot.getCurrentJob()==-1) {// If nothing left in the currentRoute
+            if (robot.getCurrentItem()==-1) {// If nothing left in the currentRoute
                 switch (answer) {
                 case WAITING:
 

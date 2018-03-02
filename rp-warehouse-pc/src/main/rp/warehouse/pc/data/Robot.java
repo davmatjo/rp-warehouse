@@ -16,7 +16,7 @@ public class Robot {
     private final Object lock = new Object();
     private Queue<Integer> route;
     private Location location;
-    private int currentJob;
+    private int currentItem;
     private final Communication comms;
     private Response response = Response.WAITING;
     private boolean fail = false;
@@ -49,16 +49,22 @@ public class Robot {
 
     }
 
-    public int getCurrentJob() {
-        return currentJob;
+    public int getCurrentItem() {
+        return currentItem;
     }
 
-    public void setCurrentJob(int currentJob) {
-        this.currentJob = currentJob;
+    public void setCurrentItem(int currentItem) {
+        this.currentItem = currentItem;
     }
 
-    public void move() {
-
+    public boolean move() {
+        Integer nextMovement = route.poll();
+        if (nextMovement != null) {
+            comms.sendData(nextMovement);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Queue<Integer> getRoute() {
