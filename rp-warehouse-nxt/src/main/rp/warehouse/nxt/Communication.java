@@ -10,6 +10,8 @@ import java.io.IOException;
 public class Communication implements Runnable {
     private final DataInputStream fromPC;
     private final DataOutputStream toPC;
+    // private final Movement robotMovement;
+    // private final RobotInterface robotInterface;
 
     public Communication() {
         System.out.println("Waiting on bluetooth");
@@ -18,6 +20,9 @@ public class Communication implements Runnable {
 
         fromPC = connection.openDataInputStream();
         toPC = connection.openDataOutputStream();
+
+        // robotMovement = new Movement();
+        // robotInterface = new RobotInterface(this);
 
         Thread receive = new Thread(this);
         receive.setDaemon(true);
@@ -30,7 +35,17 @@ public class Communication implements Runnable {
                 int command = fromPC.readInt();
                 switch (command) {
                     case Protocol.NORTH:
-
+                        //robotMovement.move(Movement.Direction.North);
+                        break;
+                    case Protocol.EAST:
+                        //robotMovement.move(Movement.Direction.East);
+                        break;
+                    case Protocol.SOUTH:
+                        //robotMovement.move(Movement.Direction.East);
+                        break;
+                    case Protocol.WEST:
+                        //robotMovement.move(Movement.Direction.East);
+                        break;
                 }
 
             } catch (IOException e) {
