@@ -1,3 +1,5 @@
+package rp.warehouse.pc.data;
+
 import java.util.ArrayList;
 
 public class Job {
