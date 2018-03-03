@@ -5,7 +5,8 @@ import rp.warehouse.pc.route.RobotController;
 
 import java.util.Queue;
 
-public class Robot extends Thread {
+public class Robot implements Runnable{
+
     // Communications
     private final String ID; // Communication ID
     private final String name; // Communication name
@@ -16,7 +17,7 @@ public class Robot extends Thread {
                 // This should Queue<Queue<Integer>> route
                 // Because when job is cancelled it the whole route needs to be deleted
     private Location location; // Current location of the robot
-    private int currentItem; // Current Job ID??
+    private int currentItem; 
     private final static int weightLimit = 50;
     private int currentWeightOfCargo = 0;
     private boolean fail = false;
