@@ -49,7 +49,11 @@ public class Robot {
         return route;
     }
 
+    /**
+     * When called cancels Job of the current item
+     */
     public void cancelJob() {
-
+        // currentItem.getJob()
+        // cancelltems.add(getCurrentItem())
     }
 }
