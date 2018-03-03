@@ -1,7 +1,6 @@
 package rp.warehouse.pc.route;
 
 import rp.warehouse.pc.data.Robot;
-import rp.warehouse.pc.data.Robot.Response;
 
 /**
  *
@@ -21,20 +20,20 @@ public class RobotController extends Thread {
 
     @Override
     public void run() {
-        Response answer = null;
+        String answer = null;
         while (true) {
 
 
           // what value means no more items
             if (robot.getCurrentItem()==-1) {// If nothing left in the currentRoute
                 switch (answer) {
-                case WAITING:
+                case "WAITING":
 
                     break;
-                case FAIL:
+                case "FAIL":
                     System.exit(1);
                     break;
-                case OK:
+                case "OK":
 
                     break;
 
@@ -44,7 +43,7 @@ public class RobotController extends Thread {
             }
 
             robot.move();
-            answer= robot.getResponse(); // blocking
+            //answer= robot.getResponse(); // blocking
         }
     }
 
