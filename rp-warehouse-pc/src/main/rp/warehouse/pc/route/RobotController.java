@@ -3,19 +3,17 @@ package rp.warehouse.pc.route;
 import rp.warehouse.pc.data.Robot;
 
 /**
- *
+ *Not to be used anymore!!!!!!!
  * @author roman
  *
  */
+@SuppressWarnings("unused")
 public class RobotController extends Thread {
 
     Robot robot = null;
 
     public RobotController(Robot _robot) {
         robot = _robot;
-
-        // Passes self
-        robot.addController(this);
     }
 
     @Override
@@ -41,7 +39,6 @@ public class RobotController extends Thread {
                     break;
                 }
             }
-
             robot.move();
             //answer= robot.getResponse(); // blocking
         }

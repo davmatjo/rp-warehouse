@@ -5,16 +5,22 @@ import rp.warehouse.pc.route.RobotController;
 
 import java.util.Queue;
 
-public class Robot {
+public class Robot implements Runnable{
 
-    private final String ID;
-    private final String name;
-    private final Communication comms;
-    private Queue<Integer> route;
-    private Location location;
-    private int currentItem;
+    // Communications
+    private final String ID; // Communication ID
+    private final String name; // Communication name
+    private final Communication comms; // Communication used to connect each robot to the a nxt brick
+
+    // Route information
+    private Queue<Integer> route; // Queue of directions
+                // This should Queue<Queue<Integer>> route
+                // Because when job is cancelled it the whole route needs to be deleted
+    private Location location; // Current location of the robot
+    private int currentItem; 
+    private final static int weightLimit = 50;
+    private int currentWeightOfCargo = 0;
     private boolean fail = false;
-    private RobotController controller;
 
     public Robot(String ID, String name) {
         this.ID = ID;
@@ -22,8 +28,30 @@ public class Robot {
         this.comms = new Communication(ID, name, this);
     }
 
-    public void addController(RobotController controller) {
-        this.controller = controller;
+    public void run() {
+        String answer = null;
+        while (true) {
+
+            // If nothing left in the currentRoute
+            if (getCurrentItem() == -1) {
+                switch (answer) {
+                case "WAITING":
+
+                    break;
+                case "FAIL":
+                    System.exit(1);
+                    break;
+                case "OK":
+
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            move();
+            // answer= robot.getResponse(); // blocking
+        }
     }
 
     public String getID() {
@@ -34,12 +62,23 @@ public class Robot {
         return location;
     }
 
+    /**
+     * When the confirmation of move has been received, the location robot is update
+     */
+    public void updateLocation() {
+        // NEEDS TO BE DONE
+    }
+
     public int getCurrentItem() {
+        if (route.peek()==null) {
+            // No more directions
+            return 0;
+        }
+        currentItem = route.poll();
         return currentItem;
     }
 
     public boolean move() {
-        // TODO - Fix this
         Integer nextMovement = route.poll();
         comms.sendMovement(nextMovement);
         return true;
