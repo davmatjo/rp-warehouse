@@ -7,6 +7,7 @@ import java.util.Queue;
 
 public class Robot implements Runnable{
 
+
     // Communications
     private final String ID; // Communication ID
     private final String name; // Communication name
