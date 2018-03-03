@@ -1,6 +1,7 @@
 package rp.warehouse.pc.data;
 
 import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.communication.Protocol;
 
 import java.util.Queue;
 
@@ -128,23 +129,25 @@ public class Robot implements Runnable {
         x = location.getX();
         y = location.getY();
         switch (currentDirection) {
-        case 3:
+        case Protocol.NORTH:
             y += 1;
             break;
-        case 4:
+        case Protocol.EAST:
             x += 1;
             break;
-        case 5:
+        case Protocol.SOUTH:
             y -= 1;
             break;
-        case 6:
+        case Protocol.WEST:
             x -= 1;
             break;
 
         default:
             break;
         }
-        location = new Location(x, y, currentDirection);
+        location.setX(x);
+        location.setY(y);
+        location.setDirection(currentDirection);
         Location itemLocation;// =currentItem.getLocation();
         if (location.getX() == 0) { // ==itemLocation.getX())&&location.getY()==itemLocation.getY()){
             // update task and get a new item
