@@ -70,6 +70,11 @@ public class Robot implements Runnable{
     }
 
     public int getCurrentItem() {
+        if (route.peek()==null) {
+            // No more directions
+            return 0;
+        }
+        currentItem = route.poll();
         return currentItem;
     }
 
