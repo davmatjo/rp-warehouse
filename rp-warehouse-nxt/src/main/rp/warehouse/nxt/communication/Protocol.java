@@ -9,5 +9,6 @@ public class Protocol {
     public static final int SOUTH = 5;
     public static final int WEST = 6;
     public static final int CANCEL = 7;
+    public static final int PICKUP = 8;
 
-    }
+}
