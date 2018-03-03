@@ -2,6 +2,8 @@ package rp.warehouse.pc.route;
 
 import rp.warehouse.pc.data.Robot;
 
+// No to be used anymore
+@SuppressWarnings("unused")
 public class RouteExecution implements RouteExecutionInterface {
     private static int numberOfRobots;
     Robot[] robots = null;
