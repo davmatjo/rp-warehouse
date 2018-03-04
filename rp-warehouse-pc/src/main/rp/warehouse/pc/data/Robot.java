@@ -24,9 +24,9 @@ public class Robot implements Runnable {
     private Item currentItem;
     
     // Robot Information
-    private final static int weightLimit = 50;
-    private int currentWeightOfCargo = 0;
-    private boolean fail = false;
+    private final static float weightLimit = 50.0f;
+    private float currentWeightOfCargo = 0.0f;
+    private boolean dropOffCheck = false;
 
     // Plan
     // Instance of Planning, which could be called 
@@ -57,26 +57,37 @@ public class Robot implements Runnable {
     public void run() {
         
         while (true) {
-            
             // How do i show that its a drop off or pick up?
 
             
             // Checks if there are anymore items
             if (currentItem==null) {
-                // Send STOP  
-                comms.sendMovement(getNextInstruction());// Is this blocking?
+                // Do nothing
             }
             
             // Checks if location of the robot matches
             // with the location of the item
             else if(route.peek()==null) {
-                // Send STOP and WAIT for PICKUP or DROP OFF
-                comms.sendMovement(getNextInstruction());
+                //checks if its dropping off
+                if (dropOffCheck) {
+                    
+                    dropOff();
+                }else {
+                    // Stops and waits for the number of items
+                    itemCheck:
+                    while(true) {
+                        int numberOfItems = comms.sendPickupRequest();
+                        
+                        // Checks that number of items fit 
+                        if(pickUp(numberOfItems)) {
+                            break itemCheck;
+                        }
+                    }
+                }
             }
-            
             // If there are still instructions present
             else{
-                comms.sendMovement(getNextInstruction());// Is this blocking?
+                comms.sendMovement(getNextInstruction());
                 updateLocation();
                 updateCurrentItem();
             }
@@ -193,18 +204,17 @@ public class Robot implements Runnable {
     /**
      * For: Communication specify amount loaded for the current item
      * 
-     * Only one item can be loaded at the time
-     * Every time user presses button on pickup one item is loaded
-     * 
-     * @return - True, there is still space for more cargo. False, there is no more space left
+     * @return - True, there is still space for more cargo or the cargo is full. 
+     *              False, too many items being picked up
      */
-    public boolean pickUp() {
-        if (currentWeightOfCargo+1 > weightLimit) {
+    private boolean pickUp(int numberOfItems) {
+        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > weightLimit) {
             return false;
         }
-        currentWeightOfCargo++;
+        currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
         return true;
     }
+    
     /**
      * For Communication when performing drop of at the station
      * 
@@ -213,7 +223,7 @@ public class Robot implements Runnable {
      * 
      * @return - True, Cargo was dropped off. False, empty
      */
-    public boolean dropOff() {
+    private boolean dropOff() {
         if (currentWeightOfCargo==0) {
             return false;
         }
