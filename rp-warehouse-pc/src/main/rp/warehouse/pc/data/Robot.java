@@ -4,6 +4,7 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RobotsControl;
 
+import java.io.IOException;
 import java.util.Queue;
 
 public class Robot implements Runnable {
@@ -41,7 +42,7 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks) {
+    public Robot(String ID, String name, Queue<Task> newTasks) throws IOException {
         this.ID = ID;
         this.name = name;
         this.comms = new Communication(ID, name, this);

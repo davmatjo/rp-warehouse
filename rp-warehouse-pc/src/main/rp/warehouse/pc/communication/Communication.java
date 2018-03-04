@@ -14,13 +14,15 @@ public class Communication implements Runnable {
     private final Robot robot;
     private final DataInputStream fromNXT;
     private final DataOutputStream toNXT;
-    private CountDownLatch waitForMovement = new CountDownLatch(1);
+    private final Object waitForMovement = new Object();
+    private final Object waitForPickup = new Object();
+    private volatile boolean pickupSuccessful = false;
     private boolean open = true;
 
-    public Communication(String ID, String name, Robot robot) {
+    public Communication(String ID, String name, Robot robot) throws IOException {
         this.robot = robot;
 
-        NXTComm nxtComm = null;
+        NXTComm nxtComm;
         try {
 
             nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -29,13 +31,13 @@ public class Communication implements Runnable {
 
         } catch (NXTCommException e) {
             System.err.println("Unable to open NXT Connection: " + e.getMessage());
+            throw new IOException(e);
         }
 
-        assert (nxtComm != null);
         fromNXT = new DataInputStream(nxtComm.getInputStream());
         toNXT = new DataOutputStream(nxtComm.getOutputStream());
 
-        new Thread(this);
+        new Thread(this).start();
     }
 
     /**
@@ -71,14 +73,24 @@ public class Communication implements Runnable {
                 // Feedback from movement
                 case Protocol.OK:
                 case Protocol.FAIL: {
-                    waitForMovement.countDown();
-                    waitForMovement = new CountDownLatch(1);
+                    synchronized (waitForMovement) {
+                        waitForMovement.notifyAll();
+                    }
                     break;
                 }
 
                 // Commands from RobotInterface
                 case Protocol.CANCEL: {
                     robot.cancelJob();
+                    break;
+                }
+
+                case Protocol.PICKUP: {
+                    input = fromNXT.readInt();
+                    synchronized (waitForMovement) {
+                        pickupSuccessful = (input == Protocol.OK);
+                        waitForPickup.notifyAll();
+                    }
                     break;
                 }
             }
@@ -106,20 +118,39 @@ public class Communication implements Runnable {
      * @param direction - Protocol.NORTH, EAST, SOUTH, or WEST
      */
     public void sendMovement(int direction) {
-        // Also need a STOP protocol, 
-        // when destination has been reached ?
-        
         assert direction >= Protocol.NORTH;
-        // This assert excludes WEST
-        assert direction <= Protocol.SOUTH;
-
-        sendData(direction);
+        assert direction <= Protocol.WEST;
 
         try {
-            waitForMovement.await();
-            waitForMovement = new CountDownLatch(1);
+            synchronized (waitForMovement) {
+                sendData(direction);
+                waitForMovement.wait();
+            }
         } catch (InterruptedException e) {
             System.err.println("Interrupted somehow: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Send the NXT a signal to pickup a number of items equal to the count
+     *
+     * @param count - number of items to pickup
+     *
+     * @return - true if the correct number of items was picked up
+     */
+    public boolean sendPickupCount(int count) {
+        assert count > 0;
+
+        try {
+            synchronized (waitForPickup) {
+                sendData(Protocol.PICKUP);
+                sendData(count);
+                waitForPickup.wait();
+                return pickupSuccessful;
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted somehow: " + e.getMessage());
+            return false;
         }
     }
 

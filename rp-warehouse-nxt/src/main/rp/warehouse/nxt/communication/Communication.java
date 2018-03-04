@@ -65,8 +65,12 @@ public class Communication implements Runnable {
     private void receiveCommand() throws IOException {
         while (open) {
             Integer command = fromPC.readInt();
-
-            robotMovement.move(commandTranslate.get(command));
+            if (command >= Protocol.NORTH && command <= Protocol.WEST) {
+                robotMovement.move(commandTranslate.get(command));
+            } else if (command == Protocol.PICKUP) {
+                int countToPickup = fromPC.readInt();
+                // robot
+            }
         }
     }
 
