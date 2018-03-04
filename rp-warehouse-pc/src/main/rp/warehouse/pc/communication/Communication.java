@@ -106,7 +106,11 @@ public class Communication implements Runnable {
      * @param direction - Protocol.NORTH, EAST, SOUTH, or WEST
      */
     public void sendMovement(int direction) {
+        // Also need a STOP protocol, 
+        // when destination has been reached ?
+        
         assert direction >= Protocol.NORTH;
+        // This assert excludes WEST
         assert direction <= Protocol.SOUTH;
 
         sendData(direction);
