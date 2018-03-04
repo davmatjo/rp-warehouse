@@ -8,7 +8,6 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 public class Communication implements Runnable {
     private final Robot robot;

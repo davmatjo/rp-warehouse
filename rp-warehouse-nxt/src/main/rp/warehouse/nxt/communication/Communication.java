@@ -69,7 +69,13 @@ public class Communication implements Runnable {
                 robotMovement.move(commandTranslate.get(command));
             } else if (command == Protocol.PICKUP) {
                 int countToPickup = fromPC.readInt();
-                // robot
+                //if (robotInterface.pickup(countToPickup) {
+                sendCommand(Protocol.PICKUP);
+                sendCommand(Protocol.OK);
+                //else {
+                sendCommand(Protocol.PICKUP);
+                sendCommand(Protocol.FAIL);
+                //}
             }
         }
     }
@@ -80,7 +86,7 @@ public class Communication implements Runnable {
      * @param command int defined in protocol. Must be >= CANCEL
      */
     public void sendCommand(int command) {
-        assert command >= Protocol.CANCEL;
+        assert !(command <= Protocol.WEST && command >= Protocol.NORTH);
 
         try {
             toPC.write(command);
