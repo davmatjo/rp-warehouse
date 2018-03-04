@@ -17,7 +17,7 @@ public class Robot implements Runnable {
     // Route information
     private Queue<Integer> route;       // Queue of directions
     private int currentDirection;
-    private Location location;          // Current location of the robot
+    private RobotLocation location;          // Current location of the robot
 
     // Job information
     private Queue<Task> tasks;

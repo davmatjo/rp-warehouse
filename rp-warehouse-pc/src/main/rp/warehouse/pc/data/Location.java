@@ -3,14 +3,10 @@ package rp.warehouse.pc.data;
 public class Location {
     private int x;
     private int y;
-    private int direction;
 
-    public Location(){}
-
-    public Location(int x, int y, int direction) {
+    public Location(int x, int y) {
         this.x = x;
         this.y = y;
-        this.direction = direction;
     }
 
     public int getX() {
@@ -21,10 +17,6 @@ public class Location {
         return y;
     }
 
-    public int getDirection() {
-        return direction;
-    }
-
     public void setX(int x) {
         this.x = x;
     }
@@ -33,7 +25,4 @@ public class Location {
         this.y = y;
     }
 
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
 }

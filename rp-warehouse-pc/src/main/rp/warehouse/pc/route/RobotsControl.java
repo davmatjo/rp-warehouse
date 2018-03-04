@@ -1,7 +1,10 @@
 package rp.warehouse.pc.route;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
@@ -22,7 +25,9 @@ import rp.warehouse.pc.data.Task;
  *
  */
 public class RobotsControl {
-    private static ArrayList<Robot> robots = new ArrayList<Robot>();
+    private static final ArrayList<Robot> robots = new ArrayList<Robot>();
+    private static final String[] robotNames = new String[] {"ExpressBoi"};
+    private static final String[] robotIDs = new String[] {"NXT_0016531AFBE1"};
 
     /**
      * For: Job Selection When the the items have been split between robots (number
@@ -37,31 +42,27 @@ public class RobotsControl {
      * 
      */
     public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
-
+        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size());
         int i = 0;
         for (Queue<Task> items : listOfItems) {
-            robots.add(new Robot(i + "", createName(), items));
-
-            // Not sure if that's the right way to do it
-            Thread t = new Thread(robots.get(i));
-            t.start();
+            try {
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
+                robots.add(newRobot);
+                pool.execute(newRobot);
+            } catch (IOException e) {
+                System.err.println("Couldn't create robot named " + robotNames[i]);
+            }
 
             i++;
         }
     }
 
-    private static String createName() {
-        return "Bob";
-    }
-
     /**
      * For: Route Planning and Warehouse to get robot classes in the for of array
-     * 
-     * 
+     *
      * @return ArrayList of Robots
      */
     public static ArrayList<Robot> getRobots() {
-
         return robots;
     }
 
