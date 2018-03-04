@@ -2,6 +2,7 @@ package rp.warehouse.pc.data;
 
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.route.RobotsControl;
 
 import java.util.Queue;
 
@@ -43,30 +44,23 @@ public class Robot implements Runnable {
         tasks = newTasks;
     }
 
+    
+    /**
+     * Runs indefinitely and sends commands to Communication 
+     * 
+     */
     public void run() {
         String answer = null;
         while (true) {
 
-            // answer= robot.getResponse(); // blocking
-            // If nothing left in the currentRoute
-            // Need some kind of response
-            if (true) {
-                switch (answer) {
-                case "WAITING":
-
-                    break;
-                case "FAIL":
-                    System.exit(1);
-                    break;
-                case "OK":
-
-                    break;
-
-                default:
-                    break;
-                }
+            
+            if (currentItem==null) {
+                comms.sendMovement(getNextInstruction());
+            }else {
+                comms.sendMovement(getNextInstruction());
             }
-
+            updateLocation();
+            updateCurrentItem();
         }
     }
 
@@ -85,18 +79,15 @@ public class Robot implements Runnable {
      * Communication should call this method to update Robot location and get next
      * Direction
      */
-    public void getNextDirection() {
+    @SuppressWarnings("unused")    // Using those commands in the run methods now
+    private void getNextDirection() {
 
-        updateLocation();
 
-        updateCurrentItem();
-
-        comms.sendMovement(getNextInstruction());
     }
 
     private int getNextInstruction() {
         // What it there are no more instruction
-        // Check Job ID (Discard cancels jobs "items" )
+        // Check Job ID (Discard cancelled jobs "items" )
         return route.poll();
     }
 
