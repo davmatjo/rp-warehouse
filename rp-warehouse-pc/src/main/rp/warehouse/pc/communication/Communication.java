@@ -15,7 +15,7 @@ public class Communication implements Runnable {
     private final DataOutputStream toNXT;
     private final Object waitForMovement = new Object();
     private final Object waitForPickup = new Object();
-    private volatile boolean pickupSuccessful = false;
+    private volatile int pickupCount = 0;
     private boolean open = true;
 
     public Communication(String ID, String name, Robot robot) throws IOException {
@@ -87,7 +87,7 @@ public class Communication implements Runnable {
                 case Protocol.PICKUP: {
                     input = fromNXT.readInt();
                     synchronized (waitForMovement) {
-                        pickupSuccessful = (input == Protocol.OK);
+                        pickupCount = input;
                         waitForPickup.notifyAll();
                     }
                     break;
@@ -133,23 +133,19 @@ public class Communication implements Runnable {
     /**
      * Send the NXT a signal to pickup a number of items equal to the count
      *
-     * @param count - number of items to pickup
-     *
      * @return - true if the correct number of items was picked up
      */
-    public boolean sendPickupCount(int count) {
-        assert count > 0;
+    public int sendPickupRequest() {
 
         try {
             synchronized (waitForPickup) {
                 sendData(Protocol.PICKUP);
-                sendData(count);
                 waitForPickup.wait();
-                return pickupSuccessful;
+                return pickupCount;
             }
         } catch (InterruptedException e) {
             System.err.println("Interrupted somehow: " + e.getMessage());
-            return false;
+            return -1;
         }
     }
 

@@ -68,14 +68,7 @@ public class Communication implements Runnable {
             if (command >= Protocol.NORTH && command <= Protocol.WEST) {
                 robotMovement.move(commandTranslate.get(command));
             } else if (command == Protocol.PICKUP) {
-                int countToPickup = fromPC.readInt();
-                //if (robotInterface.pickup(countToPickup) {
-                sendCommand(Protocol.PICKUP);
-                sendCommand(Protocol.OK);
-                //else {
-                sendCommand(Protocol.PICKUP);
-                sendCommand(Protocol.FAIL);
-                //}
+                //sendCommand(robotInterface.pickup());
             }
         }
     }
