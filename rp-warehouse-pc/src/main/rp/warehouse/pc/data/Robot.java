@@ -15,29 +15,18 @@ public class Robot implements Runnable {
     private final Communication comms;  // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private Queue<Integer> route;       // Queue of directions
-    private int currentDirection;
-    private RobotLocation location;          // Current location of the robot
+    private Queue<Integer> route;       // Queue of directions for the current task
+    private int currentInstruction;     // The current Instruction being done by robot
+    private RobotLocation location;     // Current location of the robot
 
     // Job information
-    private Queue<Task> tasks;
-    private Item currentItem;
+    private Queue<Task> tasks;          // The queue of Tasks which need to be done
+    private Item currentItem;           // Current Item 
     
     // Robot Information
     private final static float weightLimit = 50.0f;
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
-
-    // Plan
-    // Instance of Planning, which could be called 
-    // up to plan when, job is cancelled
-    
-    public Robot() {
-    	location = new RobotLocation(1, 1, 1);
-    	ID = "";
-    	name = "";
-    	comms = null;
-    }
 
     /**
      * For: Job Assignment (Created here)
@@ -73,7 +62,7 @@ public class Robot implements Runnable {
             }
             
             // Checks if location of the robot matches
-            // with the location of the item
+            // with the location of the item or drop off
             else if(route.peek()==null) {
                 //checks if its dropping off
                 if (dropOffCheck) {
@@ -94,6 +83,7 @@ public class Robot implements Runnable {
             }
             // If there are still instructions present
             else{
+                currentInstruction=route.peek();
                 comms.sendMovement(getNextInstruction());
                 updateLocation();
                 updateCurrentItem();
@@ -110,18 +100,6 @@ public class Robot implements Runnable {
         return location;
     }
 
-    /**
-     * For: Communication
-     * 
-     * When confirmation of completion of the last instruction has been received,
-     * Communication should call this method to update Robot location and get next
-     * Direction
-     */
-    @SuppressWarnings("unused")    // Using those commands in the run methods now
-    private void getNextDirection() {
-
-
-    }
 
     private int getNextInstruction() {
         // What it there are no more instruction
@@ -157,18 +135,23 @@ public class Robot implements Runnable {
         int x, y;
         x = location.getX();
         y = location.getY();
-        switch (currentDirection) {
+        int directionPointing = 0;
+        switch (currentInstruction) {
         case Protocol.NORTH:
             y += 1;
+            directionPointing = Protocol.NORTH;
             break;
         case Protocol.EAST:
             x += 1;
+            directionPointing = Protocol.EAST;
             break;
         case Protocol.SOUTH:
             y -= 1;
+            directionPointing = Protocol.SOUTH;
             break;
         case Protocol.WEST:
             x -= 1;
+            directionPointing = Protocol.WEST;
             break;
 
         default:
@@ -176,8 +159,7 @@ public class Robot implements Runnable {
         }
         location.setX(x);
         location.setY(y);
-        location.setDirection(currentDirection);
-        Location itemLocation;// =currentItem.getLocation();
+        location.setDirection(directionPointing);
         
         // Probably no need for this
         // can just check if there are no more instructions for this item
@@ -236,6 +218,12 @@ public class Robot implements Runnable {
         }
         currentWeightOfCargo=0;
         return true;
+    }
+    
+    private void plan() {
+        // Calls 
+        //route = RoutePlan.plan(Robot robot)
+        // which will be static 
     }
     
 }
