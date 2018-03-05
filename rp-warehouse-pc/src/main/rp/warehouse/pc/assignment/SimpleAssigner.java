@@ -23,11 +23,12 @@ public class SimpleAssigner {
 	}
 	
 	public void assign() {
+	    ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
 	    while (!jobs.isEmpty()) {
 			
 			        Job job = getNextJob();
 				
-				ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
+				
 				ArrayList<Task> unassignedItems = job.getItems();
 				
 				int i = 0;
@@ -41,8 +42,9 @@ public class SimpleAssigner {
 					}
 				}
 				
-				RobotsControl.addRobots(assignedItems);
+				
 			}
+	    RobotsControl.addRobots(assignedItems);
 		
 	}
 	
