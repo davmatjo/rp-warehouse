@@ -32,8 +32,24 @@ public class LocalisationImpl implements Localisation {
 		directionPoint[Ranges.BACK] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 
-		// Generate the warehouseMap values using world
+		// Generate the warehouseMap values using world.
 		// One more problem with git and I'm making my own version control software.
+		for (int x = 0; x < world.getXSize(); x++) {
+			for (int y = 0; y < world.getYSize(); y++) {
+				// Take the NORTH, EAST, SOUTH and WEST readings.
+				// Casted to ints to remove floating point (stick to grid).
+				final int north = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
+				final int east = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
+				final int south = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
+				final int west = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
+				// Create a Ranges object from these readings.
+				final Ranges ranges = new Ranges(north, east, south, west);
+				// Create a point from the X and Y co-ordinates.
+				final Point point = new Point(x, y);
+				// Store them in the warehouse map.
+				warehouseMap.put(ranges, point);
+			}
+		}
 	}
 
 	@Override
