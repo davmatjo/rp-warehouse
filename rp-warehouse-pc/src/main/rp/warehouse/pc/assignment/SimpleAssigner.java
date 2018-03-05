@@ -14,7 +14,7 @@ import rp.warehouse.pc.route.RobotsControl;
  * @author Dylan
  *
  */
-public class SimpleAssigner extends Thread {
+public class SimpleAssigner {
 
 	private ArrayList<Job> jobs;
 	
@@ -22,36 +22,35 @@ public class SimpleAssigner extends Thread {
 		this.jobs = jobs;
 	}
 	
-	public void run() {
-		while (true) {
-			if (true) { // if all robots have finished job
-				Job job = getNextJob();
+	public void assign() {
+	    ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
+	    for (int i = 0; i < 3; i++){
+		assignedItems.add(new Queue<Task>());
+	    }
+
+	    while (!jobs.isEmpty()) {
+			
+		Job job = jobs.get(0);
+		jobs.remove(0);		
 				
-				ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
-				ArrayList<Task> unassignedItems = job.getItems();
-				
-				int i = 0;
-				while (!unassignedItems.isEmpty()) {
-					Task nextItem = getNextItem(unassignedItems);
-					assignedItems.get(i).add(nextItem);
+	       	ArrayList<Task> unassignedItems = job.getItems();
+       		
+		int i = 0;
+       		while (!unassignedItems.isEmpty()) {
+       		    Task nextItem = unassignedItems.get(0);
+       		    unassignedItems.remove(0);
+
+       		    assignedItems.get(i).add(nextItem);
 					
-					i++;
-					if (i >= assignedItems.size()) {
-						i = 0;
-					}
-				}
+       		    i++;
+       		    if (i >= assignedItems.size()) {
+       	       		i = 0;
+       		    }
+       		}
 				
-				RobotsControl.addRobots(assignedItems);
-			}
-		}
+				
+	    }
+	    RobotsControl.addRobots(assignedItems);
 		
-		
-	}
-	
-	private Task getNextItem(ArrayList<Task> unassignedItems) {
-		Task next = unassignedItems.get(0);
-		unassignedItems.remove(0);
-		return next;
-	}
-	
+	}	
 }
