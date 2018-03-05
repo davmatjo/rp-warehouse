@@ -38,7 +38,7 @@ warehouseMap.put(ranges, point);
 
 When a new set of ranges has been recorded, `next`, the previous set of ranges `initial` is compared to see which points could still be feasible given the change in location from `initial` to `next`. This change in location is stored as a `Point change`, and is one of the following:
 
-- **FRONT**: `java new Point(0, 1)`
+- **FRONT**: `new Point(0, 1)`
 - **RIGHT**: `new Point(1, 0)`
 - **BACK**: `new Point(0, -1)`
 - **LEFT**: `new Point(-1, 0)`
