@@ -30,40 +30,27 @@ public class SimpleAssigner {
 
 	    while (!jobs.isEmpty()) {
 			
-			        Job job = getNextJob();
+		Job job = jobs.get(0);
+		jobs.remove(0);		
 				
-				
-				ArrayList<Task> unassignedItems = job.getItems();
+	       	ArrayList<Task> unassignedItems = job.getItems();
+       		
+		int i = 0;
+       		while (!unassignedItems.isEmpty()) {
+       		    Task nextItem = unassignedItems.get(0);
+       		    unassignedItems.remove(0);
 
-				int i = 0;
-				while (!unassignedItems.isEmpty()) {
-					Task nextItem = getNextItem(unassignedItems);
-					assignedItems.get(i).add(nextItem);
+       		    assignedItems.get(i).add(nextItem);
 					
-					i++;
-					if (i >= assignedItems.size()) {
-						i = 0;
-					}
-				}
+       		    i++;
+       		    if (i >= assignedItems.size()) {
+       	       		i = 0;
+       		    }
+       		}
 				
 				
 	    }
 	    RobotsControl.addRobots(assignedItems);
 		
-	}
-	
-	private Task getNextItem(ArrayList<Task> unassignedItems) {
-		Task next = unassignedItems.get(0);
-		unassignedItems.remove(0);
-		return next;
-	}
-
-        private Job getNextJob (){
-	    Job next = jobs.get(0);
-	    jobs.remove(0);
-	    return next;
-        }
-
-
-	
+	}	
 }
