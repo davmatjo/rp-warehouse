@@ -25,7 +25,7 @@ public class Robot implements Runnable {
     private Item currentItem;           // Current Item 
     
     // Robot Information
-    private final static float weightLimit = 50.0f;
+    private final static float WEIGHTLIMIT = 50.0f;
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
     
@@ -54,38 +54,32 @@ public class Robot implements Runnable {
     public void run() {
         
         while (true) {
-            // How do i show that its a drop off or pick up?
-
             
             // Checks if there are anymore items
             if (currentItem==null) {
                 // Do nothing
             }
-            // Checks if location of the robot matches
-            // with the location of the item or drop off
+            // Checks if completed all the instructions
             else if(route.peek()==null) {
-                //checks if its dropping off
+                
+                // Checks if it's dropping off
                 if (dropOffCheck) {
                     
                     dropOff();
                     dropOffCheck = false;
+                    
                 }else {
-                    // Stops and waits for the number of items
-                    itemCheck:
-                    while(true) {
-                        int numberOfItems = comms.sendPickupRequest();
-                        
-                        // Checks that number of items fit 
-                        if(pickUp(numberOfItems)) {
-                            break itemCheck;
-                        }
-                    }
-                }
-                
-                if (tasks.peek()!=null) {
-                    plan();
-                }else {
-                    //Do nothing 
+                     
+                    int numberOfItems = comms.sendPickupRequest();
+                    // Checks that number of items fits
+                    
+                    // Updates the weight or goes to drop off 
+                    pickUp(numberOfItems);
+                    
+                    currentInstruction=route.peek();
+                    comms.sendMovement(getNextInstruction());
+                    updateLocation();
+                    updateCurrentItem();
                 }
             }
             // If there are still instructions present
@@ -205,13 +199,23 @@ public class Robot implements Runnable {
      *              False, too many items being picked up
      */
     private boolean pickUp(int numberOfItems) {
-        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > weightLimit) {
+        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > WEIGHTLIMIT) {
+            
             // Go back to drop off
             // route =RoutePlan.planDropOff(this);
             dropOffCheck = true;
             return false;
         }
         currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
+        
+        if (currentWeightOfCargo==WEIGHTLIMIT) {
+            // Go back to drop off
+            // route =RoutePlan.planDropOff(this);
+            dropOffCheck = true;
+        }else {
+            plan();
+        }
+       
         return true;
     }
     
@@ -224,6 +228,13 @@ public class Robot implements Runnable {
      * @return - True, Cargo was dropped off. False, empty
      */
     private boolean dropOff() {
+        plan();
+                
+                if (tasks.peek()!=null) {
+                    plan();
+                }else {
+                    //Do nothing 
+                }
         if (currentWeightOfCargo==0) {
             return false;
         }
