@@ -1,3 +1,5 @@
+import rp.warehouse.pc.data.Task;
+
 import java.util.ArrayList;
 
 public class Job {

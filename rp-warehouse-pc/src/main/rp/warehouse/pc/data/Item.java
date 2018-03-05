@@ -1,3 +1,6 @@
+package rp.warehouse.pc.data;
+
+import rp.warehouse.pc.data.Location;
 
 public class Item {
 
