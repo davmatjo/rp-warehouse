@@ -27,10 +27,13 @@ public class Auctioner extends Thread {
 					for (int i = 0; i < assignedItems.size(); i++) {
 						bids.add(getBid());
 					}
+					// get lowest bid
+					// insert task into winner's queue in the optimal position
+					// remove task from unassigned
 				}
+				// set robots off
 			}
 		}
-		
 		
 	}
 	
@@ -39,7 +42,7 @@ public class Auctioner extends Thread {
 		int bidVal = Integer.MAX_VALUE;
 
 		for (Task task : job.getItems()) {
-			int newCost = getCost(task.item, currentItems);
+		        int newCost = getLowestCost(task.item, currentItems); // add locations
 			if (newCost < bidVal) {
 				bidItem = task.item;
 				bidVal = newCost;
@@ -49,19 +52,25 @@ public class Auctioner extends Thread {
 		return new Bid(bidItem, bidVal, robot);
 	}
 	
-	private int getCost(Item item, ArrayList<Item> currentPicks, Location robotLocation, Location endLocation) {
-		
+	private int getLowestCost(Item item, ArrayList<Item> currentPicks, Location robotLocation, Location endLocation) {
+	    // try every position of inserting the item
+	    // start -> pick1 -> pick2 -> ... -> end
+	    // insert in every place from after start to before end, calc cost for each
+	    // thisPath = variation of list with item inserted
+	    // thisCost = getTotalDistance(robotLocation, thisPath, endLocation);
+	    // return lowest cost (or something else for easy insert when item is won?)
 	}
 	
-	private int getDistance() {
-		
+        private int getTotalDistance(Location start, ArrayList<Item> items, Location end) {
+	      
 	}
 	
-	private Job getNextJob() {
+        private Job getNextJob() {
 		Job next = jobs.get(0);
 		jobs.remove(0);
 
 		return next;
+		// move this to run
 	}
 	
 }
