@@ -36,15 +36,9 @@ for (int x = 0; x < world.getXSize(); x++) {
 
 At the start of the iteration of the inner loop, a `Point point = new Point(x, y)` is created. This is then checked to see whether it is **not** contained within `blockedPoints` before proceeding.
 
-<<<<<<< HEAD
 The up, right, down and left ranges are then taken using a heading of 0, 90, 180 and 270 respectively, using the method `(int) world.rangeToObstacleFromGridPosition(x, y, heading)`. It is casted to an `int` so that it removes the floating point, meaning that it clamps it to the co-ordinate system used by the `GridMap`.
 
 These are then used to create a `Ranges ranges = new Ranges(up, right, down, left)`, which is then used in the following to map the ranges to the given point:
-=======
-The north, east, south and west ranges are then taken using a heading of 0, 90, 180 and 270 respectively, using the method `(int) world.rangeToObstacleFromGridPosition(x, y, heading)`. It is casted to an `int` so that it removes the floating point, meaning that it clamps it to the co-ordinate system used by the `GridMap`.
-
-These are then used to create a `new Ranges(north, east, south, west)`, which is then used in the following to map the ranges to the given point:
->>>>>>> 4bed532a67731429eddc7f20eb879635ec6bceb7
 
 ```java
 warehouseMap.put(ranges, point);
