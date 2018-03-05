@@ -1,6 +1,6 @@
 package rp.warehouse.pc.localisation;
 
-import lejos.geom.Point;
+import rp.warehouse.pc.data.RobotLocation;
 
 public interface Localisation {
 
@@ -9,6 +9,6 @@ public interface Localisation {
 	 * 
 	 * @return The estimated position of the robot.
 	 */
-	public Point getPosition();
+	public RobotLocation getPosition();
 
 }
