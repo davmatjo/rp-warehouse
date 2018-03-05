@@ -12,7 +12,7 @@ This process will repeat continuously until there is only 1 possible position to
 
 These assumptions are subject to change as the complexity of the localisation implementation increases.
 
-1. All robots initially face north *(Relative to the `GridMap` representation of the warehouse)*
+1. All robots initially face **north** *(Relative to the `GridMap` representation of the warehouse)*
 
 ## Requirements
 
