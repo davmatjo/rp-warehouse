@@ -52,6 +52,7 @@ public class LocalisationImpl implements Localisation {
 					final int left = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
 					// Create a Ranges object from these readings.
 					final Ranges ranges = new Ranges(up, right, down, left);
+
 					// Store them in the warehouse map.
 					warehouseMap.put(ranges, point);
 				}
