@@ -236,5 +236,13 @@ public class Robot implements Runnable {
         route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
         // which will be static 
     }
+    /**
+     * For Warehouse MI 
+     * 
+     * @return Queue<Integer> of directions
+     */
+    public Queue<Integer> getRoute(){
+        return route;
+    }
     
 }
