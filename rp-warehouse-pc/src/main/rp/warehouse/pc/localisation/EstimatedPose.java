@@ -22,7 +22,7 @@ public class EstimatedPose extends Pose {
 	 * @param probability
 	 *            The probability of this pose being correct.
 	 */
-	public EstimatedPose(final float x, final float y, final float heading, final float probability) {
+	public EstimatedPose(final int x, final int y, final float heading, final float probability) {
 		super(x, y, heading);
 		this.prob = probability;
 	}

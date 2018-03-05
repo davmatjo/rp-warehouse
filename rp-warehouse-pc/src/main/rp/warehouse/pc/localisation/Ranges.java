@@ -6,12 +6,25 @@ import java.util.List;
 public class Ranges {
 
 	public final static int FRONT = 0, RIGHT = 1, BACK = 2, LEFT = 3;
-	private float[] ranges = new float[4];
+	private int[] ranges = new int[4];
 
-	public Ranges(final float front, final float right, final float back, final float left) {
-		this.ranges[0] = front;
+	/**
+	 * A class to store the ranges from all directions. Used in partnership with a
+	 * location-oriented class such as Point or Location.
+	 * 
+	 * @param up
+	 *            The range <b>upward</b> relative to the current position.
+	 * @param right
+	 *            The range <b>right</b> relative to the current position.
+	 * @param down
+	 *            The range <b>downward</b> relative to the current position.
+	 * @param left
+	 *            The range <b>left</b> relative to the current position.
+	 */
+	public Ranges(final int up, final int right, final int down, final int left) {
+		this.ranges[0] = up;
 		this.ranges[1] = right;
-		this.ranges[2] = back;
+		this.ranges[2] = down;
 		this.ranges[3] = left;
 	}
 
@@ -22,7 +35,7 @@ public class Ranges {
 	 *            The direction of which to return the range.
 	 * @return The range in the given direction.
 	 */
-	public float get(final int direction) {
+	public int get(final int direction) {
 		return ranges[direction];
 	}
 
@@ -58,7 +71,7 @@ public class Ranges {
 	 * @return The rotated version of the ranges.
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
-		float[] store = new float[4];
+		int[] store = new int[4];
 		store[(FRONT + rot) % 4] = ranges.get(FRONT);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(BACK + rot) % 4] = ranges.get(BACK);
