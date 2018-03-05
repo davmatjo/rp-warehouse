@@ -3,6 +3,7 @@ package rp.warehouse.pc.data;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RobotsControl;
+import rp.warehouse.pc.route.RoutePlan;
 
 import java.io.IOException;
 import java.util.Queue;
@@ -60,7 +61,6 @@ public class Robot implements Runnable {
             if (currentItem==null) {
                 // Do nothing
             }
-            
             // Checks if location of the robot matches
             // with the location of the item or drop off
             else if(route.peek()==null) {
@@ -68,6 +68,7 @@ public class Robot implements Runnable {
                 if (dropOffCheck) {
                     
                     dropOff();
+                    dropOffCheck = false;
                 }else {
                     // Stops and waits for the number of items
                     itemCheck:
@@ -79,6 +80,12 @@ public class Robot implements Runnable {
                             break itemCheck;
                         }
                     }
+                }
+                
+                if (tasks.peek()!=null) {
+                    plan();
+                }else {
+                    //Do nothing 
                 }
             }
             // If there are still instructions present
@@ -172,6 +179,7 @@ public class Robot implements Runnable {
      * Used to update the current item
      */
     private void updateCurrentItem() {
+        // Update 
 
         if (route.peek() == null) {
             // No more directions
@@ -198,6 +206,9 @@ public class Robot implements Runnable {
      */
     private boolean pickUp(int numberOfItems) {
         if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > weightLimit) {
+            // Go back to drop off
+            // route =RoutePlan.planDropOff(this);
+            dropOffCheck = true;
             return false;
         }
         currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
@@ -221,8 +232,8 @@ public class Robot implements Runnable {
     }
     
     private void plan() {
-        // Calls 
-        //route = RoutePlan.plan(Robot robot)
+        // Change Location
+        route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
         // which will be static 
     }
     
