@@ -29,7 +29,7 @@ public class RobotsControl {
     
     //Will crash as only has one element 
     private static final String[] robotNames = new String[] {"ExpressBoi"};
-    private static final String[] robotIDs = new String[] {"NXT_0016531AFBE1"};
+    private static final String[] robotIDs = new String[] {"00:16:53:1A:FB:E1"};
 
     /**
      * For: Job Selection When the the items have been split between robots (number
