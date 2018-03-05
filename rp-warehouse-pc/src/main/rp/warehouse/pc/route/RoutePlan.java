@@ -20,10 +20,7 @@ public class RoutePlan {
 	ArrayList<RoutePlanLocation> toVisitList = new ArrayList<RoutePlanLocation>();
 	ArrayList<Location> visitedList = new ArrayList<Location>();
 	boolean goalNotFound = true;
-	
-	public static void main(String[] args) {
-		System.out.println(plan(new Robot(), new Location(6, 6)));
-	}
+
 	
 	public RoutePlan(Robot robot,/*Map map,*/ Location goalLocation) {
 		this.robot = robot;
