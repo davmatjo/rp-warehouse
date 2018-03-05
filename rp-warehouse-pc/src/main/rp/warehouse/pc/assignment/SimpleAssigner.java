@@ -25,7 +25,7 @@ public class SimpleAssigner {
 	public void assign() {
 	    ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
 	    for (int i = 0; i < 3; i++){
-		assignedItems.add(new Queue<Task>());
+		assignedItems.add(new LinkedList<Task>());
 	    }
 
 	    while (!jobs.isEmpty()) {
