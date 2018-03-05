@@ -60,6 +60,7 @@ public class RoutePlan {
 			prevX = currX;
 			prevY = currY;
 		}
+		
 		return plan;
 	}
 	
