@@ -6,6 +6,7 @@ import java.util.Random;
 import lejos.geom.Point;
 import lejos.robotics.mapping.LineMap;
 import rp.robotics.mapping.GridMap;
+import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Warehouse;
 
 public class LocalisationImpl implements Localisation {
@@ -36,14 +37,14 @@ public class LocalisationImpl implements Localisation {
 	}
 
 	@Override
-	public Point getPosition() {
+	public RobotLocation getPosition() {
 		// Assuming they all face north initially
 		// Get the readings from the sensors (using dummy values now)
 		Ranges ranges = new Ranges(1, 2, 4, 2);
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
-		// Run whilst there are multiple points, or the maximum iterations has occured.
+		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
 			List<Integer> directions = ranges.getAvailableDirections();
 			final int direction = directions.get(random.nextInt(directions.size()));
@@ -62,7 +63,7 @@ public class LocalisationImpl implements Localisation {
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
 
-		return possiblePoints.get(0);
+		return new RobotLocation(possiblePoints.get(0), 0);
 	}
 
 	/**
