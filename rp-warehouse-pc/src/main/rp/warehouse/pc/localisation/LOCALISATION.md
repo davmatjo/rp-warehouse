@@ -3,7 +3,12 @@
 
 ## Usage
 
-An instance of the `Localisation` class is needed. From there, the `Localisation.getPosition()` method can be called, which will run for a somewhat extended period of time. Once the robots are learnt their positions in the warehouse, the `RobotLocation` representation of the robot will be returned.
+An instance of the `Localisation` class is needed. From there, the `Localisation.getPosition()` method can be called, which will run for a somewhat extended period of time. Once the robots are learnt their positions in the warehouse, the `RobotLocation` representation of the robot will be returned. For example:
+
+```java
+Localisation local = new LocalisationImpl();
+RobotLocation estimatedLocation = local.getLocation();
+```
 
 ## Approach
 
