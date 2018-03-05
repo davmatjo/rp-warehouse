@@ -10,11 +10,11 @@ import rp.robotics.mapping.LineMap;
 
 public class Warehouse {
 
-	private static final ArrayList<Location> blockedLocations = (ArrayList<Location>) Arrays.asList(new Location(1, 1),
-			new Location(1, 2), new Location(1, 3), new Location(1, 4), new Location(1, 5), new Location(4, 1),
-			new Location(4, 2), new Location(4, 3), new Location(4, 4), new Location(4, 5), new Location(7, 1),
-			new Location(7, 2), new Location(7, 3), new Location(7, 4), new Location(7, 5), new Location(10, 1),
-			new Location(10, 2), new Location(10, 3), new Location(10, 4), new Location(10, 5));
+	private static final ArrayList<Location> blockedLocations = new ArrayList<Location>(Arrays.asList(
+			new Location(1, 1), new Location(1, 2), new Location(1, 3), new Location(1, 4), new Location(1, 5),
+			new Location(4, 1), new Location(4, 2), new Location(4, 3), new Location(4, 4), new Location(4, 5),
+			new Location(7, 1), new Location(7, 2), new Location(7, 3), new Location(7, 4), new Location(7, 5),
+			new Location(10, 1), new Location(10, 2), new Location(10, 3), new Location(10, 4), new Location(10, 5)));
 	private static final float height = 2.48f, width = 3.68f, xInset = 0.14f, yInset = 0.15f, cellSize = 0.30f;
 	private static final int gridWidth = 12, gridHeight = 8;
 
