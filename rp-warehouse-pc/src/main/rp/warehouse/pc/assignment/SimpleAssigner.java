@@ -14,7 +14,7 @@ import rp.warehouse.pc.route.RobotsControl;
  * @author Dylan
  *
  */
-public class SimpleAssigner extends Thread {
+public class SimpleAssigner {
 
 	private ArrayList<Job> jobs;
 	
@@ -22,10 +22,10 @@ public class SimpleAssigner extends Thread {
 		this.jobs = jobs;
 	}
 	
-	public void run() {
-		while (true) {
-			if (true) { // if all robots have finished job
-				Job job = getNextJob();
+	public void assign() {
+	    while (!jobs.isEmpty()) {
+			
+			        Job job = getNextJob();
 				
 				ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
 				ArrayList<Task> unassignedItems = job.getItems();
@@ -43,8 +43,6 @@ public class SimpleAssigner extends Thread {
 				
 				RobotsControl.addRobots(assignedItems);
 			}
-		}
-		
 		
 	}
 	
@@ -53,5 +51,13 @@ public class SimpleAssigner extends Thread {
 		unassignedItems.remove(0);
 		return next;
 	}
+
+        private Job getNextJob (){
+	    Job next = jobs.get(0);
+	    jobs.remove(0);
+	    return next;
+        }
+
+
 	
 }
