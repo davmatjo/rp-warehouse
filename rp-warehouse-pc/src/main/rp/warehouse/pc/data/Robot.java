@@ -106,7 +106,7 @@ public class Robot implements Runnable {
         return ID;
     }
 
-    public Location getLocation() {
+    public RobotLocation getLocation() {
         return location;
     }
 
