@@ -31,6 +31,13 @@ public class Robot implements Runnable {
     // Plan
     // Instance of Planning, which could be called 
     // up to plan when, job is cancelled
+    
+    public Robot() {
+    	location = new RobotLocation(1, 1, 1);
+    	ID = "";
+    	name = "";
+    	comms = null;
+    }
 
     /**
      * For: Job Assignment (Created here)
