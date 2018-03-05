@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import lejos.geom.Point;
-import lejos.robotics.mapping.LineMap;
 import rp.robotics.mapping.GridMap;
 import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Warehouse;
@@ -26,7 +25,7 @@ public class LocalisationImpl implements Localisation {
 	 * @param warehouse
 	 *            The LineMap representation of the warehouse.
 	 */
-	public LocalisationImpl(final LineMap warehouse) {
+	public LocalisationImpl() {
 		directionPoint[Ranges.FRONT] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.BACK] = new Point(0, -1);
