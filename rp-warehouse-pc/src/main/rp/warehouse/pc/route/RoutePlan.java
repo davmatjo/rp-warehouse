@@ -63,6 +63,10 @@ public class RoutePlan {
 		return plan;
 	}
 	
+	public static Queue<Integer> planDropOff(Robot robot) {
+		return null;
+	}
+	
 	public ArrayList<Location> getVisitedList() {
 		return visitedList;
 	}
