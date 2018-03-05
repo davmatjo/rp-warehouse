@@ -1,5 +1,12 @@
 package rp.warehouse.pc.route;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.data.Location;
+import rp.warehouse.pc.data.Robot;
 
 public class RoutePlan {
 	private Robot robot;
@@ -10,9 +17,13 @@ public class RoutePlan {
 	int currentY;
 	int currentDirection;
 	
-	ArrayList<Location> toVisitList = new ArrayList<Location>();
+	ArrayList<RoutePlanLocation> toVisitList = new ArrayList<RoutePlanLocation>();
 	ArrayList<Location> visitedList = new ArrayList<Location>();
 	boolean goalNotFound = true;
+	
+	public static void main(String[] args) {
+		System.out.println(plan(new Robot(), new Location(6, 6)));
+	}
 	
 	public RoutePlan(Robot robot,/*Map map,*/ Location goalLocation) {
 		this.robot = robot;
@@ -22,19 +33,51 @@ public class RoutePlan {
 		Location currentRobotLocation = this.robot.getLocation();
 		currentX = currentRobotLocation.getX();
 		currentY = currentRobotLocation.getY();
-		currentDirection = currentRobotLocation.getDirection();
+		//currentDirection = currentRobotLocation.getDirection();
 		
 		run();
+	}
+	
+	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
+		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
+		List<Location> locations = routePlan.getVisitedList();
+		int prevX = locations.get(0).getX();
+		int prevY = locations.get(0).getY();
+		locations.remove(0);
+		
+		Queue<Integer> plan = new LinkedList<Integer>();
+		for (Location l : locations) {
+			int currX = l.getX();
+			int currY = l.getY();
+			
+			if (currX - prevX == 1) {
+				plan.offer(Protocol.EAST);
+			} else if (currX - prevX == -1) {
+				plan.offer(Protocol.WEST);
+			} else if (currY - prevY == 1) {
+				plan.offer(Protocol.NORTH);
+			} else if (currY - prevY == -1) {
+				plan.offer(Protocol.SOUTH);
+			}
+			
+			prevX = currX;
+			prevY = currY;
+		}
+		return plan;
+	}
+	
+	public ArrayList<Location> getVisitedList() {
+		return visitedList;
 	}
 	
 	public void run() {
 		
 		while (goalNotFound) {
 			
-			Location northLocation = new Location(currentX, currentY + 1, currentDirection);	
-			Location eastLocation = new Location(currentX + 1, currentY, currentDirection);
-			Location southLocation = new Location(currentX, currentY - 1, currentDirection);
-			Location westLocation = new Location(currentX - 1, currentY, currentDirection);	
+			RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
+			RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
+			RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
+			RoutePlanLocation westLocation = new RoutePlanLocation(currentX - 1, currentY);	
 			
 			//now, only the VALID locations will be added to 'toVisitList'
 			addToList(northLocation);
@@ -54,7 +97,7 @@ public class RoutePlan {
 		//send the commandsList to RouteExecution.
 	}
 	
-	public void addToList(Location location) {
+	public void addToList(RoutePlanLocation location) {
 	
 		//check the location given to see if it is valid before proceeding.
 		//if the location given is the goal, it is obviously valid, and we'll enter the if statement below.
@@ -107,7 +150,7 @@ public class RoutePlan {
 	
 	public void visitCheapestLocationBasedOnPathCost() {
 		
-		Location cheapestLocation = toVisitList.get(0);
+		RoutePlanLocation cheapestLocation = toVisitList.get(0);
 		int cheapestPathCost = toVisitList.get(0).getPathCost();
 		
 		int length = toVisitList.size();
@@ -129,9 +172,9 @@ public class RoutePlan {
 		//update the location so now we're at the new location we're moving to
 		currentX = cheapestLocation.getX();
 		currentY = cheapestLocation.getY();
-		currentDirection = cheapestLocation.getDirection();
+		//currentDirection = cheapestLocation.getDirection();
 		
-		toVisitList = new ArrayList<Location>();
+		toVisitList = new ArrayList<RoutePlanLocation>();
 	}
 	
 }
