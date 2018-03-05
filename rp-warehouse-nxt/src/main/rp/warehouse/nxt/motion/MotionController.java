@@ -122,14 +122,10 @@ public class MotionController implements Movement {
 			}
 			//check is robot has gone off the line and adjust
 			else if (leftValue < LEFT_LINE_LIMIT) {
-				pilot.stop();
-				pilot.steer(200, 180, true);
-				pilot.forward();
+				pilot.steer(50);
 			}
 			else if (rightValue <  RIGHT_LINE_LIMIT) {
-				pilot.stop();
-				pilot.steer(-200, -180, true);
-				pilot.forward();
+				pilot.steer(-50);;
 			} 
 			
 			r.sleep();
@@ -138,4 +134,13 @@ public class MotionController implements Movement {
 		return true;
 	}
 
+	private void calibrateSensors() {
+		
+	}
+	
+	
+	
+	
+	
+	
 }
