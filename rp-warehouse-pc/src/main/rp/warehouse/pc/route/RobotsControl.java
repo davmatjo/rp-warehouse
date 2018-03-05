@@ -26,6 +26,8 @@ import rp.warehouse.pc.data.Task;
  */
 public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
+    
+    //Will crash as only has one element 
     private static final String[] robotNames = new String[] {"ExpressBoi"};
     private static final String[] robotIDs = new String[] {"NXT_0016531AFBE1"};
 
@@ -44,6 +46,7 @@ public class RobotsControl {
     public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
         ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size());
         int i = 0;
+        
         for (Queue<Task> items : listOfItems) {
             try {
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
