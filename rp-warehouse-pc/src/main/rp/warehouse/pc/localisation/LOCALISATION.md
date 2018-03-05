@@ -8,6 +8,49 @@ In order to establish this position, the current approach for the localisation i
 
 This process will repeat continuously until there is only 1 possible position to exist, or until a set threshold of repetitions has been met.
 
+## Generating Ranges
+
+Initialising a `Localisation` class generates an `ArrayList<Point> blockedPoints` using the `Warehouse.getBlockedLocations()` method.
+
+For the localisation to work, the ranges recorded at every point need to be generated beforehand so that the ranges recorded from the robot can be looked up and matched against the known map.
+
+To do this, a `GridMap world` is stored in the class, using the `Warehouse.build()` method to populate it. This then allows for the `world.getXSize()` and `world.getYSize()` methods to be used to get the max X and Y co-ordinates of the world, which can then be used within a for loop to iterate over all of the co-ordinates:
+
+```java
+for (int x = 0; x < world.getXSize(); x++) {
+	for (int y = 0; y < world.getYSize(); y++) {
+		// Do stuff...
+	}
+}
+```
+
+At the start of the iteration of the inner loop, a `Point point = new Point(x, y)` is created. This is then checked to see whether it is **not** contained within `blockedPoints` before proceeding.
+
+The north, east, south and west ranges are then taken using a heading of 0, 90, 180 and 270 respectively, using the method `(int) world.rangeToObstacleFromGridPosition(x, y, heading)`. It is casted to an `int` so that it removes the floating point, meaning that it clamps it to the co-ordinate system used by the `GridMap`.
+
+These are then used to create a `new Ranges(north, east, south, west)`, which is then used in the following to map the ranges to the given point:
+
+```java
+warehouseMap.put(ranges, point);
+```
+
+## Filtering
+
+When a new set of ranges has been recorded, `next`, the previous set of ranges `initial` is compared to see which points could still be feasible given the change in location from `initial` to `next`. This change in location is stored as a `Point change`, and is one of the following:
+
+- **FRONT**: `java new Point(0, 1)`
+- **RIGHT**: `new Point(1, 0)`
+- **BACK**: `new Point(0, -1)`
+- **LEFT**: `new Point(-1, 0)`
+
+On top of this, all points in `next` are checked to see if they are contained within `blockedPoints` so that only possible locations are kept within the list of points.
+
+The line responsible for this filtering is the following:
+
+```java
+next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contains(p));
+```
+
 ## Assumptions
 
 These assumptions are subject to change as the complexity of the localisation implementation increases.
