@@ -3,6 +3,7 @@ package rp.warehouse.pc.data;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RobotsControl;
+import rp.warehouse.pc.route.RoutePlan;
 
 import java.io.IOException;
 import java.util.Queue;
@@ -15,23 +16,19 @@ public class Robot implements Runnable {
     private final Communication comms;  // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private Queue<Integer> route;       // Queue of directions
-    private int currentDirection;
-    private RobotLocation location;          // Current location of the robot
+    private Queue<Integer> route;       // Queue of directions for the current task
+    private int currentInstruction;     // The current Instruction being done by robot
+    private RobotLocation location;     // Current location of the robot
 
     // Job information
-    private Queue<Task> tasks;
-    private Item currentItem;
+    private Queue<Task> tasks;          // The queue of Tasks which need to be done
+    private Item currentItem;           // Current Item 
     
     // Robot Information
-    private final static int weightLimit = 50;
-    private int currentWeightOfCargo = 0;
-    private boolean fail = false;
-
-    // Plan
-    // Instance of Planning, which could be called 
-    // up to plan when, job is cancelled
-
+    private final static float weightLimit = 50.0f;
+    private float currentWeightOfCargo = 0.0f;
+    private boolean dropOffCheck = false;
+    
     /**
      * For: Job Assignment (Created here)
      * 
@@ -57,26 +54,44 @@ public class Robot implements Runnable {
     public void run() {
         
         while (true) {
-            
             // How do i show that its a drop off or pick up?
 
             
             // Checks if there are anymore items
             if (currentItem==null) {
-                // Send STOP  
-                comms.sendMovement(getNextInstruction());// Is this blocking?
+                // Do nothing
             }
-            
             // Checks if location of the robot matches
-            // with the location of the item
+            // with the location of the item or drop off
             else if(route.peek()==null) {
-                // Send STOP and WAIT for PICKUP or DROP OFF
-                comms.sendMovement(getNextInstruction());
+                //checks if its dropping off
+                if (dropOffCheck) {
+                    
+                    dropOff();
+                    dropOffCheck = false;
+                }else {
+                    // Stops and waits for the number of items
+                    itemCheck:
+                    while(true) {
+                        int numberOfItems = comms.sendPickupRequest();
+                        
+                        // Checks that number of items fit 
+                        if(pickUp(numberOfItems)) {
+                            break itemCheck;
+                        }
+                    }
+                }
+                
+                if (tasks.peek()!=null) {
+                    plan();
+                }else {
+                    //Do nothing 
+                }
             }
-            
             // If there are still instructions present
             else{
-                comms.sendMovement(getNextInstruction());// Is this blocking?
+                currentInstruction=route.peek();
+                comms.sendMovement(getNextInstruction());
                 updateLocation();
                 updateCurrentItem();
             }
@@ -88,22 +103,10 @@ public class Robot implements Runnable {
         return ID;
     }
 
-    public Location getLocation() {
+    public RobotLocation getLocation() {
         return location;
     }
 
-    /**
-     * For: Communication
-     * 
-     * When confirmation of completion of the last instruction has been received,
-     * Communication should call this method to update Robot location and get next
-     * Direction
-     */
-    @SuppressWarnings("unused")    // Using those commands in the run methods now
-    private void getNextDirection() {
-
-
-    }
 
     private int getNextInstruction() {
         // What it there are no more instruction
@@ -139,18 +142,23 @@ public class Robot implements Runnable {
         int x, y;
         x = location.getX();
         y = location.getY();
-        switch (currentDirection) {
+        int directionPointing = 0;
+        switch (currentInstruction) {
         case Protocol.NORTH:
             y += 1;
+            directionPointing = Protocol.NORTH;
             break;
         case Protocol.EAST:
             x += 1;
+            directionPointing = Protocol.EAST;
             break;
         case Protocol.SOUTH:
             y -= 1;
+            directionPointing = Protocol.SOUTH;
             break;
         case Protocol.WEST:
             x -= 1;
+            directionPointing = Protocol.WEST;
             break;
 
         default:
@@ -158,8 +166,7 @@ public class Robot implements Runnable {
         }
         location.setX(x);
         location.setY(y);
-        location.setDirection(currentDirection);
-        Location itemLocation;// =currentItem.getLocation();
+        location.setDirection(directionPointing);
         
         // Probably no need for this
         // can just check if there are no more instructions for this item
@@ -172,6 +179,7 @@ public class Robot implements Runnable {
      * Used to update the current item
      */
     private void updateCurrentItem() {
+        // Update 
 
         if (route.peek() == null) {
             // No more directions
@@ -193,18 +201,20 @@ public class Robot implements Runnable {
     /**
      * For: Communication specify amount loaded for the current item
      * 
-     * Only one item can be loaded at the time
-     * Every time user presses button on pickup one item is loaded
-     * 
-     * @return - True, there is still space for more cargo. False, there is no more space left
+     * @return - True, there is still space for more cargo or the cargo is full. 
+     *              False, too many items being picked up
      */
-    public boolean pickUp() {
-        if (currentWeightOfCargo+1 > weightLimit) {
+    private boolean pickUp(int numberOfItems) {
+        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > weightLimit) {
+            // Go back to drop off
+            // route =RoutePlan.planDropOff(this);
+            dropOffCheck = true;
             return false;
         }
-        currentWeightOfCargo++;
+        currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
         return true;
     }
+    
     /**
      * For Communication when performing drop of at the station
      * 
@@ -213,12 +223,18 @@ public class Robot implements Runnable {
      * 
      * @return - True, Cargo was dropped off. False, empty
      */
-    public boolean dropOff() {
+    private boolean dropOff() {
         if (currentWeightOfCargo==0) {
             return false;
         }
         currentWeightOfCargo=0;
         return true;
+    }
+    
+    private void plan() {
+        // Change Location
+        route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
+        // which will be static 
     }
     
 }

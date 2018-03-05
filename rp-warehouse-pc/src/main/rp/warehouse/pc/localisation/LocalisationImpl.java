@@ -1,11 +1,12 @@
 package rp.warehouse.pc.localisation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import lejos.geom.Point;
-import lejos.robotics.mapping.LineMap;
 import rp.robotics.mapping.GridMap;
+import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Warehouse;
 
 public class LocalisationImpl implements Localisation {
@@ -15,6 +16,7 @@ public class LocalisationImpl implements Localisation {
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final GridMap world = Warehouse.build();
 	private Point[] directionPoint = new Point[4];
+	private final List<Point> blockedPoints = new ArrayList<Point>();
 	private final int MAX_RUNS = 10;
 	private int runCounter = 0;
 	private final Random random = new Random();
@@ -25,25 +27,44 @@ public class LocalisationImpl implements Localisation {
 	 * @param warehouse
 	 *            The LineMap representation of the warehouse.
 	 */
-	public LocalisationImpl(final LineMap warehouse) {
+	public LocalisationImpl() {
 		directionPoint[Ranges.FRONT] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.BACK] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 
-		// Generate the warehouseMap values using world
+		// Populate blockedPoints with the Locations from the warehouse.
+		Warehouse.getBlockedLocations().forEach(l -> blockedPoints.add(l.toPoint()));
+
+		// Generate the warehouseMap values using world.
 		// One more problem with git and I'm making my own version control software.
+		for (int x = 0; x < world.getXSize(); x++) {
+			for (int y = 0; y < world.getYSize(); y++) {
+				// Take the NORTH, EAST, SOUTH and WEST readings.
+				// Casted to ints to remove floating point (stick to grid).
+				final int north = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
+				final int east = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
+				final int south = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
+				final int west = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
+				// Create a Ranges object from these readings.
+				final Ranges ranges = new Ranges(north, east, south, west);
+				// Create a point from the X and Y co-ordinates.
+				final Point point = new Point(x, y);
+				// Store them in the warehouse map.
+				warehouseMap.put(ranges, point);
+			}
+		}
 	}
 
 	@Override
-	public Point getPosition() {
+	public RobotLocation getPosition() {
 		// Assuming they all face north initially
 		// Get the readings from the sensors (using dummy values now)
 		Ranges ranges = new Ranges(1, 2, 4, 2);
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
-		// Run whilst there are multiple points, or the maximum iterations has occured.
+		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
 			List<Integer> directions = ranges.getAvailableDirections();
 			final int direction = directions.get(random.nextInt(directions.size()));
@@ -62,7 +83,7 @@ public class LocalisationImpl implements Localisation {
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
 
-		return possiblePoints.get(0);
+		return new RobotLocation(possiblePoints.get(0), 0);
 	}
 
 	/**
@@ -80,7 +101,7 @@ public class LocalisationImpl implements Localisation {
 	private List<Point> filterPositions(final List<Point> initial, List<Point> next, final Point change) {
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
-		next.removeIf(p -> !initial.contains(p.subtract(change)));
+		next.removeIf(p -> blockedPoints.contains(p) || !initial.contains(p.subtract(change)));
 		return next;
 	}
 
