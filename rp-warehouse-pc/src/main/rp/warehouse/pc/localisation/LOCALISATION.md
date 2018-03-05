@@ -1,4 +1,9 @@
+
 # Localisation
+
+## Usage
+
+An instance of the `Localisation` class is needed. From there, the `Localisation.getPosition()` method can be called, which will run for a somewhat extended period of time. Once the robots are learnt their positions in the warehouse, the `RobotLocation` representation of the robot will be returned.
 
 ## Approach
 
@@ -26,9 +31,9 @@ for (int x = 0; x < world.getXSize(); x++) {
 
 At the start of the iteration of the inner loop, a `Point point = new Point(x, y)` is created. This is then checked to see whether it is **not** contained within `blockedPoints` before proceeding.
 
-The north, east, south and west ranges are then taken using a heading of 0, 90, 180 and 270 respectively, using the method `(int) world.rangeToObstacleFromGridPosition(x, y, heading)`. It is casted to an `int` so that it removes the floating point, meaning that it clamps it to the co-ordinate system used by the `GridMap`.
+The up, right, down and left ranges are then taken using a heading of 0, 90, 180 and 270 respectively, using the method `(int) world.rangeToObstacleFromGridPosition(x, y, heading)`. It is casted to an `int` so that it removes the floating point, meaning that it clamps it to the co-ordinate system used by the `GridMap`.
 
-These are then used to create a `new Ranges(north, east, south, west)`, which is then used in the following to map the ranges to the given point:
+These are then used to create a `Ranges ranges = new Ranges(up, right, down, left)`, which is then used in the following to map the ranges to the given point:
 
 ```java
 warehouseMap.put(ranges, point);
@@ -38,10 +43,9 @@ warehouseMap.put(ranges, point);
 
 When a new set of ranges has been recorded, `next`, the previous set of ranges `initial` is compared to see which points could still be feasible given the change in location from `initial` to `next`. This change in location is stored as a `Point change`, and is one of the following:
 
-- **FRONT**: `new Point(0, 1)`
-- **RIGHT**: `new Point(1, 0)`
-- **BACK**: `new Point(0, -1)`
-- **LEFT**: `new Point(-1, 0)`
+|UP|RIGHT|DOWN|LEFT|
+|--|--|--|--|
+|`new Point(0, 1)`|`new Point(1, 0)`|`new Point(0, -1)`|`new Point(-1, 0)`|
 
 On top of this, all points in `next` are checked to see if they are contained within `blockedPoints` so that only possible locations are kept within the list of points.
 
@@ -55,7 +59,7 @@ next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contai
 
 These assumptions are subject to change as the complexity of the localisation implementation increases.
 
-1. All robots initially face **north** *(Relative to the `GridMap` representation of the warehouse)*
+1. All robots initially face **UP** *(Relative to the `GridMap` representation of the warehouse)*
 
 ## Requirements
 

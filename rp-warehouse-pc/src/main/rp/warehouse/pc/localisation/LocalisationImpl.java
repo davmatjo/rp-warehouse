@@ -44,14 +44,14 @@ public class LocalisationImpl implements Localisation {
 				final Point point = new Point(x, y);
 				// Check if the position isn't blocked
 				if (!blockedPoints.contains(point)) {
-					// Take the NORTH, EAST, SOUTH and WEST readings.
+					// Take the UP, RIGHT, DOWN and LEFT readings.
 					// Casted to ints to remove floating point (stick to grid).
-					final int north = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
-					final int east = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
-					final int south = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
-					final int west = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
+					final int up = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
+					final int right = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
+					final int down = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
+					final int left = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
 					// Create a Ranges object from these readings.
-					final Ranges ranges = new Ranges(north, east, south, west);
+					final Ranges ranges = new Ranges(up, right, down, left);
 					// Store them in the warehouse map.
 					warehouseMap.put(ranges, point);
 				}
@@ -61,7 +61,7 @@ public class LocalisationImpl implements Localisation {
 
 	@Override
 	public RobotLocation getPosition() {
-		// Assuming they all face north initially
+		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
 		Ranges ranges = new Ranges(1, 2, 4, 2);
 
