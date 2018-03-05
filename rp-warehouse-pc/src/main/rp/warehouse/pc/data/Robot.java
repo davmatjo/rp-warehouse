@@ -27,7 +27,7 @@ public class Robot implements Runnable {
     private final static float weightLimit = 50.0f;
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
-
+    
     /**
      * For: Job Assignment (Created here)
      * 
