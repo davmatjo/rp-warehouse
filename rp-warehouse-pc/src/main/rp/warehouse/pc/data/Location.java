@@ -32,4 +32,8 @@ public class Location {
 		this.y = y;
 	}
 
+	public Point toPoint() {
+		return new Point(x, y);
+	}
+
 }

@@ -1,5 +1,6 @@
 package rp.warehouse.pc.localisation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,6 +16,7 @@ public class LocalisationImpl implements Localisation {
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final GridMap world = Warehouse.build();
 	private Point[] directionPoint = new Point[4];
+	private final List<Point> blockedPoints = new ArrayList<Point>();
 	private final int MAX_RUNS = 10;
 	private int runCounter = 0;
 	private final Random random = new Random();
@@ -30,6 +32,9 @@ public class LocalisationImpl implements Localisation {
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.BACK] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
+
+		// Populate blockedPoints with the Locations from the warehouse.
+		Warehouse.getBlockedLocations().forEach(l -> blockedPoints.add(l.toPoint()));
 
 		// Generate the warehouseMap values using world.
 		// One more problem with git and I'm making my own version control software.
@@ -96,7 +101,7 @@ public class LocalisationImpl implements Localisation {
 	private List<Point> filterPositions(final List<Point> initial, List<Point> next, final Point change) {
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
-		next.removeIf(p -> !initial.contains(p.subtract(change)));
+		next.removeIf(p -> blockedPoints.contains(p) || !initial.contains(p.subtract(change)));
 		return next;
 	}
 
