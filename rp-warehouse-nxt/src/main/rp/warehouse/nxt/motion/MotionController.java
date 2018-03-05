@@ -29,7 +29,6 @@ public class MotionController implements Movement {
 	public boolean move(Direction direction) {
 
 		int rotation = 0;
-		double speed = 0.1d;
 
 		//find out which way to turn based on the new direction and the direction the robot is facing
 		switch (direction) {
@@ -41,7 +40,7 @@ public class MotionController implements Movement {
 				rotation = -90;
 				break;
 			case SOUTH:
-				speed = -0.1d;
+				rotation = 180;
 				break;
 			case WEST:
 				rotation = 90;
@@ -59,14 +58,14 @@ public class MotionController implements Movement {
 				rotation = -90;
 				break;
 			case WEST:
-				speed = -0.1d;
+				rotation = 180;
 				break;
 			}
 			break;
 		case SOUTH:
 			switch (previousDirection) {
 			case NORTH:
-				speed = -0.1d;
+				rotation = 180;
 				break;
 			case EAST:
 				rotation = 90;
@@ -84,7 +83,7 @@ public class MotionController implements Movement {
 				rotation = -90;
 				break;
 			case EAST:
-				speed = -0.1d;
+				rotation = 180;
 				break;
 			case SOUTH:
 				rotation = 90;
@@ -98,14 +97,14 @@ public class MotionController implements Movement {
 		}
 		
 		previousDirection = direction;
-		return travel(rotation, speed);
+		return travel(rotation);
 	}
 	
-	private boolean travel(int rotation, double speed) {
+	private boolean travel(int rotation) {
 		boolean junction = false;
 		
 		pilot.rotate(rotation);
-		pilot.setTravelSpeed(speed);
+		pilot.setTravelSpeed(0.1);
 		pilot.forward();
 		
 		
