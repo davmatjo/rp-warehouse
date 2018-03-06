@@ -125,12 +125,12 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
 
         if (route.peek() == null) {
+            
             while(!dropOffDone && !pickUpDone) {
                 
             }
             dropOffDone = false;
             pickUpDone = false;
-            currentItem = tasks.poll().item;// Ask Megan to change it
         }
         
     }
@@ -143,7 +143,7 @@ public class Robot implements Runnable {
         // cancelltems.add(getCurrentItem())
 
         // Clear all current instructions
-        // and start a new one
+        // and start a nehttps://www.youtube.com/watch?v=L5gVFYmDWCkw one
     }
     
     /**
@@ -152,20 +152,22 @@ public class Robot implements Runnable {
      *              False, too many items being picked up
      */
     public boolean pickUp(int numberOfItems) {
-        if (route.peek()==null && !dropOffCheck) {
+        if (route.peek() == null && !dropOffCheck) {
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
-            if ( newWeight> WEIGHTLIMIT) {
+            if ( newWeight > WEIGHTLIMIT) {
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return false;
             }else if (newWeight == WEIGHTLIMIT) {
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
+                currentItem = tasks.poll().item;// Ask Megan to change it
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return true;
             }
             currentWeightOfCargo = newWeight;
+            currentItem = tasks.poll().item;// Ask Megan to change it
             plan();
             
             pickUpDone = true;
@@ -197,7 +199,7 @@ public class Robot implements Runnable {
     
     private void plan() {
         if (currentItem!=null) {
-            route = RoutePlan.plan(this, new Location(1,1));//currentItem.getLocation;
+            route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
             
         }
