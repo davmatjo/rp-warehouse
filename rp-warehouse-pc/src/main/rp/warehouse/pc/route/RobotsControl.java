@@ -33,7 +33,7 @@ public class RobotsControl {
     private static final String[] robotNames = new String[] {"ExpressBoi", "ExpressBoi", "ExpressBoi"};
     private static final String[] robotIDs = new String[] {"00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1"};
     
-    final static Logger logger =Logger.getLogger(RobotsControl.class);
+    private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
     /**
      * For: Job Selection When the the items have been split between robots (number
@@ -61,14 +61,12 @@ public class RobotsControl {
                 robots.add(newRobot);
                 pool.execute(newRobot);
             } catch (IOException e) {
-                System.err.println("Couldn't create robot named " + robotNames[i]);
-                logger.error("Failed creating Robot");
-
+                logger.error("Failed creating Robot named " + robotNames[i]);
             }
 
             i++;
         }
-        logger.trace("Array of Robots has been seccesfully creasted");
+        logger.trace("Array of Robots has been created with " + robots.size() + " robots");
 
     }
 
