@@ -1,5 +1,6 @@
 package rp.warehouse.pc.data;
 
+import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RoutePlan;
@@ -18,7 +19,7 @@ public class Robot implements Runnable {
 
     // Route information
     private Queue<Integer> route;       // Queue of directions for the current task
-    private int currentInstruction;     // The current Instruction being done by robot
+    private int lastInstruction = -1;     // The current Instruction being done by robot (For WMI)
     private RobotLocation location;     // Current location of the robot
 
     // Job information
@@ -30,6 +31,8 @@ public class Robot implements Runnable {
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
     private boolean running = true;
+    private boolean dropOffDone = false;
+    private boolean pickUpDone = false;
 
     private static final Logger logger = Logger.getLogger(Robot.class);
 
@@ -43,12 +46,16 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool) {
+    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) {
         this.ID = ID;
         this.name = name;
         this.pool = pool;
-        tasks = newTasks;
+        this.tasks = newTasks;
+        this.currentItem = tasks.poll().item;
+        this.location = startingLocation;
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
+        
+        plan();
 
     }
 
@@ -60,62 +67,56 @@ public class Robot implements Runnable {
             logger.error("Couldn't connect to: " + name);
             running = false;
         }
-        
+        logger.trace("Robot " + ID + " " + name + "was successfully connected");
+        Rate r = new Rate(20);
         while (running) {
-
-
-        }
-    }
-
-    
-
-    /**
-     * When the confirmation of move has been received, the location robot is
-     * updated
-     */
-    private void updateLocation() {
-        int x, y;
-        x = location.getX();
-        y = location.getY();
-        int directionPointing = 0;
-        switch (currentInstruction) {
-        case Protocol.NORTH:
-            y += 1;
-            directionPointing = Protocol.NORTH;
-            break;
-        case Protocol.EAST:
-            x += 1;
-            directionPointing = Protocol.EAST;
-            break;
-        case Protocol.SOUTH:
-            y -= 1;
-            directionPointing = Protocol.SOUTH;
-            break;
-        case Protocol.WEST:
-            x -= 1;
-            directionPointing = Protocol.WEST;
-            break;
-
-        default:
-            break;
-        }
-        location.setX(x);
-        location.setY(y);
-        location.setDirection(directionPointing);
-        
-        // Probably no need for this
-        // can just check if there are no more instructions for this item
-        if (location.getX() == 0) { // ==itemLocation.getX())&&location.getY()==itemLocation.getY()){
-            // update task and get a new item
+            sendInstruction();
+            r.sleep();
+            
         }
     }
     
     private void sendInstruction(){
-        currentInstruction=route.peek();
-        comms.sendMovement(getNextInstruction());
         updateLocation();
+        comms.sendMovement(getCurrentInstruction());
         updateCurrentItem();
 
+    }
+
+    /**
+     * Updates robots location
+     */
+    private void updateLocation() {
+        if (lastInstruction!=-1) {
+            int x, y;
+            x = location.getX();
+            y = location.getY();
+            int directionPointing = 0;
+            switch (lastInstruction) {
+            case Protocol.NORTH:
+                y += 1;
+                directionPointing = Protocol.NORTH;
+                break;
+            case Protocol.EAST:
+                x += 1;
+                directionPointing = Protocol.EAST;
+                break;
+            case Protocol.SOUTH:
+                y -= 1;
+                directionPointing = Protocol.SOUTH;
+                break;
+            case Protocol.WEST:
+                x -= 1;
+                directionPointing = Protocol.WEST;
+                break;
+
+            default:
+                break;
+            }
+            location.setX(x);
+            location.setY(y);
+            location.setDirection(directionPointing);
+        }
     }
 
     /**
@@ -124,9 +125,14 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
 
         if (route.peek() == null) {
-            // No more directions
+            while(!dropOffDone && !pickUpDone) {
+                
+            }
+            dropOffDone = false;
+            pickUpDone = false;
+            currentItem = tasks.poll().item;// Ask Megan to change it
         }
-        currentItem = tasks.poll().item;
+        
     }
 
     /**
@@ -145,50 +151,56 @@ public class Robot implements Runnable {
      * @return - True, there is still space for more cargo or the cargo is full. 
      *              False, too many items being picked up
      */
-    private boolean pickUp(int numberOfItems) {
-        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > WEIGHTLIMIT) {
+    public boolean pickUp(int numberOfItems) {
+        if (route.peek()==null && !dropOffCheck) {
+            float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
+            if ( newWeight> WEIGHTLIMIT) {
+                route = RoutePlan.planDropOff(this);
+                dropOffCheck = true;
+                return false;
+            }else if (newWeight == WEIGHTLIMIT) {
+                currentWeightOfCargo = newWeight;
+                // Go back to drop off
+                route = RoutePlan.planDropOff(this);
+                dropOffCheck = true;
+                return true;
+            }
+            currentWeightOfCargo = newWeight;
+            plan();
             
-            // Go back to drop off
-            // route =RoutePlan.planDropOff(this);
-            dropOffCheck = true;
+            pickUpDone = true;
+            return true;
+        }else {
             return false;
         }
-        currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
-        
-        if (currentWeightOfCargo==WEIGHTLIMIT) {
-            // Go back to drop off
-            // route =RoutePlan.planDropOff(this);
-            dropOffCheck = true;
-        }else {
-            plan();
-        }
-       
-        return true;
     }
     
     /**
      * For Communication when performing drop of at the station
-     * @return - True, Cargo was dropped off. False, empty
+     * @return - 
      */
-    private boolean dropOff() {
-        plan();
-                
-                if (tasks.peek()!=null) {
-                    plan();
-                }else {
-                    //Do nothing 
-                }
-        if (currentWeightOfCargo==0) {
+    public boolean dropOff() {
+
+        if (route.peek()!=null || !dropOffCheck) {
             return false;
+        }else {
+            if (tasks.peek()!=null) {
+                plan();
+            }
+            currentWeightOfCargo=0;
+            dropOffCheck = false;
+            dropOffDone = true;
+            return true;
         }
-        currentWeightOfCargo=0;
-        return true;
+
     }
     
     private void plan() {
-        // Change Location
-        route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
-        // which will be static 
+        if (currentItem!=null) {
+            route = RoutePlan.plan(this, new Location(1,1));//currentItem.getLocation;
+        }else {
+            
+        }
     }
     
     private void init() throws IOException {
@@ -211,13 +223,7 @@ public class Robot implements Runnable {
     public RobotLocation getLocation() {
         return location;
     }
-
-
-    private int getNextInstruction() {
-        // What it there are no more instruction
-        // Check Job ID (Discard cancelled jobs "items" )
-        return route.poll();
-    }
+    
 
     /**
      * For: Job Assignment
@@ -227,5 +233,12 @@ public class Robot implements Runnable {
     public void setJobs(Queue<Task> newTasks) {
         tasks = newTasks;
     }
+    
+    private int getCurrentInstruction() {
+        lastInstruction = route.poll(); 
+        // Check Job ID (Discard cancelled jobs "items" )
+        return lastInstruction;
+    }
+
     
 }
