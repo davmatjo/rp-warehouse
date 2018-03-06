@@ -1,16 +1,14 @@
 package rp.warehouse.pc;
 
 import org.apache.log4j.Logger;
+import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.route.RobotsControl;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);
@@ -27,6 +25,9 @@ public class Main {
         ArrayList<Queue<Task>> myL = new ArrayList<>();
         myL.add(myQ);
 
+        Integer[] a = new Integer[] {Protocol.NORTH, Protocol.EAST, Protocol.EAST, Protocol.WEST};
         RobotsControl.addRobots(myL);
+        RobotsControl.getRobots().get(0).setRoute(new LinkedList<>(Arrays.asList(a)));
+
     }
 }

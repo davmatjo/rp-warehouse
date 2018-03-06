@@ -9,6 +9,7 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
@@ -110,11 +111,12 @@ public class Communication implements Runnable {
      *
      * @param data int: defined in communication.Protocol
      */
-    private void sendData(int data) {
+    public void sendData(int data) {
         try {
-            logger.trace(name + ": Sending " + data);
-            toNXT.write(data);
+            logger.debug(name + ": Sending " + data);
+            toNXT.writeInt(data);
             toNXT.flush();
+            logger.trace(name + ": Sent " + data);
         } catch (IOException e) {
             logger.error("Bluetooth IO Error in send: " + e.getMessage());
             open = false;
@@ -131,9 +133,12 @@ public class Communication implements Runnable {
         assert direction <= Protocol.WEST;
 
         try {
+            logger.trace(name + ": Sending direction: " + direction);
             synchronized (waitForMovement) {
                 sendData(direction);
+                logger.trace("Waiting");
                 waitForMovement.wait();
+                logger.trace("Finished waiting");
             }
         } catch (InterruptedException e) {
             System.err.println("Interrupted somehow: " + e.getMessage());

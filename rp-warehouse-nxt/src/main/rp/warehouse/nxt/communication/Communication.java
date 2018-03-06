@@ -4,22 +4,23 @@ import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 //import rp.util.HashMap;
 import lejos.util.Delay;
+import rp.util.HashMap;
 import rp.warehouse.nxt.motion.Movement;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Communication implements Runnable {
-//    private static final HashMap<Integer, Movement.Direction> commandTranslate = new HashMap<>();
+public class Communication extends Thread {
+    private static final HashMap<Integer, Movement.Direction> commandTranslate = new HashMap<>();
     private final DataInputStream fromPC;
     private final DataOutputStream toPC;
-//    private final Movement robotMovement;
+    private final Movement robotMovement;
     private boolean open = true;
     // private final RobotInterface robotInterface;
 
     public Communication(Movement movement) {
-//        fillMap();
+        fillMap();
 
         System.out.println("Waiting on bluetooth");
         BTConnection connection = Bluetooth.waitForConnection();
@@ -28,21 +29,19 @@ public class Communication implements Runnable {
         fromPC = connection.openDataInputStream();
         toPC = connection.openDataOutputStream();
 
-//        robotMovement = movement;
+        robotMovement = movement;
 //         robotInterface = new RobotInterface(this);
-
-        new Thread(this);
     }
 
     /**
      * A map to translate Protocol Integers to directions
      */
-//    private void fillMap() {
-//        commandTranslate.put(Protocol.NORTH, Movement.Direction.NORTH);
-//        commandTranslate.put(Protocol.EAST, Movement.Direction.EAST);
-//        commandTranslate.put(Protocol.SOUTH, Movement.Direction.SOUTH);
-//        commandTranslate.put(Protocol.WEST, Movement.Direction.WEST);
-//    }
+    private void fillMap() {
+        commandTranslate.put(Protocol.NORTH, Movement.Direction.NORTH);
+        commandTranslate.put(Protocol.EAST, Movement.Direction.EAST);
+        commandTranslate.put(Protocol.SOUTH, Movement.Direction.SOUTH);
+        commandTranslate.put(Protocol.WEST, Movement.Direction.WEST);
+    }
 
     /**
      * Runs the receiveCommand method, then cleans up when finished
@@ -50,6 +49,7 @@ public class Communication implements Runnable {
     @Override
     public void run() {
         try {
+            System.out.println("New Thread");
             receiveCommand();
             fromPC.close();
             toPC.close();
@@ -65,11 +65,11 @@ public class Communication implements Runnable {
      */
     private void receiveCommand() throws IOException {
         while (open) {
+            System.out.println("Waiting to receive");
             Integer command = fromPC.readInt();
             System.out.println("RECEIVE: " + command);
             if (command >= Protocol.NORTH && command <= Protocol.WEST) {
-                //robotMovement.move(commandTranslate.get(command));
-                Delay.msDelay(500);
+                robotMovement.move(commandTranslate.get(command));
                 System.out.println("SEND: " + 1);
                 sendCommand(1);
             } else if (command == Protocol.PICKUP) {
@@ -87,7 +87,7 @@ public class Communication implements Runnable {
 //        assert !(command <= Protocol.WEST && command >= Protocol.NORTH);
 
         try {
-            toPC.write(command);
+            toPC.writeInt(command);
             toPC.flush();
         } catch (IOException e) {
             System.err.println(e.getMessage());
