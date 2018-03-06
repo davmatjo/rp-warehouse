@@ -13,7 +13,7 @@ RobotLocation estimatedLocation = local.getLocation();
 
 The `Localisation` interface has a method `Localisation.getPosition()`, which returns a `RobotLocation` representing the estimated location of the robot.
 
-In order to establish this position, the current approach for the localisation implementation will record ranges, storing the possible positions by comparing the ranges against the stored map of the warehouse. The robot will move, record the ranges again and remove any points from the current possible positions by seeing which ones would be possible to exist given the previous position and the movement of which has just occured.
+In order to establish this position, the current approach for the localisation implementation will record ranges, storing the possible positions by comparing the ranges against the stored map of the warehouse. The robot will move, record the ranges again and remove any points from the current possible positions by seeing which ones would be possible to exist given the previous position and the movement of which has just occurred.
 
 This process will repeat continuously until there is only 1 possible position to exist, or until a set threshold of repetitions has been met.
 
