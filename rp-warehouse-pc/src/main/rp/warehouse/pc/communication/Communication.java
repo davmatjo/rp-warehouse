@@ -9,7 +9,6 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
@@ -42,8 +41,6 @@ public class Communication implements Runnable {
 
         fromNXT = new DataInputStream(nxtComm.getInputStream());
         toNXT = new DataOutputStream(nxtComm.getOutputStream());
-
-        new Thread(this).start();
     }
 
     /**
@@ -76,7 +73,7 @@ public class Communication implements Runnable {
             // Read input and act accordingly
             logger.trace(name + ": Waiting to receive");
             int input = fromNXT.readInt();
-            logger.trace(name + ": Recieved " + input);
+            logger.trace(name + ": Received " + input);
             switch (input) {
 
                 // Feedback from movement
@@ -111,7 +108,7 @@ public class Communication implements Runnable {
      *
      * @param data int: defined in communication.Protocol
      */
-    public void sendData(int data) {
+    private void sendData(int data) {
         try {
             logger.debug(name + ": Sending " + data);
             toNXT.writeInt(data);

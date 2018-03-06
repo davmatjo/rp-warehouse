@@ -9,7 +9,14 @@ import rp.robotics.mapping.GridMap;
 import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Warehouse;
 
-public class LocalisationImpl implements Localisation {
+/**
+ * An implementation of the localisation interface. Used to actually calculate
+ * the location.
+ * 
+ * @author Kieran
+ *
+ */
+public class Localiser implements Localisation {
 
 	// Currently assumes that all robots are facing upwards relative to the map.
 
@@ -27,7 +34,7 @@ public class LocalisationImpl implements Localisation {
 	 * @param warehouse
 	 *            The LineMap representation of the warehouse.
 	 */
-	public LocalisationImpl() {
+	public Localiser() {
 		directionPoint[Ranges.FRONT] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.BACK] = new Point(0, -1);
