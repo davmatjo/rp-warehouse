@@ -42,8 +42,6 @@ public class Communication implements Runnable {
 
         fromNXT = new DataInputStream(nxtComm.getInputStream());
         toNXT = new DataOutputStream(nxtComm.getOutputStream());
-
-        new Thread(this).start();
     }
 
     /**

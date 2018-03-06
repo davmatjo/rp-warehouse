@@ -5,14 +5,18 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
 
 public class Robot implements Runnable {
 
     // Communications
     private final String ID;            // Communication ID
     private final String name;          // Communication name
-    private final Communication comms;  // Communication used to connect each robot to the a nxt brick
+    private final ExecutorService pool;
+    private Communication comms;  // Communication used to connect each robot to the a nxt brick
 
     // Route information
     private Queue<Integer> route;       // Queue of directions for the current task
@@ -21,18 +25,19 @@ public class Robot implements Runnable {
 
     // Job information
     private Queue<Task> tasks;          // The queue of Tasks which need to be done
-    private Item currentItem;           // Current Item 
-    
+    private Item currentItem;           // Current Item
+
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
-    
-    final static Logger logger =Logger.getLogger(Robot.class);
-    
+    private boolean running = true;
+
+    final static Logger logger = Logger.getLogger(Robot.class);
+
     /**
      * For: Job Assignment (Created here)
-     * 
+     *
      * @param ID
      *            - Unique ID (could be a good idea to use Array location for now)
      * @param name
@@ -40,19 +45,29 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks) throws IOException {
+    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool) throws IOException {
         this.ID = ID;
         this.name = name;
-        this.comms = new Communication(ID, name, this);
+        this.pool = pool;
         tasks = newTasks;
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
 
     }
 
-    // Runs indefinitely and sends commands to Communication   
+    private void init() throws IOException {
+        this.comms = new Communication(ID, name, this);
+        pool.execute(comms);
+    }
+
+    // Runs indefinitely and sends commands to Communication
     public void run() {
-        
-        while (true) {
+        try {
+            init();
+        } catch (IOException e) {
+            logger.error("Couldn't connect to: " + name);
+            running = false;
+        }
+        while (running) {
             
             // Checks if there are anymore items
             if (currentItem==null) {

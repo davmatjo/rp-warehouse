@@ -24,10 +24,10 @@ public class Main {
 
         ArrayList<Queue<Task>> myL = new ArrayList<>();
         myL.add(myQ);
+        myL.add(new LinkedList<>(myQ));
+        myL.add(new LinkedList<>(myQ));
 
-        Integer[] a = new Integer[] {Protocol.NORTH, Protocol.EAST, Protocol.EAST, Protocol.WEST};
         RobotsControl.addRobots(myL);
-        RobotsControl.getRobots().get(0).setRoute(new LinkedList<>(Arrays.asList(a)));
-
+        logger.debug("Main thread ending");
     }
 }

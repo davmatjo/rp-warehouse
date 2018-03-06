@@ -27,11 +27,11 @@ import rp.warehouse.pc.data.Task;
  *
  */
 public class RobotsControl {
-    private static final ArrayList<Robot> robots = new ArrayList<Robot>();
+    private static final ArrayList<Robot> robots = new ArrayList<>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi", "ExpressBoi", "ExpressBoi"};
-    private static final String[] robotIDs = new String[] {"00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -50,14 +50,14 @@ public class RobotsControl {
     public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
         logger.debug("Starting Robot Creation");
 
-        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size());
+        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
         int i = 0;
         
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
             try {
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, pool);
                 robots.add(newRobot);
                 pool.execute(newRobot);
                 logger.debug("Robot " + robotNames[i] + " created");
@@ -69,6 +69,8 @@ public class RobotsControl {
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
+        // Shut down the pool to prevent new threads being created, and allow the program to end
+        pool.shutdown();
     }
 
     /**
