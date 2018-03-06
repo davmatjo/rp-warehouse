@@ -3,14 +3,21 @@ package rp.warehouse.pc.localisation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class to store the ranges from all directions. Used in partnership with a
+ * location-oriented class such as Point or Location.
+ * 
+ * @author Kieran
+ *
+ */
 public class Ranges {
 
 	public final static int FRONT = 0, RIGHT = 1, BACK = 2, LEFT = 3;
 	private int[] ranges = new int[4];
 
 	/**
-	 * A class to store the ranges from all directions. Used in partnership with a
-	 * location-oriented class such as Point or Location.
+	 * Create an instance of Ranges given the up, right, down and left ranges to be
+	 * stored.
 	 * 
 	 * @param up
 	 *            The range <b>upward</b> relative to the current position.
