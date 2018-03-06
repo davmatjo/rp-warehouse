@@ -3,6 +3,7 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Robot;
 
 import java.io.DataInputStream;
@@ -10,6 +11,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Communication implements Runnable {
+    private static final Logger logger = Logger.getLogger(Communication.class);
+    private final String name;
     private final Robot robot;
     private final DataInputStream fromNXT;
     private final DataOutputStream toNXT;
@@ -20,16 +23,19 @@ public class Communication implements Runnable {
 
     public Communication(String ID, String name, Robot robot) throws IOException {
         this.robot = robot;
+        this.name = name;
 
         NXTComm nxtComm;
         try {
-
+            logger.trace(name + ": Creating factory");
             nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+            logger.trace(name + ": Creating NXTInfo");
             NXTInfo nxt = new NXTInfo(NXTCommFactory.BLUETOOTH, name, ID);
+            logger.trace(name + ": Opening NXTComm");
             nxtComm.open(nxt);
 
         } catch (NXTCommException e) {
-            System.err.println("Unable to open NXT Connection: " + e.getMessage());
+            logger.error("Unable to open NXT Connection: " + e.getMessage());
             throw new IOException(e);
         }
 
@@ -54,6 +60,7 @@ public class Communication implements Runnable {
 
         } catch (IOException e) {
             System.err.println("Bluetooth IO Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -66,7 +73,9 @@ public class Communication implements Runnable {
         while (open) {
 
             // Read input and act accordingly
+            logger.trace(name + ": Waiting to receive");
             int input = fromNXT.readInt();
+            logger.trace(name + ": Recieved " + input);
             switch (input) {
 
                 // Feedback from movement
@@ -103,10 +112,11 @@ public class Communication implements Runnable {
      */
     private void sendData(int data) {
         try {
+            logger.trace(name + ": Sending " + data);
             toNXT.write(data);
             toNXT.flush();
         } catch (IOException e) {
-            System.err.println("Bluetooth IO Error in send: " + e.getMessage());
+            logger.error("Bluetooth IO Error in send: " + e.getMessage());
             open = false;
         }
     }

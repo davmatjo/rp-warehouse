@@ -1,5 +1,6 @@
 package rp.warehouse.pc;
 
+import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
@@ -12,7 +13,12 @@ import java.util.List;
 import java.util.Queue;
 
 public class Main {
+    private static final Logger logger = Logger.getLogger(Main.class);
+
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+            logger.info("|-----------------------------[Application Closed]----------------------------------|");
+        }));
         Queue<Task> myQ = new LinkedList<>();
         Item myItem = new Item(1f, 1f);
         myItem.setLocation(new Location(5, 5));
