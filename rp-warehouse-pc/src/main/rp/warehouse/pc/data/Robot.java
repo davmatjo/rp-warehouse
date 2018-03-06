@@ -2,9 +2,8 @@ package rp.warehouse.pc.data;
 
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.route.RobotsControl;
 import rp.warehouse.pc.route.RoutePlan;
-
+import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Queue;
 
@@ -25,9 +24,11 @@ public class Robot implements Runnable {
     private Item currentItem;           // Current Item 
     
     // Robot Information
-    private final static float weightLimit = 50.0f;
+    private final static float WEIGHTLIMIT = 50.0f;
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
+    
+    final static Logger logger =Logger.getLogger(Robot.class);
     
     /**
      * For: Job Assignment (Created here)
@@ -44,48 +45,40 @@ public class Robot implements Runnable {
         this.name = name;
         this.comms = new Communication(ID, name, this);
         tasks = newTasks;
+        logger.trace("Robot class: " + ID + " " + name + " Has been created" );
+
     }
 
-    
-    /**
-     * Runs indefinitely and sends commands to Communication 
-     * 
-     */
+    // Runs indefinitely and sends commands to Communication   
     public void run() {
         
         while (true) {
-            // How do i show that its a drop off or pick up?
-
             
             // Checks if there are anymore items
             if (currentItem==null) {
                 // Do nothing
             }
-            // Checks if location of the robot matches
-            // with the location of the item or drop off
+            // Checks if completed all the instructions
             else if(route.peek()==null) {
-                //checks if its dropping off
+                
+                // Checks if it's dropping off
                 if (dropOffCheck) {
                     
                     dropOff();
                     dropOffCheck = false;
+                    
                 }else {
-                    // Stops and waits for the number of items
-                    itemCheck:
-                    while(true) {
-                        int numberOfItems = comms.sendPickupRequest();
-                        
-                        // Checks that number of items fit 
-                        if(pickUp(numberOfItems)) {
-                            break itemCheck;
-                        }
-                    }
-                }
-                
-                if (tasks.peek()!=null) {
-                    plan();
-                }else {
-                    //Do nothing 
+                     
+                    int numberOfItems = comms.sendPickupRequest();
+                    // Checks that number of items fits
+                    
+                    // Updates the weight or goes to drop off 
+                    pickUp(numberOfItems);
+                    
+                    currentInstruction=route.peek();
+                    comms.sendMovement(getNextInstruction());
+                    updateLocation();
+                    updateCurrentItem();
                 }
             }
             // If there are still instructions present
@@ -116,7 +109,6 @@ public class Robot implements Runnable {
 
     /**
      * For: Route Planning
-     * 
      * @param newRoute
      *            - the new queue of directions to get one item
      */
@@ -126,7 +118,6 @@ public class Robot implements Runnable {
 
     /**
      * For: Job Assignment
-     * 
      * @param newTasks
      *            - the new queue of Jobs for this robot to complete
      */
@@ -179,7 +170,6 @@ public class Robot implements Runnable {
      * Used to update the current item
      */
     private void updateCurrentItem() {
-        // Update 
 
         if (route.peek() == null) {
             // No more directions
@@ -200,30 +190,42 @@ public class Robot implements Runnable {
     
     /**
      * For: Communication specify amount loaded for the current item
-     * 
      * @return - True, there is still space for more cargo or the cargo is full. 
      *              False, too many items being picked up
      */
     private boolean pickUp(int numberOfItems) {
-        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > weightLimit) {
+        if (currentWeightOfCargo+(currentItem.getWeight()*numberOfItems) > WEIGHTLIMIT) {
+            
             // Go back to drop off
             // route =RoutePlan.planDropOff(this);
             dropOffCheck = true;
             return false;
         }
         currentWeightOfCargo = currentItem.getWeight()*numberOfItems;
+        
+        if (currentWeightOfCargo==WEIGHTLIMIT) {
+            // Go back to drop off
+            // route =RoutePlan.planDropOff(this);
+            dropOffCheck = true;
+        }else {
+            plan();
+        }
+       
         return true;
     }
     
     /**
      * For Communication when performing drop of at the station
-     * 
-     * The whole cargo is dropped off at once
-     * When user presses button to unload the robot,the whole cargo is dropped off at once
-     * 
      * @return - True, Cargo was dropped off. False, empty
      */
     private boolean dropOff() {
+        plan();
+                
+                if (tasks.peek()!=null) {
+                    plan();
+                }else {
+                    //Do nothing 
+                }
         if (currentWeightOfCargo==0) {
             return false;
         }
@@ -235,6 +237,13 @@ public class Robot implements Runnable {
         // Change Location
         route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
         // which will be static 
+    }
+    /**
+     * For Warehouse MI 
+     * @return Queue<Integer> of directions
+     */
+    public Queue<Integer> getRoute(){
+        return route;
     }
     
 }

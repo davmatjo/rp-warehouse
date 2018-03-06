@@ -6,6 +6,8 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Robot;
@@ -28,8 +30,10 @@ public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi"};
-    private static final String[] robotIDs = new String[] {"00:16:53:1A:FB:E1"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "ExpressBoi", "ExpressBoi"};
+    private static final String[] robotIDs = new String[] {"00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1", "00:16:53:1A:FB:E1"};
+    
+    final static Logger logger =Logger.getLogger(RobotsControl.class);
 
     /**
      * For: Job Selection When the the items have been split between robots (number
@@ -44,20 +48,28 @@ public class RobotsControl {
      * 
      */
     public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
+        logger.debug("Starting Robot Creation");
+
         ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size());
         int i = 0;
         
         for (Queue<Task> items : listOfItems) {
+            logger.trace("Robot " + i + " is being created" );
+
             try {
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
                 robots.add(newRobot);
                 pool.execute(newRobot);
             } catch (IOException e) {
                 System.err.println("Couldn't create robot named " + robotNames[i]);
+                logger.error("Failed creating Robot");
+
             }
 
             i++;
         }
+        logger.trace("Array of Robots has been seccesfully creasted");
+
     }
 
     /**
