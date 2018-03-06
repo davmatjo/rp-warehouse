@@ -5,8 +5,6 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
@@ -54,11 +52,6 @@ public class Robot implements Runnable {
 
     }
 
-    private void init() throws IOException {
-        this.comms = new Communication(ID, name, this);
-        pool.execute(comms);
-    }
-
     // Runs indefinitely and sends commands to Communication
     public void run() {
         try {
@@ -67,78 +60,14 @@ public class Robot implements Runnable {
             logger.error("Couldn't connect to: " + name);
             running = false;
         }
+        
         while (running) {
-            
-            // Checks if there are anymore items
-            if (currentItem==null) {
-                // Do nothing
-            }
-            // Checks if completed all the instructions
-            else if(route.peek()==null) {
-                
-                // Checks if it's dropping off
-                if (dropOffCheck) {
-                    
-                    dropOff();
-                    dropOffCheck = false;
-                    
-                }else {
-                     
-                    int numberOfItems = comms.sendPickupRequest();
-                    // Checks that number of items fits
-                    
-                    // Updates the weight or goes to drop off 
-                    pickUp(numberOfItems);
-                    
-                    currentInstruction=route.peek();
-                    comms.sendMovement(getNextInstruction());
-                    updateLocation();
-                    updateCurrentItem();
-                }
-            }
-            // If there are still instructions present
-            else{
-                currentInstruction=route.peek();
-                comms.sendMovement(getNextInstruction());
-                updateLocation();
-                updateCurrentItem();
-            }
+
 
         }
     }
 
-    public String getID() {
-        return ID;
-    }
-
-    public RobotLocation getLocation() {
-        return location;
-    }
-
-
-    private int getNextInstruction() {
-        // What it there are no more instruction
-        // Check Job ID (Discard cancelled jobs "items" )
-        return route.poll();
-    }
-
-    /**
-     * For: Route Planning
-     * @param newRoute
-     *            - the new queue of directions to get one item
-     */
-    public void setRoute(Queue<Integer> newRoute) {
-        route = newRoute;
-    }
-
-    /**
-     * For: Job Assignment
-     * @param newTasks
-     *            - the new queue of Jobs for this robot to complete
-     */
-    public void setJobs(Queue<Task> newTasks) {
-        tasks = newTasks;
-    }
+    
 
     /**
      * When the confirmation of move has been received, the location robot is
@@ -179,6 +108,14 @@ public class Robot implements Runnable {
         if (location.getX() == 0) { // ==itemLocation.getX())&&location.getY()==itemLocation.getY()){
             // update task and get a new item
         }
+    }
+    
+    private void sendInstruction(){
+        currentInstruction=route.peek();
+        comms.sendMovement(getNextInstruction());
+        updateLocation();
+        updateCurrentItem();
+
     }
 
     /**
@@ -253,12 +190,42 @@ public class Robot implements Runnable {
         route =RoutePlan.plan(this, new Location(1,1));//tasks.peek();
         // which will be static 
     }
+    
+    private void init() throws IOException {
+        this.comms = new Communication(ID, name, this);
+        pool.execute(comms);
+    }
+    
     /**
      * For Warehouse MI 
      * @return Queue<Integer> of directions
      */
     public Queue<Integer> getRoute(){
         return route;
+    }
+    
+    public String getID() {
+        return ID;
+    }
+
+    public RobotLocation getLocation() {
+        return location;
+    }
+
+
+    private int getNextInstruction() {
+        // What it there are no more instruction
+        // Check Job ID (Discard cancelled jobs "items" )
+        return route.poll();
+    }
+
+    /**
+     * For: Job Assignment
+     * @param newTasks
+     *            - the new queue of Jobs for this robot to complete
+     */
+    public void setJobs(Queue<Task> newTasks) {
+        tasks = newTasks;
     }
     
 }
