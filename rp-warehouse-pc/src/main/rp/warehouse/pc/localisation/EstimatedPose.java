@@ -3,6 +3,13 @@ package rp.warehouse.pc.localisation;
 import lejos.geom.Point;
 import lejos.robotics.navigation.Pose;
 
+/**
+ * Used to represent an estimated pose of the robot. Extends the default Pose to
+ * include a probability. Currently unused.
+ * 
+ * @author Kieran
+ *
+ */
 public class EstimatedPose extends Pose {
 
 	// Currently unused class, may use later.
@@ -10,8 +17,7 @@ public class EstimatedPose extends Pose {
 	private float prob;
 
 	/**
-	 * A class to represent an estimated pose of the robot. Extends the default Pose
-	 * to include a probability.
+	 * Create an instance of an estimated pose.
 	 * 
 	 * @param x
 	 *            The X coordinate of the robot.

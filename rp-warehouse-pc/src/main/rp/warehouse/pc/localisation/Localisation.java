@@ -2,6 +2,12 @@ package rp.warehouse.pc.localisation;
 
 import rp.warehouse.pc.data.RobotLocation;
 
+/**
+ * An interface for the localisation, simply to get the location of the robot.
+ * 
+ * @author Kieran
+ *
+ */
 public interface Localisation {
 
 	/**
