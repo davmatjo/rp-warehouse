@@ -1,4 +1,4 @@
-package rp.warehouse.pc.data;
+import rp.warehouse.pc.data.Task;
 
 import java.util.ArrayList;
 

@@ -1,12 +1,14 @@
 package rp.warehouse.pc.data;
 
+import rp.warehouse.pc.data.Location;
+
 public class Item {
 
     private Float reward;
     private float weight;
     private Location location;
 
-    public Item(Float reward, Float weight) {
+    Item(Float reward, Float weight) {
         this.reward = reward;
         this.weight = weight;
     }
