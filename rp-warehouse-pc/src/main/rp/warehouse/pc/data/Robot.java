@@ -33,7 +33,7 @@ public class Robot implements Runnable {
     private boolean dropOffCheck = false;
     private boolean running = true;
 
-    final static Logger logger = Logger.getLogger(Robot.class);
+    private static final Logger logger = Logger.getLogger(Robot.class);
 
     /**
      * For: Job Assignment (Created here)
@@ -45,7 +45,7 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool) throws IOException {
+    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool) {
         this.ID = ID;
         this.name = name;
         this.pool = pool;
