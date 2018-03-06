@@ -18,7 +18,6 @@ public class Item {
         location = this.location;
     }
 
-
     //method to return the items reward
     public Float getReward() {
         return reward;

@@ -1,4 +1,4 @@
-import rp.warehouse.pc.data.Task;
+package rp.warehouse.pc.data;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ public class Job {
     private String name;
     private ArrayList<Task> items;
 
-    Job(String name, int count) {
+    Job(String name) {
         this.name = name;
     }
 
