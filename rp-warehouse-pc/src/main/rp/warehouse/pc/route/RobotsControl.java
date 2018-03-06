@@ -60,13 +60,14 @@ public class RobotsControl {
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
                 robots.add(newRobot);
                 pool.execute(newRobot);
+                logger.debug("Robot " + robotNames[i] + " created");
             } catch (IOException e) {
                 logger.error("Failed creating Robot named " + robotNames[i]);
             }
 
             i++;
         }
-        logger.trace("Array of Robots has been created with " + robots.size() + " robots");
+        logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
     }
 
