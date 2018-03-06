@@ -2,9 +2,8 @@ package rp.warehouse.pc.data;
 
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.route.RobotsControl;
 import rp.warehouse.pc.route.RoutePlan;
-
+import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Queue;
 
@@ -29,6 +28,8 @@ public class Robot implements Runnable {
     private float currentWeightOfCargo = 0.0f;
     private boolean dropOffCheck = false;
     
+    final static Logger logger =Logger.getLogger(Robot.class);
+    
     /**
      * For: Job Assignment (Created here)
      * 
@@ -44,13 +45,11 @@ public class Robot implements Runnable {
         this.name = name;
         this.comms = new Communication(ID, name, this);
         tasks = newTasks;
+        logger.trace("Robot class: " + ID + " " + name + " Has been created" );
+
     }
 
-    
-    /**
-     * Runs indefinitely and sends commands to Communication 
-     * 
-     */
+    // Runs indefinitely and sends commands to Communication   
     public void run() {
         
         while (true) {
@@ -110,7 +109,6 @@ public class Robot implements Runnable {
 
     /**
      * For: Route Planning
-     * 
      * @param newRoute
      *            - the new queue of directions to get one item
      */
@@ -120,7 +118,6 @@ public class Robot implements Runnable {
 
     /**
      * For: Job Assignment
-     * 
      * @param newTasks
      *            - the new queue of Jobs for this robot to complete
      */
@@ -173,7 +170,6 @@ public class Robot implements Runnable {
      * Used to update the current item
      */
     private void updateCurrentItem() {
-        // Update 
 
         if (route.peek() == null) {
             // No more directions
@@ -194,7 +190,6 @@ public class Robot implements Runnable {
     
     /**
      * For: Communication specify amount loaded for the current item
-     * 
      * @return - True, there is still space for more cargo or the cargo is full. 
      *              False, too many items being picked up
      */
@@ -221,10 +216,6 @@ public class Robot implements Runnable {
     
     /**
      * For Communication when performing drop of at the station
-     * 
-     * The whole cargo is dropped off at once
-     * When user presses button to unload the robot,the whole cargo is dropped off at once
-     * 
      * @return - True, Cargo was dropped off. False, empty
      */
     private boolean dropOff() {
@@ -249,7 +240,6 @@ public class Robot implements Runnable {
     }
     /**
      * For Warehouse MI 
-     * 
      * @return Queue<Integer> of directions
      */
     public Queue<Integer> getRoute(){
