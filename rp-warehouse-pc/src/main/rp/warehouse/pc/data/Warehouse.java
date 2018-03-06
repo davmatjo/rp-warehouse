@@ -8,6 +8,13 @@ import lejos.geom.Rectangle;
 import rp.robotics.mapping.GridMap;
 import rp.robotics.mapping.LineMap;
 
+/**
+ * Used to interact with the programmatic representation of the layout of the
+ * warehouse.
+ * 
+ * @author Kieran
+ *
+ */
 public class Warehouse {
 
 	// The list of blocked locations (grid points within the walls)

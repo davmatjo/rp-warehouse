@@ -7,6 +7,13 @@ import java.util.List;
 
 import lejos.geom.Point;
 
+/**
+ * A bidirectional map for the warehouse which stores both the ranges and points
+ * of every grid coordinate on the map.
+ * 
+ * @author Kieran
+ *
+ */
 public class WarehouseMap {
 
 	private HashMap<Ranges, HashSet<Point>> positions = new HashMap<Ranges, HashSet<Point>>();
