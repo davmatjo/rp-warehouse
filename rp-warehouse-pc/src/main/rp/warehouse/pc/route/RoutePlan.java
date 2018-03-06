@@ -60,7 +60,12 @@ public class RoutePlan {
 			prevX = currX;
 			prevY = currY;
 		}
+		
 		return plan;
+	}
+	
+	public static Queue<Integer> planDropOff(Robot robot) {
+		return null;
 	}
 	
 	public ArrayList<Location> getVisitedList() {
@@ -175,5 +180,3 @@ public class RoutePlan {
 	}
 	
 }
-
-
