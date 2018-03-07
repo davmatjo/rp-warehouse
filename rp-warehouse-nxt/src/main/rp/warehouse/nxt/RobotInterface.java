@@ -2,6 +2,7 @@ package rp.warehouse.nxt;
 
 public interface RobotInterface	{
 	
-	boolean buttonPressed();
-	void displayScreen();
+	int buttonPressed(int command);
+	void displayScreen(int buttonInput);
+	int pickup();
 }
