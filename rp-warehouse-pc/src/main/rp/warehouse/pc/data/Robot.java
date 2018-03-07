@@ -5,6 +5,8 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
+import org.jfree.chart.title.LegendGraphic;
+
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +72,9 @@ public class Robot implements Runnable {
         logger.trace("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(20);
         while (running) {
+            logger.debug("Sending Next instruction");
             sendInstruction();
+            logger.debug("Instruction executed");
             r.sleep();
             
         }
@@ -88,6 +92,7 @@ public class Robot implements Runnable {
      */
     private void updateLocation() {
         if (lastInstruction!=-1) {
+            logger.debug("Updating location");
             int x, y;
             x = location.getX();
             y = location.getY();
@@ -125,10 +130,11 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
 
         if (route.peek() == null) {
-            
+            logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             while(!dropOffDone && !pickUpDone) {
                 
             }
+            logger.trace("Action completed");
             dropOffDone = false;
             pickUpDone = false;
         }
@@ -139,6 +145,8 @@ public class Robot implements Runnable {
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
+        logger.debug("Starting Job cancellation");
+
         // currentItem.getJob()
         // cancelltems.add(getCurrentItem())
 
@@ -152,13 +160,17 @@ public class Robot implements Runnable {
      *              False, too many items being picked up
      */
     public boolean pickUp(int numberOfItems) {
+        logger.info("Starting pickUp");
         if (route.peek() == null && !dropOffCheck) {
+            logger.info("Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             if ( newWeight > WEIGHTLIMIT) {
+                logger.debug("To much cargo, going to drop off");
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return false;
             }else if (newWeight == WEIGHTLIMIT) {
+                logger.debug("Picked up Item(s), cargo is full. Going to drop off");
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
                 currentItem = tasks.poll().item;// Ask Megan to change it
@@ -166,13 +178,16 @@ public class Robot implements Runnable {
                 dropOffCheck = true;
                 return true;
             }
+            logger.debug("Picked up Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
+            logger.info("current weight if cargo " + currentWeightOfCargo);
             currentItem = tasks.poll().item;// Ask Megan to change it
             plan();
             
             pickUpDone = true;
             return true;
         }else {
+            logger.info("Pick up refused");
             return false;
         }
     }
@@ -182,11 +197,14 @@ public class Robot implements Runnable {
      * @return - 
      */
     public boolean dropOff() {
-
+        logger.info("Starting DropOff");
         if (route.peek()!=null || !dropOffCheck) {
+            logger.debug("Drop off refused");
             return false;
         }else {
-            if (tasks.peek()!=null) {
+            logger.debug("Drof off valid");
+            if (tasks.peek()!=null) {// why?
+                logger.debug("Planning to get current item");
                 plan();
             }
             currentWeightOfCargo=0;
@@ -198,10 +216,12 @@ public class Robot implements Runnable {
     }
     
     private void plan() {
+        logger.info("Starting plan");
         if (currentItem!=null) {
             route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
-            
+            logger.error("No current Item");
+            route = null;
         }
     }
     
@@ -237,6 +257,8 @@ public class Robot implements Runnable {
     }
     
     private int getCurrentInstruction() {
+        logger.info("Starting getCurrentInstraction");
+
         lastInstruction = route.poll(); 
         // Check Job ID (Discard cancelled jobs "items" )
         return lastInstruction;
