@@ -7,10 +7,15 @@ import lejos.nxt.*;
 
 public class RobotInterfaceController implements RobotInterface	{
 	
+	/* Two final variables are created to represent left and right in switch statements */
+	
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
 	private static int command;
 	private static int jobAmount;
+	
+	/*An interface is created and the communicator to send it is created */
+	
 	RobotInterfaceController theInterface = new RobotInterfaceController();
 	Communication communicator = new Communication();
 	
@@ -18,6 +23,8 @@ public class RobotInterfaceController implements RobotInterface	{
 		command = 0;
 		jobAmount = 0;
 	}
+	
+	/* In the main method the button listeners are created to listen to the buttons presses and command is changed depending on which one is pressed */
 	
 	public void main (String args[])		{
 		Button.ENTER.addButtonListener(new ButtonListener()	{
@@ -58,9 +65,12 @@ public class RobotInterfaceController implements RobotInterface	{
 				
 			}
 		});
+		/* the method is called to start it with the value -1 so that it does not trigger any of the switch cases */
+		theInterface.buttonPressed(-1);
 		
 	}
 
+	/*This method changes the display based on what the user presses */
 	@Override
 	public void displayScreen(int buttonInput) {
 		LCD.clearDisplay();
@@ -68,6 +78,7 @@ public class RobotInterfaceController implements RobotInterface	{
 			case Protocol.OK:
 				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
 				LCD.refresh();
+				/* The number of jobs is sent v
 				communicator.sendCommand(jobAmount);
 			case LEFT:
 				jobAmount--;
@@ -86,13 +97,17 @@ public class RobotInterfaceController implements RobotInterface	{
 			switch(command)	{
 				case Protocol.CANCEL:
 						communicator.sendCommand(Protocol.CANCEL);
+						command = -1;
 				case LEFT:
 						displayScreen(command);
+						command = -1;
 				case RIGHT:
 						displayScreen(command);
+						command = -1;
 				case Protocol.OK:
 						communicator.sendCommand(Protocol.PICKUP);
 						displayScreen(command);
+						command = -1;
 			}	
 		}
 	}
