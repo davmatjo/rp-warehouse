@@ -78,7 +78,7 @@ public class RobotInterfaceController implements RobotInterface	{
 			case Protocol.OK:
 				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
 				LCD.refresh();
-				/* The number of jobs is sent v
+				/* The number of jobs is sent v */
 				communicator.sendCommand(jobAmount);
 			case LEFT:
 				jobAmount--;
