@@ -4,14 +4,22 @@ import rp.warehouse.nxt.Protocol;
 import rp.warehouse.nxt.RobotInterface;
 import lejos.nxt.*;
 
+
 public class RobotInterfaceController implements RobotInterface	{
 	
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
-	private int command = 0;
+	private static int command;
+	private static int jobAmount;
+	RobotInterfaceController theInterface = new RobotInterfaceController();
+	Communication communicator = new Communication();
+	
+	public RobotInterfaceController()	{
+		command = 0;
+		jobAmount = 0;
+	}
 	
 	public void main (String args[])		{
-		RobotInterfaceController theInterface = new RobotInterfaceController();
 		Button.ENTER.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
@@ -55,27 +63,43 @@ public class RobotInterfaceController implements RobotInterface	{
 
 	@Override
 	public void displayScreen(int buttonInput) {
+		LCD.clearDisplay();
+		switch (buttonInput)	{
+			case Protocol.OK:
+				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+				LCD.refresh();
+				communicator.sendCommand(jobAmount);
+			case LEFT:
+				jobAmount--;
+				LCD.drawInt(jobAmount, LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+				LCD.refresh();
+			case RIGHT:
+				jobAmount++;
+				LCD.drawInt(jobAmount, LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+				LCD.refresh();
+		}
 	}
 
 	@Override
-	public int buttonPressed(int command) {
+	public void buttonPressed(int command) {
 		while (true)	{
 			switch(command)	{
-				case 1: command = Protocol.CANCEL;
-						return Protocol.CANCEL;
-				case 2: command = LEFT;
+				case Protocol.CANCEL:
+						communicator.sendCommand(Protocol.CANCEL);
+				case LEFT:
 						displayScreen(command);
-				case 3: command = RIGHT;
+				case RIGHT:
 						displayScreen(command);
-				case 4: command = Protocol.OK;
+				case Protocol.OK:
+						communicator.sendCommand(Protocol.PICKUP);
 						displayScreen(command);
 			}	
 		}
 	}
 
-	public int pickup() {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override
+	public int pickup(int amount) {
+		return amount;
 	}
 
 
