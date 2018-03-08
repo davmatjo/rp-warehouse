@@ -82,7 +82,6 @@ public class RobotInterfaceController {
 		switch (buttonInput)	{
 			case Protocol.OK:
 				LCD.drawString("Amount confirmed", 0, 0);
-				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
 				/* The number of jobs is sent*/
 				if(waiting)	{
 					communicator.sendCommand(Protocol.PICKUP);
