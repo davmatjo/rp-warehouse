@@ -42,7 +42,7 @@ public class Ranges {
 	 *            The direction of which to return the range.
 	 * @return The range in the given direction.
 	 */
-	public float get(final int direction) {
+	public int get(final int direction) {
 		assert direction <= LEFT && direction >= UP : direction;
 		return ranges[direction];
 	}
@@ -80,7 +80,7 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot >= 0 && rot <= 3 : rot;
-		final float[] store = new float[4];
+		final int[] store = new int[4];
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
