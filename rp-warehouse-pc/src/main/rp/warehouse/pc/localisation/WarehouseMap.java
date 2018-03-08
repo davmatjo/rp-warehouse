@@ -40,10 +40,10 @@ public class WarehouseMap {
 				if (!blockedPoints.contains(point)) {
 					// Take the UP, RIGHT, DOWN and LEFT readings.
 					// Casted to ints to remove floating point (stick to grid).
-					final int up = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
-					final int right = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
-					final int down = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
-					final int left = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
+					final float up = world.rangeToObstacleFromGridPosition(x, y, 90);
+					final float right = world.rangeToObstacleFromGridPosition(x, y, 0);
+					final float down = world.rangeToObstacleFromGridPosition(x, y, -90);
+					final float left = world.rangeToObstacleFromGridPosition(x, y, 180);
 					// Create a Ranges object from these readings.
 					final Ranges ranges = new Ranges(up, right, down, left);
 
@@ -104,7 +104,10 @@ public class WarehouseMap {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		// Iterate over the points of the warehouse.
-		final Iterator<Point> iterator = this.ranges.keySet().iterator();
+		final List<Point> points = new ArrayList<Point>(this.ranges.keySet());
+		// Sort by X then Y
+		points.sort((p1, p2) -> (int) (p1.x == p2.x ? (p1.y - p2.y) : (p1.x - p2.x)));
+		final Iterator<Point> iterator = points.iterator();
 		while (iterator.hasNext()) {
 			final Point point = iterator.next();
 			builder.append("(").append(point.x).append(",").append(point.y).append(") -> ").append(getRanges(point));
