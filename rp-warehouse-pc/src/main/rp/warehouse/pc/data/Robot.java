@@ -59,7 +59,7 @@ public class Robot implements Runnable {
         this.comms = new Communication(ID, name, this);
         pool.execute(comms);
         Localiser loc = new Localiser(comms);
-        this.location = loc.getPosition();// startingLocation;
+        this.location = startingLocation;// loc.getPosition();
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         plan();
 
