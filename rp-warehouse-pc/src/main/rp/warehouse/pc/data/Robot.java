@@ -127,9 +127,10 @@ public class Robot implements Runnable {
         if (route.peek() == null) {
             logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
-            while(!dropOffDone && !pickUpDone) {
-                r.sleep();
-            }
+            pickUp(comms.sendPickupRequest());
+//            while(!dropOffDone && !pickUpDone) {
+//                r.sleep();
+//            }
             logger.trace("Action completed");
             dropOffDone = false;
             pickUpDone = false;
@@ -155,7 +156,7 @@ public class Robot implements Runnable {
      * @return - True, there is still space for more cargo or the cargo is full. 
      *              False, too many items being picked up
      */
-    public boolean pickUp(int numberOfItems) {
+    private boolean pickUp(int numberOfItems) {
         logger.info("Starting pickUp");
         if (route.peek() == null && !dropOffCheck) {
             logger.info("Pick up valid");
