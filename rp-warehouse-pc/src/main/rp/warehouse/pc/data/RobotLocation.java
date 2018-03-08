@@ -22,4 +22,9 @@ public class RobotLocation extends Location {
 	public void setDirection(int direction) {
 		this.direction = direction;
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ", D: " + this.direction;
+	}
 }

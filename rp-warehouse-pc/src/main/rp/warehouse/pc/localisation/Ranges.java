@@ -2,6 +2,7 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class to store the ranges from all directions. Used in partnership with a
@@ -97,13 +98,34 @@ public class Ranges {
 	 * @return The amount of grid points within that range.
 	 */
 	private static int toGrid(final float range) {
-		final int gridRange = (int) Math.floor((range - 0.14f) / 0.3d);
+		final int gridRange = (int) Math.floor((range - 0.1f) / 0.3d);
 		return gridRange < 0 ? 0 : gridRange;
 	}
 
 	@Override
 	public String toString() {
 		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (!(obj instanceof Ranges)) {
+			return false;
+		} else {
+			Ranges other = (Ranges) obj;
+			for (int i = 0; i < 4; i++) {
+				if (get(i) != other.get(i))
+					return false;
+			}
+			return true;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ranges[0], ranges[1], ranges[2], ranges[3]);
 	}
 
 }

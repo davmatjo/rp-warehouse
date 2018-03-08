@@ -38,7 +38,8 @@ public class Localiser implements Localisation {
 	public RobotLocation getPosition() {
 		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
-		Ranges ranges = new Ranges(1, 2, 4, 2);
+		Point testPoint = new Point(0, 3);
+		Ranges ranges = warehouseMap.getRanges(testPoint);
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
@@ -57,13 +58,13 @@ public class Localiser implements Localisation {
 			} else {
 				// Move, get ranges
 			}
-			// Dummy range for now
-			ranges = new Ranges(0, 2, 5, 2);
+			testPoint = testPoint.add(move);
+			ranges = warehouseMap.getRanges(testPoint);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
 		// Create the location of the robot using the first possible location from the
 		// list of possible locations.
-		return new RobotLocation(possiblePoints.get(0), 0);
+		return new RobotLocation(possiblePoints.get(0), 90);
 	}
 
 	/**
