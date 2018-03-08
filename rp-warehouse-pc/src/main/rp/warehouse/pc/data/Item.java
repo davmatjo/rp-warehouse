@@ -15,7 +15,7 @@ public class Item {
 
     //method to set the location of the item
     public void setLocation(Location location) {
-        location = this.location;
+        this.location = location;
     }
 
     //method to return the items reward
