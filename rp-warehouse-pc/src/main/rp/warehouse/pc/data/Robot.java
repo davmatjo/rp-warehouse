@@ -130,10 +130,10 @@ public class Robot implements Runnable {
         if (route.peek() == null) {
             logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
-            pickUp(comms.sendPickupRequest());
-//            while(!dropOffDone && !pickUpDone) {
-//                r.sleep();
-//            }
+            while (!pickUpDone) {
+                pickUp(comms.sendPickupRequest());
+                r.sleep();
+            }
             logger.trace("Action completed");
             dropOffDone = false;
             pickUpDone = false;

@@ -8,7 +8,7 @@ public class Item {
     private float weight;
     private Location location;
 
-    Item(Float reward, Float weight) {
+    public Item(Float reward, Float weight) {
         this.reward = reward;
         this.weight = weight;
     }

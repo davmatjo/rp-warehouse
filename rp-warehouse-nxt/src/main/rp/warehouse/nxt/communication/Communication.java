@@ -81,7 +81,9 @@ public class Communication extends Thread {
                 robotInterface.pickup();
             } else if (command == Protocol.LOCALISE) {
                 float[] ranges = rangeFind.getRanges();
-                for (Float range : ranges) {
+                sendCommand(Protocol.LOCALISE);
+                for (float range : ranges) {
+                    System.out.println(range);
                     sendFloat(range);
                 }
             }

@@ -60,7 +60,7 @@ public class RobotsControl {
 
             Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));
+                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 0, 0, 1));
                 robots.add(newRobot);
                 pool.execute(newRobot);
                 logger.debug("Robot " + robotNames[i] + " created");

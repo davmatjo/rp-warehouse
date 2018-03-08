@@ -61,7 +61,7 @@ public class Communication implements Runnable {
             toNXT.close();
 
         } catch (IOException e) {
-            System.err.println("Bluetooth IO Error: " + e.getMessage());
+            logger.error("Bluetooth IO Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -107,10 +107,12 @@ public class Communication implements Runnable {
 
                 case Protocol.LOCALISE: {
                     for (int i=0; i < 4; i++) {
-                        ranges[i] = fromNXT.readFloat();
+                        float range = fromNXT.readFloat();
+                        logger.trace(name + ": Range read " + range);
+                        ranges[i] = range;
                     }
                     synchronized (waitForRanges) {
-                        ranges.notifyAll();
+                        waitForRanges.notifyAll();
                     }
                     break;
                 }
@@ -179,7 +181,7 @@ public class Communication implements Runnable {
     public Ranges getRanges() {
         try {
             synchronized (waitForRanges) {
-                sendData(Protocol.PICKUP);
+                sendData(Protocol.LOCALISE);
                 waitForRanges.wait();
                 return Ranges.fromArray(ranges);
             }

@@ -1,5 +1,7 @@
 package rp.warehouse.pc.data;
 
+import rp.warehouse.pc.assignment.SimpleAssigner;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,19 +23,21 @@ public class JobInput {
     Jobs jobs = new Jobs();
 
     //will be passed the location of the files as strings and recieve the files?
-    JobInput() {
+    public JobInput() throws FileNotFoundException {
         this.itemsLocation = itemsLocation;
         this.jobsLocation = jobsLocation;
         this.locationsLocation = locationsLocation;
         this.cancellationsLocation = cancellationsLocation;
+        readItems();
+        readLocations();
+        readJobs();
+        new SimpleAssigner(jobs.getJobs());
     }
 
     public static void main(String[] args) throws FileNotFoundException {
 
         JobInput jobInput = new JobInput();
-        jobInput.readItems();
-        jobInput.readLocations();
-        jobInput.readJobs();
+
         System.out.println("");
 
     }
@@ -42,7 +46,7 @@ public class JobInput {
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
-        Scanner scanner = new Scanner(new File(home + "/Documents/rp-warehouse/rp-warehouse-pc/src/main/rp/warehouse/pc/data/items.csv"));
+        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/items.csv"));
 
         //for every line
         while(scanner.hasNext()){
@@ -69,7 +73,7 @@ public class JobInput {
     public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
-        Scanner scanner = new Scanner(new File(home + "/Documents/rp-warehouse/rp-warehouse-pc/src/main/rp/warehouse/pc/data/locations.csv"));
+        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/locations.csv"));
 
         //for every line
         while(scanner.hasNext()){
@@ -101,7 +105,7 @@ public class JobInput {
     public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
-        Scanner scanner = new Scanner(new File(home + "/Documents/rp-warehouse/rp-warehouse-pc/src/main/rp/warehouse/pc/data/jobs.csv"));
+        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/jobs.csv"));
 //        scanner.useDelimiter(",");
 
         //for every line
