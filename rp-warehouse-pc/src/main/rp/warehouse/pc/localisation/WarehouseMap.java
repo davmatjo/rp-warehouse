@@ -74,9 +74,14 @@ public class WarehouseMap {
 	 * @param ranges
 	 *            The ranges to check for.
 	 * @return The points matching the ranges given.
+	 * @throws NoIdeaException
 	 */
-	public ArrayList<Point> getPoints(final Ranges ranges) {
-		return this.positions.get(ranges);
+	public ArrayList<Point> getPoints(final Ranges ranges) throws NoIdeaException {
+		if (this.positions.containsKey(ranges)) {
+			return this.positions.get(ranges);
+		} else {
+			throw new NoIdeaException(ranges);
+		}
 	}
 
 	/**
