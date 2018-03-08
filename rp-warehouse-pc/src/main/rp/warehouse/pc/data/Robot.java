@@ -14,7 +14,6 @@ public class Robot implements Runnable {
     // Communications
     private final String ID;                    // Communication ID
     private final String name;                  // Communication name
-    private final ExecutorService pool;
     private Communication comms;                // Communication used to connect each robot to the a nxt brick
 
     // Route information
