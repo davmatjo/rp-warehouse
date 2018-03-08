@@ -3,6 +3,7 @@ package rp.warehouse.pc.localisation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import lejos.geom.Point;
@@ -54,6 +55,22 @@ public class WarehouseMap {
 	 */
 	public Ranges getRanges(final Point point) {
 		return this.ranges.get(point);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		// Iterate over the points of the warehouse.
+		final Iterator<Point> iterator = this.ranges.keySet().iterator();
+		while (iterator.hasNext()) {
+			final Point point = iterator.next();
+			builder.append("(").append(point.x).append(",").append(point.y).append(") -> ").append(getRanges(point));
+			// Add a newline unless it's the last element.
+			if (iterator.hasNext())
+				builder.append("\n");
+		}
+		// Build the final string.
+		return builder.toString();
 	}
 
 }
