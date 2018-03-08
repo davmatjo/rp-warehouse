@@ -16,11 +16,16 @@ public class Jobs {
         jobs.add(job);
     }
 
-//    public Job getJob(String job) {
-//
-//
-//
-//    }
+    public Job getJob(String jobName) {
+        Job job = null;
+        //iterate over array list
+        for (int i = 0; i < jobs.size(); i++) {
+            if(jobs.get(i).equals(jobName)) {
+                job = jobs.get(i);
+            }
+        }
+        return job;
+    }
 
 }
 

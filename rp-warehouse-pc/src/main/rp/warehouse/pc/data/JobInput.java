@@ -173,9 +173,9 @@ public class JobInput {
 
             //first item = job, second item = cancelled
             //get the job from the jobs list
-//            jobs.getJob(arrayList.get(1));
+            jobs.getJob(arrayList.get(1));
 
-            //add to cancellations
+            //add cancellation
 
         }
 
