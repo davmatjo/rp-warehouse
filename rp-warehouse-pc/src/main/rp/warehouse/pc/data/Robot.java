@@ -76,7 +76,6 @@ public class Robot implements Runnable {
     }
     
     private void sendInstruction(){
-        updateLocation();
         comms.sendMovement(getCurrentInstruction());
         updateCurrentItem();
 
@@ -125,6 +124,7 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
 
         if (route.peek() == null) {
+            updateLocation();
             logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
             pickUp(comms.sendPickupRequest());
