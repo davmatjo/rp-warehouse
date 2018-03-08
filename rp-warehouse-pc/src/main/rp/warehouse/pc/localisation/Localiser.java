@@ -20,9 +20,10 @@ public class Localiser implements Localisation {
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
-	private final int MAX_RUNS = 10;
-	private int runCounter = 0;
+	private final byte MAX_RUNS = 10;
+	private byte runCounter = 0;
 	private final Random random = new Random();
+	private Byte previousDirection = null;
 
 	/**
 	 * An implementation of the Localisation interface.
@@ -38,16 +39,20 @@ public class Localiser implements Localisation {
 	public RobotLocation getPosition() {
 		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
-		Point testPoint = new Point(0, 3);
+		Point testPoint = new Point(0, 2);
 		Ranges ranges = warehouseMap.getRanges(testPoint);
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
-			List<Integer> directions = ranges.getAvailableDirections();
+			List<Byte> directions = ranges.getAvailableDirections();
+			if (runCounter > 1) {
+				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
+			}
 			// Choose a random direction from the list of available directions.
-			final int direction = directions.get(random.nextInt(directions.size()));
+			final byte direction = directions.get(random.nextInt(directions.size()));
+			previousDirection = direction;
 			final Point move = directionPoint[direction];
 			if (direction == Ranges.UP) {
 				// Move, get ranges

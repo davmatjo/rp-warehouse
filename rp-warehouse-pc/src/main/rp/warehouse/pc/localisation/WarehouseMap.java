@@ -31,8 +31,8 @@ public class WarehouseMap {
 	public WarehouseMap() {
 		final GridMap world = Warehouse.build();
 		// Generate the warehouseMap values using world.
-		for (int x = 0; x < world.getXSize(); x++) {
-			for (int y = 0; y < world.getYSize(); y++) {
+		for (byte x = 0; x < world.getXSize(); x++) {
+			for (byte y = 0; y < world.getYSize(); y++) {
 				// Create a point from the X and Y co-ordinates.
 				final Point point = new Point(x, y);
 				// Check if the position isn't blocked
