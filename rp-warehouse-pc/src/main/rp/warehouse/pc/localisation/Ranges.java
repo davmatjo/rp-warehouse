@@ -108,9 +108,14 @@ public class Ranges {
 	 * @param direction
 	 * @return
 	 */
-	public static byte getOpposite(byte direction) {
+	public static byte getOpposite(final byte direction) {
 		assert direction >= 0 && direction <= 4 : direction;
 		return opposite[direction];
+	}
+
+	public static Ranges fromArray(final float[] array) {
+		System.out.println(array[0] + ", " + array[1] + ", " + array[2] + ", " + array[3]);
+		return new Ranges(array[0], array[1], array[2], array[3]);
 	}
 
 	@Override

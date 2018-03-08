@@ -5,6 +5,7 @@ import java.util.Random;
 
 import lejos.geom.Point;
 import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.RobotLocation;
 
 /**
@@ -20,11 +21,13 @@ public class Localiser implements Localisation {
 
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
+	private final byte[] reverseRotation = new byte[] { 0, 3, 2, 1 };
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final byte MAX_RUNS = 10;
 	private byte runCounter = 0;
 	private final Random random = new Random();
 	private Byte previousDirection = null;
+	private final Communication comms;
 
 	/**
 	 * An implementation of the Localisation interface.
@@ -34,14 +37,14 @@ public class Localiser implements Localisation {
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
+		this.comms = comms;
 	}
 
 	@Override
 	public RobotLocation getPosition() {
 		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
-		Point testPoint = new Point(0, 2);
-		Ranges ranges = warehouseMap.getRanges(testPoint);
+		Ranges ranges = comms.getRanges();
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
@@ -56,16 +59,15 @@ public class Localiser implements Localisation {
 			previousDirection = direction;
 			final Point move = directionPoint[direction];
 			if (direction == Ranges.UP) {
-				// Move, get ranges
+				comms.sendMovement(Protocol.NORTH);
 			} else if (direction == Ranges.RIGHT) {
-				// Move, get ranges
+				comms.sendMovement(Protocol.EAST);
 			} else if (direction == Ranges.DOWN) {
-				// Move, get ranges
+				comms.sendMovement(Protocol.SOUTH);
 			} else {
-				// Move, get ranges
+				comms.sendMovement(Protocol.WEST);
 			}
-			testPoint = testPoint.add(move);
-			ranges = warehouseMap.getRanges(testPoint);
+			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
 		// Create the location of the robot using the first possible location from the

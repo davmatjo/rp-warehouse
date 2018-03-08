@@ -1,16 +1,16 @@
 package rp.warehouse.pc.communication;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Robot;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import rp.warehouse.pc.localisation.Ranges;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
@@ -176,16 +176,16 @@ public class Communication implements Runnable {
         }
     }
 
-    public float[] getRanges() {
+    public Ranges getRanges() {
         try {
             synchronized (waitForRanges) {
                 sendData(Protocol.PICKUP);
                 waitForRanges.wait();
-                return ranges;
+                return Ranges.fromArray(ranges);
             }
         } catch (InterruptedException e) {
             logger.error("Interrupted somehow: " + e.getMessage());
-            return ranges;
+            return Ranges.fromArray(ranges);
         }
     }
 
