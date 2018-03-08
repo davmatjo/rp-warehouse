@@ -1,27 +1,29 @@
 package rp.warehouse.pc.assignment;
 
+import rp.warehouse.pc.data.Task;
+
 public class Bid {
 
-	private Item item;
-	private int value;
+	private Task item;
 	private int owner;
+	private ItemOrder itemOrder;
 	
-	public Bid(Item item, int value, int owner) {
-		this.item = pick;
-		this.value = value;
+	public Bid(Task item, int owner, ItemOrder itemOrder) {
+		this.item = item;
 		this.owner = owner;
+		this.itemOrder = itemOrder;
 	}
 	
-	public Item getItem() {
+	public Task getItem() {
 		return item;
-	}
-	
-	public int getValue() {
-		return value;
 	}
 	
 	public int getOwner() {
 		return owner;
+	}
+	
+	public ItemOrder getItemOrder() {
+		return itemOrder;
 	}
 
 }
