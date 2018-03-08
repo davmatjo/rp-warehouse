@@ -10,9 +10,9 @@ import rp.util.Rate;
 
 public class MotionController implements Movement {
 
-	//temporary values until calibration is added
-	private int LEFT_LINE_LIMIT;
-	private int RIGHT_LINE_LIMIT;
+	// temporary values until calibration is added
+	private int leftLineLimit;
+	private int rightLineLimit;
 	private DifferentialPilot pilot;
 	private LightSensor leftSensor;
 	private LightSensor rightSensor;
@@ -31,7 +31,8 @@ public class MotionController implements Movement {
 
 		int rotation = 0;
 
-		//find out which way to turn based on the new direction and the direction the robot is facing
+		// find out which way to turn based on the new direction and the direction the
+		// robot is facing
 		switch (direction) {
 		case NORTH:
 			switch (previousDirection) {
@@ -96,61 +97,58 @@ public class MotionController implements Movement {
 		default:
 			return false;
 		}
-		
+
 		previousDirection = direction;
 		return travel(rotation);
 	}
-	
+
 	private boolean travel(int rotation) {
 		boolean junction = false;
-		
+
 		pilot.rotate(rotation);
 		pilot.setTravelSpeed(0.1);
 		pilot.forward();
-		
-		
+
 		Rate r = new Rate(20);
-		
+
 		while (!junction) {
-			
+
 			int leftValue = leftSensor.getNormalizedLightValue();
 			int rightValue = rightSensor.getNormalizedLightValue();
-			
-			//checks if a junction has been reached 
-			if (leftValue < LEFT_LINE_LIMIT && rightValue < RIGHT_LINE_LIMIT) {
+
+			// checks if a junction has been reached
+			if (leftValue < leftLineLimit && rightValue < rightLineLimit) {
 				pilot.stop();
 				junction = true;
 			}
-			//check is robot has gone off the line and adjust
-			else if (leftValue < LEFT_LINE_LIMIT) {
+			// check is robot has gone off the line and adjust
+			else if (leftValue < leftLineLimit) {
 				pilot.steer(50);
-			}
-			else if (rightValue <  RIGHT_LINE_LIMIT) {
-				pilot.steer(-50);;
+			} else if (rightValue < rightLineLimit) {
+				pilot.steer(-50);
+				;
 			} else {
-			    pilot.steer(0);
-            }
+				pilot.steer(0);
+			}
 
 			r.sleep();
 		}
-		//returns true once it has reached a junction
+		// returns true once it has reached a junction
 		pilot.travel(0.08);
 		return true;
 	}
 
+	// calibrates the sensors on startup.
 	private void calibrateSensors() {
-		
-		System.out.println("Put both sensors on a black line and press a button");
-		
+
+		System.out.println("Put both sensors on a black line and press a button.");
+
 		Button.waitForAnyPress();
-		
-		LEFT_LINE_LIMIT = leftSensor.getNormalizedLightValue();
-		RIGHT_LINE_LIMIT = rightSensor.getNormalizedLightValue();
+
+		leftLineLimit = leftSensor.getNormalizedLightValue();
+		rightLineLimit = rightSensor.getNormalizedLightValue();
+
+		System.out.println("Sensors have been calibrated!");
 	}
-	
-	
-	
-	
-	
-	
+
 }
