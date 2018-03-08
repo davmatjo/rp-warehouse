@@ -3,10 +3,9 @@ package rp.warehouse.pc.data;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import rp.util.Comparator;
 import rp.warehouse.pc.route.*;
 
-public class JobSelector implements Comparator<Job> {
+public class JobSelector {
 
 	private ArrayList<Job> jobs;
 	private boolean cancelled;
@@ -57,20 +56,7 @@ public class JobSelector implements Comparator<Job> {
 	}
 	
 	// The method that sorts the ArrayList of Jobs based on their total reward (for now). Will be extended to reward per coordinate.
-	public void sort() {
-		
-		
-		
+	public void sortByReward() {
+		Collections.sort(jobs, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
 	}
-
-	@Override
-	public int compare(Job a, Job b) {
-		if(totalReward(a) < totalReward(b))
-			return -1;
-		else if(totalReward(a) == totalReward(b))
-				return 0;
-		else return 1;
-	}
-
-	
 }
