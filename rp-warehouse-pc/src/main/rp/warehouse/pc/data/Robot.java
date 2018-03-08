@@ -164,6 +164,7 @@ public class Robot implements Runnable {
             if ( newWeight > WEIGHTLIMIT) {
                 logger.debug("To much cargo, going to drop off");
                 route = RoutePlan.planDropOff(this);
+                lastInstruction = -1;
                 dropOffCheck = true;
                 return false;
             }else if (newWeight == WEIGHTLIMIT) {
@@ -171,15 +172,17 @@ public class Robot implements Runnable {
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
                 currentItem = tasks.poll().getItem();
+                lastInstruction = -1;
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return true;
             }
             logger.debug("Picked up Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
-            logger.info("current weight if cargo " + currentWeightOfCargo);
+            logger.info("current weight of cargo " + currentWeightOfCargo);
             currentItem = tasks.poll().getItem();
             plan();
+            lastInstruction = -1;
             
             pickUpDone = true;
             return true;
@@ -203,6 +206,7 @@ public class Robot implements Runnable {
             if (tasks.peek()!=null) {// why?
                 logger.debug("Planning to get current item");
                 plan();
+                lastInstruction = -1;
             }
             currentWeightOfCargo=0;
             dropOffCheck = false;
