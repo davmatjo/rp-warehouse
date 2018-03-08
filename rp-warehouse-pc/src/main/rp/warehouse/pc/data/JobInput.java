@@ -77,7 +77,7 @@ public class JobInput {
             //get the item from the items table where 1st string in array is the item name
             Item currentItem = items.getItem(arrayList.get(0));
 
-            //add the location to the item
+            //add (set) the location to the item
             currentItem.setLocation(location);
 
 
@@ -103,21 +103,38 @@ public class JobInput {
             ArrayList<String> arrayList = new ArrayList<>(list.size());
             arrayList.addAll(list);
 
-            //create a new job using the first item in the arraylist as the name
-            Job job = new Job(arrayList.get(0));
+            //get the name of the job
             System.out.println("job name: " + arrayList.get(0));
+            String name = arrayList.get(0);
+
             //remove the name from the list
             arrayList.remove(0);
+
+            //create an arraylist to hold the tasks
+            ArrayList<Task> tasks = new ArrayList<Task>();
 
             //while the arraylist isnt empty
             while (arrayList.size() != 0) {
 
+                //get the item (find the item in items)
+                Item item = items.getItem(arrayList.get(0));
 
-                //create tasks here and add them to the jobslist of thr current job
-                //add the current job to the jobs class
-                break;
+                //get the count
+                Integer count = Integer.parseInt(arrayList.get(1));
+
+                //create a task from these two itmes
+                Task task = new Task(item, count);
+
+                //add tasks to the tasks lists
+                tasks.add(task);
+
 
             }
+
+            //create a Job
+            Job job = new Job(name, tasks);
+
+            //add the job to the jobs list
 
         }
         scanner.close();
