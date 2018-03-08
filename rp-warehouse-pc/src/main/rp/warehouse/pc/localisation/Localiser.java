@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import lejos.geom.Point;
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.RobotLocation;
 
 /**
@@ -28,7 +29,7 @@ public class Localiser implements Localisation {
 	/**
 	 * An implementation of the Localisation interface.
 	 */
-	public Localiser() {
+	public Localiser(Communication comms) {
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
