@@ -159,14 +159,12 @@ public class Robot implements Runnable {
      */
     private boolean pickUp(int numberOfItems) {
         logger.info("Starting pickUp");
-        if(numberOfItems != currentTask.getCount()) {
-            return false;
-        }
-        if (route.peek() == null && !dropOffCheck) {
+        if (route.peek() == null && !dropOffCheck  && numberOfItems == currentTask.getCount()) {
             logger.info("Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             if ( newWeight > WEIGHTLIMIT) {
                 logger.debug("To much cargo, going to drop off");
+                logger.error("Should not happen");
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return false;
@@ -180,12 +178,19 @@ public class Robot implements Runnable {
                 dropOffCheck = true;
                 return true;
             }
-            logger.debug("Picked up Item(s), continuing with tasks");
+            logger.debug("Picked up " + numberOfItems + " Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
             logger.info("current weight of cargo " + currentWeightOfCargo);
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
-            plan();
+            if(currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount()) > WEIGHTLIMIT) {
+                logger.info("Will not be able to fit the next item, going to drop off");
+                route = RoutePlan.planDropOff(this);
+                dropOffCheck = true;
+            }else {
+                plan();
+            } 
+          
             
             pickUpDone = true;
             return true;
