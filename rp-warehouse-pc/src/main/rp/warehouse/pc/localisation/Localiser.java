@@ -3,6 +3,8 @@ package rp.warehouse.pc.localisation;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import lejos.geom.Point;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
@@ -19,6 +21,7 @@ public class Localiser implements Localisation {
 
 	// Currently assumes that all robots are facing upwards relative to the map.
 
+	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
 	private final byte[] reverseRotation = new byte[] { 0, 3, 2, 1 };
@@ -47,6 +50,7 @@ public class Localiser implements Localisation {
 		Ranges ranges = comms.getRanges();
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
+		logger.debug("Possible points: " + possiblePoints);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
@@ -54,10 +58,12 @@ public class Localiser implements Localisation {
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
+			logger.debug("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
 			final byte direction = directions.get(random.nextInt(directions.size()));
 			previousDirection = direction;
 			final Point move = directionPoint[direction];
+			logger.debug("Chosen move: " + move);
 			if (direction == Ranges.UP) {
 				comms.sendMovement(Protocol.NORTH);
 			} else if (direction == Ranges.RIGHT) {
@@ -68,7 +74,9 @@ public class Localiser implements Localisation {
 				comms.sendMovement(Protocol.WEST);
 			}
 			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
+			logger.debug("Retrieved ranges: " + ranges);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
+			logger.debug("Filtered positions: " + possiblePoints);
 		}
 		// Create the location of the robot using the first possible location from the
 		// list of possible locations.
