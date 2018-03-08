@@ -74,7 +74,7 @@ public class RobotInterfaceController {
 		LCD.refresh();
 		switch (buttonInput)	{
 			case Protocol.OK:
-				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+				LCD.drawString("Amount confirmed", 0, 0);
 				/* The number of jobs is sent*/
 				if(waiting)	{
 					communicator.sendCommand(Protocol.PICKUP);
@@ -83,8 +83,9 @@ public class RobotInterfaceController {
 					jobAmount = 0;
 				}
 				else	{
-					LCD.drawString("Error: Robot not waiting for command", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+					LCD.drawString("Error: Robot not waiting for command", 0, 0);
 				}
+				break;
 			case LEFT:
 				LCD.drawString("Amount: " + (--jobAmount), 0, 0);
 				break;
