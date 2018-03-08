@@ -153,4 +153,7 @@ public class MotionController implements Movement {
 		System.out.println("Sensors have been calibrated!");
 	}
 
+	public void rotate() {
+		pilot.rotate(90);
+	}
 }

@@ -9,6 +9,8 @@ import rp.warehouse.pc.data.Robot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
@@ -18,7 +20,9 @@ public class Communication implements Runnable {
     private final DataOutputStream toNXT;
     private final Object waitForMovement = new Object();
     private final Object waitForPickup = new Object();
+    private final Object waitForRanges = new Object();
     private volatile int pickupCount = 0;
+    private final float[] ranges = new float[4];
     private boolean open = true;
 
     public Communication(String ID, String name, Robot robot) throws IOException {
@@ -100,6 +104,16 @@ public class Communication implements Runnable {
                     }
                     break;
                 }
+
+                case Protocol.LOCALISE: {
+                    for (int i=0; i < 4; i++) {
+                        ranges[i] = fromNXT.readFloat();
+                    }
+                    synchronized (waitForRanges) {
+                        ranges.notifyAll();
+                    }
+                    break;
+                }
             }
         }
     }
@@ -139,7 +153,7 @@ public class Communication implements Runnable {
                 logger.trace("Finished waiting");
             }
         } catch (InterruptedException e) {
-            System.err.println("Interrupted somehow: " + e.getMessage());
+            logger.error("Interrupted somehow: " + e.getMessage());
         }
     }
 
@@ -157,8 +171,21 @@ public class Communication implements Runnable {
                 return pickupCount;
             }
         } catch (InterruptedException e) {
-            System.err.println("Interrupted somehow: " + e.getMessage());
+            logger.error("Interrupted somehow: " + e.getMessage());
             return -1;
+        }
+    }
+
+    public float[] getRanges() {
+        try {
+            synchronized (waitForRanges) {
+                sendData(Protocol.PICKUP);
+                waitForRanges.wait();
+                return ranges;
+            }
+        } catch (InterruptedException e) {
+            logger.error("Interrupted somehow: " + e.getMessage());
+            return ranges;
         }
     }
 

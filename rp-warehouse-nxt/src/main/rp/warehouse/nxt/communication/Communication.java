@@ -3,9 +3,10 @@ package rp.warehouse.nxt.communication;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 //import rp.util.HashMap;
-import lejos.util.Delay;
 import rp.util.HashMap;
 import rp.warehouse.nxt.interaction.RobotInterfaceController;
+import rp.warehouse.nxt.localisation.Ranges;
+import rp.warehouse.nxt.motion.MotionController;
 import rp.warehouse.nxt.motion.Movement;
 
 import java.io.DataInputStream;
@@ -16,11 +17,12 @@ public class Communication extends Thread {
     private static final HashMap<Integer, Movement.Direction> commandTranslate = new HashMap<>();
     private final DataInputStream fromPC;
     private final DataOutputStream toPC;
-    private final Movement robotMovement;
+    private final MotionController robotMovement;
     private boolean open = true;
     private final RobotInterfaceController robotInterface;
+    private final Ranges rangeFind;
 
-    public Communication(Movement movement) {
+    public Communication(MotionController movement) {
         fillMap();
 
         System.out.println("Waiting on bluetooth");
@@ -32,6 +34,8 @@ public class Communication extends Thread {
 
         robotMovement = movement;
         robotInterface = new RobotInterfaceController(this);
+
+        rangeFind = new Ranges(robotMovement);
     }
 
     /**
@@ -75,6 +79,11 @@ public class Communication extends Thread {
                 sendCommand(1);
             } else if (command == Protocol.PICKUP) {
                 robotInterface.pickup();
+            } else if (command == Protocol.LOCALISE) {
+                float[] ranges = rangeFind.getRanges();
+                for (Float range : ranges) {
+                    sendFloat(range);
+                }
             }
         }
     }
@@ -85,10 +94,18 @@ public class Communication extends Thread {
      * @param command int defined in protocol. Must be >= CANCEL
      */
     public void sendCommand(int command) {
-//        assert !(command <= Protocol.WEST && command >= Protocol.NORTH);
-
         try {
             toPC.writeInt(command);
+            toPC.flush();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+    }
+
+    private void sendFloat(float data) {
+        try {
+            toPC.writeFloat(data);
             toPC.flush();
         } catch (IOException e) {
             System.err.println(e.getMessage());
