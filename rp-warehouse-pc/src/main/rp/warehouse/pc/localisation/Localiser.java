@@ -22,7 +22,7 @@ public class Localiser implements Localisation {
 
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final GridMap world = Warehouse.build();
-	private Point[] directionPoint = new Point[4];
+	private final Point[] directionPoint = new Point[4];
 	private final List<Point> blockedPoints = new ArrayList<Point>();
 	private final int MAX_RUNS = 10;
 	private int runCounter = 0;
@@ -111,7 +111,7 @@ public class Localiser implements Localisation {
 	 *            The change in position from <b>initial</b> to <b>next</b>.
 	 * @return The new list of possible positions of the robot.
 	 */
-	private List<Point> filterPositions(final List<Point> initial, List<Point> next, final Point change) {
+	private List<Point> filterPositions(final List<Point> initial, final List<Point> next, final Point change) {
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
 		next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contains(p));

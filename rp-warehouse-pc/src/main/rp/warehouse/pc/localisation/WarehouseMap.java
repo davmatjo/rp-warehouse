@@ -17,8 +17,8 @@ import lejos.geom.Point;
  */
 public class WarehouseMap {
 
-	private HashMap<Ranges, HashSet<Point>> positions = new HashMap<Ranges, HashSet<Point>>();
-	private HashMap<Point, Ranges> ranges = new HashMap<Point, Ranges>();
+	private final HashMap<Ranges, HashSet<Point>> positions = new HashMap<Ranges, HashSet<Point>>();
+	private final HashMap<Point, Ranges> ranges = new HashMap<Point, Ranges>();
 
 	/**
 	 * Method to add ranges and points to the warehouse map.
@@ -29,7 +29,7 @@ public class WarehouseMap {
 	 *            The point of which the ranges occur at.
 	 */
 	public void put(final Ranges ranges, final Point point) {
-		HashSet<Point> points = positions.getOrDefault(ranges, new HashSet<Point>());
+		final HashSet<Point> points = positions.getOrDefault(ranges, new HashSet<Point>());
 		points.add(point);
 		this.positions.put(ranges, points);
 		this.ranges.put(point, ranges);
@@ -59,7 +59,7 @@ public class WarehouseMap {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		// Iterate over the points of the warehouse.
 		final Iterator<Point> iterator = this.ranges.keySet().iterator();
 		while (iterator.hasNext()) {
