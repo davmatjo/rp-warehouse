@@ -76,7 +76,6 @@ public class Robot implements Runnable {
     }
     
     private void sendInstruction(){
-        updateLocation();
         comms.sendMovement(getCurrentInstruction());
         updateCurrentItem();
 
@@ -123,7 +122,7 @@ public class Robot implements Runnable {
      * Used to update the current item
      */
     private void updateCurrentItem() {
-
+        updateLocation();
         if (route.peek() == null) {
             logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
@@ -164,7 +163,6 @@ public class Robot implements Runnable {
             if ( newWeight > WEIGHTLIMIT) {
                 logger.debug("To much cargo, going to drop off");
                 route = RoutePlan.planDropOff(this);
-                lastInstruction = -1;
                 dropOffCheck = true;
                 return false;
             }else if (newWeight == WEIGHTLIMIT) {
@@ -172,7 +170,6 @@ public class Robot implements Runnable {
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
                 currentItem = tasks.poll().getItem();
-                lastInstruction = -1;
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return true;
@@ -182,7 +179,6 @@ public class Robot implements Runnable {
             logger.info("current weight of cargo " + currentWeightOfCargo);
             currentItem = tasks.poll().getItem();
             plan();
-            lastInstruction = -1;
             
             pickUpDone = true;
             return true;
