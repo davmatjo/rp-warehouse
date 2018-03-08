@@ -35,9 +35,9 @@ public class Localiser implements Localisation {
 	 *            The LineMap representation of the warehouse.
 	 */
 	public Localiser() {
-		directionPoint[Ranges.FRONT] = new Point(0, 1);
+		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
-		directionPoint[Ranges.BACK] = new Point(0, -1);
+		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 
 		// Populate blockedPoints with the Locations from the warehouse.
@@ -78,13 +78,14 @@ public class Localiser implements Localisation {
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
 			List<Integer> directions = ranges.getAvailableDirections();
+			// Choose a random direction from the list of available directions.
 			final int direction = directions.get(random.nextInt(directions.size()));
 			final Point move = directionPoint[direction];
-			if (direction == Ranges.FRONT) {
+			if (direction == Ranges.UP) {
 				// Move, get ranges
 			} else if (direction == Ranges.RIGHT) {
 				// Move, get ranges
-			} else if (direction == Ranges.BACK) {
+			} else if (direction == Ranges.DOWN) {
 				// Move, get ranges
 			} else {
 				// Move, get ranges
@@ -93,7 +94,8 @@ public class Localiser implements Localisation {
 			ranges = new Ranges(0, 2, 5, 2);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
-
+		// Create the location of the robot using the first possible location from the
+		// list of possible locations.
 		return new RobotLocation(possiblePoints.get(0), 0);
 	}
 
