@@ -80,7 +80,7 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot >= 0 && rot <= 3 : rot;
-		int[] store = new int[4];
+		final int[] store = new int[4];
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
