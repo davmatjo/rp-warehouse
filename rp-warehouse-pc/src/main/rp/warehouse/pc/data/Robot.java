@@ -53,7 +53,7 @@ public class Robot implements Runnable {
         this.name = name;
         this.pool = pool;
         this.tasks = newTasks;
-        this.currentItem = tasks.poll().item;
+        this.currentItem = tasks.poll().getItem();
         this.location = startingLocation;
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         
@@ -71,6 +71,7 @@ public class Robot implements Runnable {
         }
         logger.trace("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(20);
+        
         while (running) {
             logger.debug("Sending Next instruction");
             sendInstruction();
@@ -151,7 +152,7 @@ public class Robot implements Runnable {
         // cancelltems.add(getCurrentItem())
 
         // Clear all current instructions
-        // and start a nehttps://www.youtube.com/watch?v=L5gVFYmDWCkw one
+        // and start a new one
     }
     
     /**
@@ -173,7 +174,7 @@ public class Robot implements Runnable {
                 logger.debug("Picked up Item(s), cargo is full. Going to drop off");
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
-                currentItem = tasks.poll().item;// Ask Megan to change it
+                currentItem = tasks.poll().getItem();
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return true;
@@ -181,7 +182,7 @@ public class Robot implements Runnable {
             logger.debug("Picked up Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
             logger.info("current weight if cargo " + currentWeightOfCargo);
-            currentItem = tasks.poll().item;// Ask Megan to change it
+            currentItem = tasks.poll().getItem();
             plan();
             
             pickUpDone = true;
@@ -221,7 +222,12 @@ public class Robot implements Runnable {
             route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
             logger.error("No current Item");
-            route = null;
+            //route = null;
+            route.add(3);
+            route.add(4);
+            route.add(5);
+            route.add(6);
+            
         }
     }
     
@@ -263,6 +269,7 @@ public class Robot implements Runnable {
         // Check Job ID (Discard cancelled jobs "items" )
         return lastInstruction;
     }
-
+// Music to listen to while coding
+// https://www.youtube.com/watch?v=L5gVFYmDWCk
     
 }
