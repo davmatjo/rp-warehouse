@@ -93,7 +93,8 @@ public class Communication implements Runnable {
 
                 case Protocol.PICKUP: {
                     input = fromNXT.readInt();
-                    synchronized (waitForMovement) {
+                    logger.trace(name + ": Received " + input);
+                    synchronized (waitForPickup) {
                         pickupCount = input;
                         waitForPickup.notifyAll();
                     }

@@ -1,11 +1,10 @@
 package rp.warehouse.nxt.interaction;
 import rp.warehouse.nxt.communication.*;
-import rp.warehouse.nxt.motion.Movement;
 import rp.warehouse.nxt.RobotInterface;
 import lejos.nxt.*;
 
 
-public class RobotInterfaceController implements RobotInterface	{
+public class RobotInterfaceController {
 	
 	/* Two final variables are created to represent left and right in switch statements */
 	
@@ -25,15 +24,16 @@ public class RobotInterfaceController implements RobotInterface	{
 		command = 0;
 		jobAmount = 0;
 		communicator = theCommunicator;
+		main();
 	}
 	
 	/* In the main method the button listeners are created to listen to the buttons presses and command is changed depending on which one is pressed */
 	
-	public void main (String args[])		{
+	private void main() {
 		Button.ENTER.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
-				command = Protocol.OK;
+				buttonEvent(Protocol.OK);
 			}
 			@Override
 			public void buttonReleased(Button b) {
@@ -42,7 +42,7 @@ public class RobotInterfaceController implements RobotInterface	{
 		Button.LEFT.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
-				command = LEFT;
+				buttonEvent(LEFT);
 			}
 			@Override
 			public void buttonReleased(Button b) {
@@ -51,7 +51,7 @@ public class RobotInterfaceController implements RobotInterface	{
 		Button.RIGHT.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
-				command = RIGHT;
+				buttonEvent(RIGHT);
 			}
 			@Override
 			public void buttonReleased(Button b) {
@@ -60,7 +60,7 @@ public class RobotInterfaceController implements RobotInterface	{
 		Button.ESCAPE.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
-				command = Protocol.CANCEL;
+				buttonEvent(Protocol.CANCEL);
 			}
 			@Override
 			public void buttonReleased(Button b) {
@@ -68,14 +68,10 @@ public class RobotInterfaceController implements RobotInterface	{
 				
 			}
 		});
-		/* the method is called to start it with the value -1 so that it does not trigger any of the switch cases */
-		this.buttonPressed(-1);
-		
 	}
 
 	/*This method changes the display based on what the user presses */
-	@Override
-	public void displayScreen(int buttonInput) {
+	private void displayScreen(int buttonInput) {
 		LCD.clearDisplay();
 		switch (buttonInput)	{
 			case Protocol.OK:
@@ -83,6 +79,7 @@ public class RobotInterfaceController implements RobotInterface	{
 				LCD.refresh();
 				/* The number of jobs is sent*/
 				if(waiting)	{
+					communicator.sendCommand(Protocol.PICKUP);
 					communicator.sendCommand(jobAmount);
 					waiting = false;
 				}
@@ -102,30 +99,25 @@ public class RobotInterfaceController implements RobotInterface	{
 	}
 
 	/*This method is called at the end of the main and loops continuously changing which switch case it is depending on which button has been pressed */
-	@Override
-	public void buttonPressed(int command) {
-		while (true)	{
-			switch(command)	{
-				case Protocol.CANCEL:
-						communicator.sendCommand(Protocol.CANCEL);
-						command = -1;
-				case LEFT:
-						displayScreen(command);
-						command = -1;
-				case RIGHT:
-						displayScreen(command);
-						command = -1;
-				case Protocol.OK:
-						communicator.sendCommand(Protocol.PICKUP);
-						displayScreen(command);
-						command = -1;
-			}	
+	private void buttonEvent(int command) {
+		switch(command)	{
+			case Protocol.CANCEL:
+					communicator.sendCommand(Protocol.CANCEL);
+					break;
+			case LEFT:
+					displayScreen(command);
+					break;
+			case RIGHT:
+					displayScreen(command);
+					break;
+			case Protocol.OK:
+					displayScreen(command);
+					break;
 		}
 	}
 
-	@Override
 	public void pickup() {
-		
+		waiting = true;
 	}
 
 

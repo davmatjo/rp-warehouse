@@ -5,6 +5,7 @@ import lejos.nxt.comm.Bluetooth;
 //import rp.util.HashMap;
 import lejos.util.Delay;
 import rp.util.HashMap;
+import rp.warehouse.nxt.interaction.RobotInterfaceController;
 import rp.warehouse.nxt.motion.Movement;
 
 import java.io.DataInputStream;
@@ -17,7 +18,7 @@ public class Communication extends Thread {
     private final DataOutputStream toPC;
     private final Movement robotMovement;
     private boolean open = true;
-    // private final RobotInterface robotInterface;
+    private final RobotInterfaceController robotInterface;
 
     public Communication(Movement movement) {
         fillMap();
@@ -30,7 +31,7 @@ public class Communication extends Thread {
         toPC = connection.openDataOutputStream();
 
         robotMovement = movement;
-//         robotInterface = new RobotInterface(this);
+        robotInterface = new RobotInterfaceController(this);
     }
 
     /**
@@ -73,7 +74,7 @@ public class Communication extends Thread {
                 System.out.println("SEND: " + 1);
                 sendCommand(1);
             } else if (command == Protocol.PICKUP) {
-                //sendCommand(robotInterface.pickup());
+                robotInterface.pickup();
             }
         }
     }

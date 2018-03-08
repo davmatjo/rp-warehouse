@@ -4,5 +4,5 @@ public interface RobotInterface	{
 	
 	void buttonPressed(int command);
 	void displayScreen(int buttonInput);
-	int pickup();
+	void pickup();
 }
