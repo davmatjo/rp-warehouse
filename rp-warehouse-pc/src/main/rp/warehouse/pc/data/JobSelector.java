@@ -12,8 +12,7 @@ public class JobSelector implements Comparator<Job> {
 	private boolean cancelled;
 	private boolean predictedCancel;
 	private float value;
-	private static int MAX_WEIGHT = 50;
-
+	
 	public JobSelector(ArrayList<Job> jobs, int cancelled, boolean predictedCancel, float value) {
 		this.jobs = jobs;
 		this.predictedCancel = predictedCancel;
@@ -37,7 +36,7 @@ public class JobSelector implements Comparator<Job> {
 		return this.cancelled;
 	}
 
-	//A method for calculating the overall reward for a given Job j.
+	//A method for calculating the overall reward for a given Job j. 
 	public float totalReward(Job j) {
 		float total = 0;
 		for (Task t : j.getItems()) {
@@ -47,18 +46,7 @@ public class JobSelector implements Comparator<Job> {
 		return total = 0;
 	}
 	
-	//A method for calculating the overall weight for a given job J. Will be used for determining whether 
-	//a job is "overweight" or not. Will be used in the split method.
-	public float totalWeight(Job j) {
-
-		float total = 0;
-		for (Task t : j.getItems()) {
-			total = total + t.getItem().getWeight() * t.getCount();
-
-		}
-
-		return total = 0;
-	}
+	
 	//A method for counting how many items overall a job j needs to get.
 	public int totalItems(Job j) {
 		int total = 0;
@@ -68,17 +56,6 @@ public class JobSelector implements Comparator<Job> {
 		return total;
 	}
 	
-	// A method for splitting "overweight" jobs.
-	public void split() {
-		for(Job j: jobs) {
-			if(totalWeight(j) > MAX_WEIGHT) {
-				String oldName = j.getName();
-				// j.setName(oldName.concat("a");
-				Job job = new Job(oldName.concat("b"));
-				
-			}				
-		}		
-	}
 	// The method that sorts the ArrayList of Jobs based on their total reward (for now). Will be extended to reward per coordinate.
 	public void sort() {
 		
