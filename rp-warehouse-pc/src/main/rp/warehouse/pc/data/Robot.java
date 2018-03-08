@@ -5,8 +5,6 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
-import org.jfree.chart.title.LegendGraphic;
-
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -14,26 +12,26 @@ import java.util.concurrent.ExecutorService;
 public class Robot implements Runnable {
 
     // Communications
-    private final String ID;            // Communication ID
-    private final String name;          // Communication name
-    private Communication comms;  // Communication used to connect each robot to the a nxt brick
+    private final String ID;                    // Communication ID
+    private final String name;                  // Communication name
+    private Communication comms;                // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private Queue<Integer> route;       // Queue of directions for the current task
-    private int lastInstruction = -1;     // The current Instruction being done by robot (For WMI)
-    private RobotLocation location;     // Current location of the robot
+    private Queue<Integer> route;               // Queue of directions for the current task
+    private int lastInstruction = -1;           // The current Instruction being done by robot (For WMI)
+    private RobotLocation location;             // Current location of the robot
 
     // Job information
-    private Queue<Task> tasks;          // The queue of Tasks which need to be done
-    private Item currentItem;           // Current Item
+    private Queue<Task> tasks;                  // The queue of Tasks which need to be done
+    private Item currentItem;                   // Current Item
 
     // Robot Information
-    private final static float WEIGHTLIMIT = 50.0f;
-    private float currentWeightOfCargo = 0.0f;
-    private boolean dropOffCheck = false;
-    private boolean running = true;
-    private boolean dropOffDone = false;
-    private boolean pickUpDone = false;
+    private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
+    private float currentWeightOfCargo = 0.0f;  
+    private boolean dropOffCheck = false;       // Indicates if drop off needs to happen 
+    private boolean running = true;             
+    private boolean dropOffDone = false;        
+    private boolean pickUpDone = false;          
 
     //constructor just made for testing - this may be deleted later
     public Robot (RobotLocation startingLocation) {
@@ -135,8 +133,9 @@ public class Robot implements Runnable {
 
         if (route.peek() == null) {
             logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
+            Rate r = new Rate(20);
             while(!dropOffDone && !pickUpDone) {
-                
+                r.sleep();
             }
             logger.trace("Action completed");
             dropOffDone = false;
