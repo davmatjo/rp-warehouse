@@ -40,6 +40,8 @@ public class RoutePlan {
 	
 	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
+		Queue<Integer> plan = RoutePlan.plan;
+		RoutePlan.plan = new LinkedList<>();
 		return plan;
 	}
 	

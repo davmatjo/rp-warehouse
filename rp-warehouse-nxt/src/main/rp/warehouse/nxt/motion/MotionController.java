@@ -4,6 +4,7 @@ import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Delay;
 import rp.config.WheeledRobotConfiguration;
 import rp.systems.WheeledRobotSystem;
 import rp.util.Rate;
@@ -24,6 +25,9 @@ public class MotionController implements Movement {
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
 		calibrateSensors();
+		leftLineLimit = leftSensor.getLightValue() - 25;
+		rightLineLimit = rightSensor.getLightValue() - 25;
+
 	}
 
 	@Override
@@ -113,8 +117,8 @@ public class MotionController implements Movement {
 
 		while (!junction) {
 
-			int leftValue = leftSensor.getNormalizedLightValue();
-			int rightValue = rightSensor.getNormalizedLightValue();
+			int leftValue = leftSensor.getLightValue();
+			int rightValue = rightSensor.getLightValue();
 
 			// checks if a junction has been reached
 			if (leftValue < leftLineLimit && rightValue < rightLineLimit) {
@@ -142,11 +146,9 @@ public class MotionController implements Movement {
 	private void calibrateSensors() {
 
 		System.out.println("Put both sensors on a black line and press a button.");
-
-		Button.waitForAnyPress();
-
-		leftLineLimit = leftSensor.getNormalizedLightValue();
-		rightLineLimit = rightSensor.getNormalizedLightValue();
+		Delay.msDelay(300);
+		leftSensor.calibrateHigh();
+		rightSensor.calibrateHigh();
 
 		System.out.println("Sensors have been calibrated!");
 	}
