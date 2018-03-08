@@ -28,11 +28,11 @@ public class Ranges {
 	 * @param left
 	 *            The range <b>left</b> relative to the current position.
 	 */
-	public Ranges(final int up, final int right, final int down, final int left) {
-		this.ranges[0] = up;
-		this.ranges[1] = right;
-		this.ranges[2] = down;
-		this.ranges[3] = left;
+	public Ranges(final float up, final float right, final float down, final float left) {
+		this.ranges[0] = toGrid(up);
+		this.ranges[1] = toGrid(right);
+		this.ranges[2] = toGrid(down);
+		this.ranges[3] = toGrid(left);
 	}
 
 	/**
@@ -86,6 +86,19 @@ public class Ranges {
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
 		store[(LEFT + rot) % 4] = ranges.get(LEFT);
 		return new Ranges(store[0], store[1], store[2], store[3]);
+	}
+
+	/**
+	 * Method to convert a range reading to grid point distance - how many grid
+	 * points are within the range.
+	 * 
+	 * @param range
+	 *            The range reading from the sensor.
+	 * @return The amount of grid points within that range.
+	 */
+	private static int toGrid(final float range) {
+		final int gridRange = (int) Math.floor((range - 0.14f) / 0.3d);
+		return gridRange < 0 ? 0 : gridRange;
 	}
 
 	@Override
