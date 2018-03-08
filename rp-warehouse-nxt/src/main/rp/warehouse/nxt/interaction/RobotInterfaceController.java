@@ -103,12 +103,7 @@ public class RobotInterfaceController {
 				}
 				break;
 			case RIGHT:
-				if (jobAmount < 50)	{
-					LCD.drawString("Amount: " + (++jobAmount), 0, 0);
-				}
-				else	{
-					LCD.drawString("Error: Items cannot go above 50", 0, 0);
-				}
+				LCD.drawString("Amount: " + (++jobAmount), 0, 0);
 				break;
 		}
 	}
