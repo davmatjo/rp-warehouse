@@ -1,5 +1,6 @@
 package rp.warehouse.nxt.motion;
 
+import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.robotics.navigation.DifferentialPilot;
@@ -10,9 +11,8 @@ import rp.util.Rate;
 public class MotionController implements Movement {
 
 	//temporary values until calibration is added
-	private static final int LEFT_LINE_LIMIT = 400;
-	private static final int RIGHT_LINE_LIMIT = 400;
- 
+	private int LEFT_LINE_LIMIT;
+	private int RIGHT_LINE_LIMIT;
 	private DifferentialPilot pilot;
 	private LightSensor leftSensor;
 	private LightSensor rightSensor;
@@ -23,6 +23,7 @@ public class MotionController implements Movement {
 		this.leftSensor = new LightSensor(port1);
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
+		calibrateSensors();
 	}
 
 	@Override
@@ -139,6 +140,12 @@ public class MotionController implements Movement {
 
 	private void calibrateSensors() {
 		
+		System.out.println("Put both sensors on a black line and press a button");
+		
+		Button.waitForAnyPress();
+		
+		LEFT_LINE_LIMIT = leftSensor.getNormalizedLightValue();
+		RIGHT_LINE_LIMIT = rightSensor.getNormalizedLightValue();
 	}
 	
 	
