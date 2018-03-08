@@ -6,9 +6,13 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+
+import lejos.geom.Point;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
 
 /**
@@ -25,11 +29,13 @@ import rp.warehouse.pc.data.Task;
  *
  */
 public class RobotsControl {
-    private static final ArrayList<Robot> robots = new ArrayList<Robot>();
+    private static final ArrayList<Robot> robots = new ArrayList<>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi"};
-    private static final String[] robotIDs = new String[] {"NXT_0016531AFBE1"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
+    
+    private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
     /**
      * For: Job Selection When the the items have been split between robots (number
@@ -44,20 +50,25 @@ public class RobotsControl {
      * 
      */
     public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
-        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size());
+        logger.debug("Starting Robot Creation");
+
+        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
         int i = 0;
         
         for (Queue<Task> items : listOfItems) {
-            try {
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items);
-                robots.add(newRobot);
-                pool.execute(newRobot);
-            } catch (IOException e) {
-                System.err.println("Couldn't create robot named " + robotNames[i]);
-            }
+            logger.trace("Robot " + i + " is being created" );
+
+            Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));// Need to implement properly
+            robots.add(newRobot);
+            pool.execute(newRobot);
+            logger.debug("Robot " + robotNames[i] + " created");
 
             i++;
         }
+        logger.debug("Array of Robots has been created with " + robots.size() + " robots");
+
+        // Shut down the pool to prevent new threads being created, and allow the program to end
+        pool.shutdown();
     }
 
     /**

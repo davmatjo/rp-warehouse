@@ -126,11 +126,14 @@ public class MotionController implements Movement {
 			}
 			else if (rightValue <  RIGHT_LINE_LIMIT) {
 				pilot.steer(-50);;
-			} 
-			
+			} else {
+			    pilot.steer(0);
+            }
+
 			r.sleep();
 		}
-		//returns true once it has reached a junction 
+		//returns true once it has reached a junction
+		pilot.travel(0.08);
 		return true;
 	}
 
