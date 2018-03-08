@@ -13,7 +13,6 @@ public class RobotInterfaceController implements RobotInterface	{
 	private final static int RIGHT = 11;
 	private static int command;
 	private static int jobAmount;
-	private List<Int>
 	
 	/*An interface is created and the communicator to send it is created */
 	
@@ -92,7 +91,7 @@ public class RobotInterfaceController implements RobotInterface	{
 		}
 	}
 
-	/*This method is called at the end of the main and loops continously changing which switch case it is depending on which button has been pressed */
+	/*This method is called at the end of the main and loops continuously changing which switch case it is depending on which button has been pressed */
 	@Override
 	public void buttonPressed(int command) {
 		while (true)	{
