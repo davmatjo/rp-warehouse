@@ -7,11 +7,14 @@ import java.util.Queue;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.data.Warehouse;
 
 public class RoutePlan {
 	private Robot robot;
 	//private Map map;
 	private Location goalLocation;
+	//private ArrayList<Location> blocked = Warehouse.getBlockedLocations();
 	
 	int currentX;
 	int currentY;
@@ -20,7 +23,14 @@ public class RoutePlan {
 	ArrayList<RoutePlanLocation> toVisitList = new ArrayList<RoutePlanLocation>();
 	ArrayList<Location> visitedList = new ArrayList<Location>();
 	boolean goalNotFound = true;
-
+	static Queue<Integer> plan = new LinkedList<Integer>();
+	
+	public static void main (String[] args) {
+		Robot rob = new Robot(new RobotLocation(1, 1, 1));
+		Location goalLocation = new Location(5, 5);
+		//RoutePlan routePlan = new RoutePlan(rob, goalLocation);
+		System.out.println(plan(rob, goalLocation));
+	}
 	
 	public RoutePlan(Robot robot,/*Map map,*/ Location goalLocation) {
 		this.robot = robot;
@@ -37,30 +47,6 @@ public class RoutePlan {
 	
 	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
-		List<Location> locations = routePlan.getVisitedList();
-		int prevX = locations.get(0).getX();
-		int prevY = locations.get(0).getY();
-		locations.remove(0);
-		
-		Queue<Integer> plan = new LinkedList<Integer>();
-		for (Location l : locations) {
-			int currX = l.getX();
-			int currY = l.getY();
-			
-			if (currX - prevX == 1) {
-				plan.offer(Protocol.EAST);
-			} else if (currX - prevX == -1) {
-				plan.offer(Protocol.WEST);
-			} else if (currY - prevY == 1) {
-				plan.offer(Protocol.NORTH);
-			} else if (currY - prevY == -1) {
-				plan.offer(Protocol.SOUTH);
-			}
-			
-			prevX = currX;
-			prevY = currY;
-		}
-		
 		return plan;
 	}
 	
@@ -88,7 +74,7 @@ public class RoutePlan {
 			addToList(westLocation);
 			
 			//now, we visit the cheapest-path-cost location; we store it in 'visitedList'
-			visitCheapestLocationBasedOnPathCost();			
+			visitCheapestLocationBasedOnPathCost(currentX, currentY);			
 		}
 		
 		//now, we're out of the while loop - the goal has been found.
@@ -106,6 +92,7 @@ public class RoutePlan {
 		if (isValid(location)) {
 			location.setPathCost(goalLocation);
 			toVisitList.add(location);	
+			
 		}
 		
 		/*this goal check is made AFTER the validity check above, so that if the location sent is the goal location,
@@ -116,23 +103,45 @@ public class RoutePlan {
 		}
 	}
 	
-	public boolean isValid(Location location) {
+	public boolean isValid(RoutePlanLocation location) {
 		
 		int x = location.getX();
 		int y = location.getY();
 		
 		//assuming the grid size
-		final int MAX_X = 6;
-		final int MAX_Y = 6;
-
+		final int MAX_X = 10;
+		final int MAX_Y = 10;
 		
-		if (x >= 0 && y >= 0 && x <= MAX_X && y <= MAX_Y && visitedList.contains(location) == false) {
-			
-			//now check for obstacles (can't do now because I don't have the map)
-			//might even need Bluetooth to check for robots in the path
-			
-			return true;
+		boolean locationIsBlocked = false;
+
+		/*for (int i = 0; i < blocked.size(); i ++) {
+			if ((blocked.get(i).getX() == x && blocked.get(i).getY() == y)) {
+				locationIsBlocked = true;
+			}
 		}
+		
+		for (int i = 0; i < visitedList.size(); i++) {
+			
+			if (visitedList.get(i).getX() == x && visitedList.get(i).getY() == y) {
+				locationIsBlocked = true;
+			}
+			
+		}*/
+		
+		
+		if (
+			x >= 0
+			&& y >= 0
+			&& x <= MAX_X
+			&& y <= MAX_Y
+			&& visitedList.contains(location) == false
+			&& locationIsBlocked == false
+			)
+			{	
+				//now check for obstacles (can't do now because I don't have the map)
+				//might even need Bluetooth to check for robots in the path
+				return true;
+			}
 		
 		else return false;	
 	}
@@ -150,7 +159,7 @@ public class RoutePlan {
 		else return false;
 	}
 	
-	public void visitCheapestLocationBasedOnPathCost() {
+	public void visitCheapestLocationBasedOnPathCost(int prevX, int prevY) {
 		
 		RoutePlanLocation cheapestLocation = toVisitList.get(0);
 		int cheapestPathCost = toVisitList.get(0).getPathCost();
@@ -170,11 +179,27 @@ public class RoutePlan {
 		
 		System.out.println("Visited: " + cheapestLocation);
 		visitedList.add(cheapestLocation);
+		cheapestLocation.setHasBeenVisited(true);
+		//blocked.add(cheapestLocation);
 		
 		//update the location so now we're at the new location we're moving to
 		currentX = cheapestLocation.getX();
 		currentY = cheapestLocation.getY();
 		//currentDirection = cheapestLocation.getDirection();
+		
+		
+		if (currentX - prevX == 1) {
+			plan.offer(Protocol.EAST);
+		} else if (currentX - prevX == -1) {
+			plan.offer(Protocol.WEST);
+		} else if (currentY - prevY == 1) {
+			plan.offer(Protocol.NORTH);
+		} else if (currentY - prevY == -1) {
+			plan.offer(Protocol.SOUTH);
+		}
+		
+		
+		
 		
 		toVisitList = new ArrayList<RoutePlanLocation>();
 	}
