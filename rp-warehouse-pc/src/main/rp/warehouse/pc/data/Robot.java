@@ -3,6 +3,7 @@ package rp.warehouse.pc.data;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.localisation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
@@ -55,9 +56,10 @@ public class Robot implements Runnable {
         this.tasks = newTasks;
         this.currentTask = tasks.poll();
         this.currentItem = currentTask.getItem();
-        this.location = startingLocation;
-        logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         this.comms = new Communication(ID, name, this);
+        Localiser loc = new Localiser(comms);
+        this.location = loc.getPosition();// startingLocation;
+        logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         pool.execute(comms);
         plan();
 
