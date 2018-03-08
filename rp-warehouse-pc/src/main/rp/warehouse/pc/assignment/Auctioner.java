@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
+
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
@@ -27,6 +29,8 @@ public class Auctioner {
 	private ArrayList<Job> jobs;
 	private ArrayList<Robot> robots;
 	private final ArrayList<Location> dropLocations;
+	
+	private static final Logger logger = Logger.getLogger(Auctioner.class);
 
 	/**
 	 * Constructor
@@ -54,11 +58,13 @@ public class Auctioner {
 
 		Job job = jobs.get(0);
 		jobs.remove(0);
+		logger.debug("Assigning next job");
 
 		ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
 		ArrayList<Task> unassignedItems = job.getItems();
 
 		Location dropLocation = getBestDropLocation(unassignedItems);
+		logger.debug("Job drop location chosen: " + dropLocation.getX() + ", " + dropLocation.getY());
 
 		while (!unassignedItems.isEmpty()) {
 			ArrayList<Bid> bids = new ArrayList<Bid>();
@@ -73,8 +79,10 @@ public class Auctioner {
 			}
 			assignedItems.get(winner.getOwner()).add(winner.getItem());
 			unassignedItems.remove(winner.getItem());
+			logger.trace("Item assigned to robot " + robots.get(winner.getOwner()).getID());
 
 		}
+		logger.debug("All items assigned");
 		// set robots off
 		// also robots need to receive the drop location
 
@@ -111,7 +119,7 @@ public class Auctioner {
 	}
 
 	/**
-	 * 
+	 * Gets the item order which gives the lowest cost
 	 * 
 	 * @param item
 	 *            The item being considered
@@ -123,8 +131,7 @@ public class Auctioner {
 	 *            The chosen drop location
 	 * @return The lowest cost order with considered item
 	 */
-	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation,
-			Location dropLocation) {
+	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation, Location dropLocation) {
 		final LinkedList<Task> current = new LinkedList<Task>(currentPicks);
 
 		int lowest = Integer.MAX_VALUE;

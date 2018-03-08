@@ -39,7 +39,7 @@ public class SimpleAssigner {
 
 			Job job = jobs.get(0);
 			jobs.remove(0);
-			logger.trace("Next job");
+			logger.debug("Next job");
 
 			ArrayList<Task> unassignedItems = job.getItems();
 
@@ -59,7 +59,7 @@ public class SimpleAssigner {
 			logger.trace("All items from job assigned");
 
 		}
-		logger.trace("All jobs assigned");
+		logger.debug("All jobs assigned");
 		RobotsControl.addRobots(assignedItems);
 
 	}
