@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Ranges {
 
-	public final static int FRONT = 0, RIGHT = 1, BACK = 2, LEFT = 3;
+	public final static int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
 	private int[] ranges = new int[4];
 
 	/**
@@ -43,7 +43,7 @@ public class Ranges {
 	 * @return The range in the given direction.
 	 */
 	public int get(final int direction) {
-		assert direction <= LEFT && direction >= FRONT : direction;
+		assert direction <= LEFT && direction >= UP : direction;
 		return ranges[direction];
 	}
 
@@ -55,11 +55,11 @@ public class Ranges {
 	public List<Integer> getAvailableDirections() {
 		List<Integer> dirs = new ArrayList<Integer>();
 		if (ranges[0] > 0)
-			dirs.add(FRONT);
+			dirs.add(UP);
 		if (ranges[1] > 0)
 			dirs.add(RIGHT);
 		if (ranges[2] > 0)
-			dirs.add(BACK);
+			dirs.add(DOWN);
 		if (ranges[3] > 0)
 			dirs.add(LEFT);
 		return dirs;
@@ -80,12 +80,17 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot >= 0 && rot <= 3 : rot;
-		int[] store = new int[4];
-		store[(FRONT + rot) % 4] = ranges.get(FRONT);
+		final int[] store = new int[4];
+		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
-		store[(BACK + rot) % 4] = ranges.get(BACK);
+		store[(DOWN + rot) % 4] = ranges.get(DOWN);
 		store[(LEFT + rot) % 4] = ranges.get(LEFT);
 		return new Ranges(store[0], store[1], store[2], store[3]);
+	}
+
+	@Override
+	public String toString() {
+		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
 	}
 
 }
