@@ -18,6 +18,7 @@ public class JobInput {
 
     //create the objects that will hold the items/jobs/etc
     Items items = new Items();
+    Jobs jobs = new Jobs();
 
     //will be passed the location of the files as strings and recieve the files?
     JobInput(String itemsLocation, String jobsLocation, String locationsLocation, String cancellationsLocation) {
@@ -135,6 +136,7 @@ public class JobInput {
             Job job = new Job(name, tasks);
 
             //add the job to the jobs list
+            jobs.addJob(job);
 
         }
         scanner.close();
