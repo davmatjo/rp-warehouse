@@ -24,6 +24,7 @@ public class Robot implements Runnable {
     // Job information
     private Queue<Task> tasks;                  // The queue of Tasks which need to be done
     private Item currentItem;                   // Current Item
+    private Task currentTask;
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
@@ -52,7 +53,8 @@ public class Robot implements Runnable {
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
-        this.currentItem = tasks.poll().getItem();
+        this.currentTask = tasks.poll();
+        this.currentItem = currentTask.getItem();
         this.location = startingLocation;
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         this.comms = new Communication(ID, name, this);
@@ -157,11 +159,12 @@ public class Robot implements Runnable {
      */
     private boolean pickUp(int numberOfItems) {
         logger.info("Starting pickUp");
-        if (route.peek() == null && !dropOffCheck) {
+        if (route.peek() == null && !dropOffCheck  && numberOfItems == currentTask.getCount()) {
             logger.info("Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             if ( newWeight > WEIGHTLIMIT) {
                 logger.debug("To much cargo, going to drop off");
+                logger.error("Should not happen");
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return false;
@@ -169,16 +172,25 @@ public class Robot implements Runnable {
                 logger.debug("Picked up Item(s), cargo is full. Going to drop off");
                 currentWeightOfCargo = newWeight;
                 // Go back to drop off
-                currentItem = tasks.poll().getItem();
+                this.currentTask = tasks.poll();
+                this.currentItem = currentTask.getItem();
                 route = RoutePlan.planDropOff(this);
                 dropOffCheck = true;
                 return true;
             }
-            logger.debug("Picked up Item(s), continuing with tasks");
+            logger.debug("Picked up " + numberOfItems + " Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
             logger.info("current weight of cargo " + currentWeightOfCargo);
-            currentItem = tasks.poll().getItem();
-            plan();
+            this.currentTask = tasks.poll();
+            this.currentItem = currentTask.getItem();
+            if(currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount()) > WEIGHTLIMIT) {
+                logger.info("Will not be able to fit the next item, going to drop off");
+                route = RoutePlan.planDropOff(this);
+                dropOffCheck = true;
+            }else {
+                plan();
+            } 
+          
             
             pickUpDone = true;
             return true;
