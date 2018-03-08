@@ -14,7 +14,8 @@ public interface Localisation {
 	 * Method to get the estimated position with the highest probability.
 	 * 
 	 * @return The estimated position of the robot.
+	 * @throws NoIdeaException
 	 */
-	public RobotLocation getPosition();
+	public RobotLocation getPosition() throws NoIdeaException;
 
 }

@@ -41,7 +41,7 @@ public class Localiser implements Localisation {
 	}
 
 	@Override
-	public RobotLocation getPosition() {
+	public RobotLocation getPosition() throws NoIdeaException {
 		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
 		Ranges ranges = comms.getRanges();
@@ -72,7 +72,7 @@ public class Localiser implements Localisation {
 		}
 		// Create the location of the robot using the first possible location from the
 		// list of possible locations.
-		return new RobotLocation(possiblePoints.get(0), 90);
+		return new RobotLocation(possiblePoints.get(0), Protocol.NORTH);
 	}
 
 	/**
