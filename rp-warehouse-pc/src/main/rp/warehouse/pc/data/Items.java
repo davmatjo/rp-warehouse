@@ -2,12 +2,11 @@
 
 package rp.warehouse.pc.data;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
 
 public class Items {
 
-    private ConcurrentMap<String, Item> userTable = new ConcurrentHashMap<String, Item>();
+    private HashMap<String, Item> userTable = new HashMap<String, Item>();
 
     //method to add a new item
     public void add(String name, Item item) {

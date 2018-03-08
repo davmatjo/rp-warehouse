@@ -18,13 +18,24 @@ public class JobInput {
 
     //create the objects that will hold the items/jobs/etc
     Items items = new Items();
+    Jobs jobs = new Jobs();
 
     //will be passed the location of the files as strings and recieve the files?
-    JobInput(String itemsLocation, String jobsLocation, String locationsLocation, String cancellationsLocation) {
+    JobInput() {
         this.itemsLocation = itemsLocation;
         this.jobsLocation = jobsLocation;
         this.locationsLocation = locationsLocation;
         this.cancellationsLocation = cancellationsLocation;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+
+        JobInput jobInput = new JobInput();
+        jobInput.readItems();
+        jobInput.readLocations();
+        jobInput.readJobs();
+        System.out.println("");
+
     }
 
 
@@ -72,12 +83,12 @@ public class JobInput {
 
             //create a new location where:
             //2nd string = x, 3rd string = y
-            Location location = new Location(Integer.parseInt(arrayList.get(1)), Integer.parseInt(arrayList.get(2)));
+            Location location = new Location(Integer.parseInt(arrayList.get(0)), Integer.parseInt(arrayList.get(1)));
 
             //get the item from the items table where 1st string in array is the item name
-            Item currentItem = items.getItem(arrayList.get(0));
+            Item currentItem = items.getItem(arrayList.get(2));
 
-            //add the location to the item
+            //add (set) the location to the item
             currentItem.setLocation(location);
 
 
@@ -103,24 +114,72 @@ public class JobInput {
             ArrayList<String> arrayList = new ArrayList<>(list.size());
             arrayList.addAll(list);
 
-            //create a new job using the first item in the arraylist as the name
-            Job job = new Job(arrayList.get(0));
-            System.out.println("job name: " + arrayList.get(0));
+            //get the name of the job
+//            System.out.println("job name: " + arrayList.get(0));
+            String name = arrayList.get(0);
+
             //remove the name from the list
             arrayList.remove(0);
 
+            //create an arraylist to hold the tasks
+            ArrayList<Task> tasks = new ArrayList<Task>();
+
             //while the arraylist isnt empty
-            while (arrayList.size() != 0) {
+            while (arrayList.size() > 0) {
 
+                //get the item (find the item in items)
+                Item item = items.getItem(arrayList.get(0));
 
-                //create tasks here and add them to the jobslist of thr current job
-                //add the current job to the jobs class
-                break;
+                //get the count
+                Integer count = Integer.parseInt(arrayList.get(1));
+
+                //create a task from these two itmes
+                Task task = new Task(item, count, name);
+
+                //add tasks to the tasks lists
+                tasks.add(task);
+
+                arrayList.remove(0);
+                arrayList.remove(0);
+
 
             }
 
+            //create a Job
+            Job job = new Job(name, tasks);
+
+            //add the job to the jobs list
+            jobs.addJob(job);
+
         }
         scanner.close();
+
+    }
+
+    public void readCancellations() throws FileNotFoundException {
+
+        //read in cancellations
+        Scanner scanner = new Scanner(new File(home + "/Documents/rp-warehouse/rp-warehouse-pc/src/main/rp/warehouse/pc/data/cancellations.csv"));
+
+        //for every line
+        while(scanner.hasNext()) {
+
+            String line = scanner.next();
+            //split the above string into an array of strings:
+            List<String> list = Arrays.asList(line.split(","));
+            //convert that list to an arraylist to make it easier to work with
+            ArrayList<String> arrayList = new ArrayList<>(list.size());
+            arrayList.addAll(list);
+
+            //first item = job, second item = cancelled
+            //get the job from the jobs list
+//            jobs.getJob(arrayList.get(1));
+
+            //add to cancellations
+
+        }
+
+
 
     }
 
