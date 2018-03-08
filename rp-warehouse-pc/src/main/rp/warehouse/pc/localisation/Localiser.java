@@ -1,13 +1,10 @@
 package rp.warehouse.pc.localisation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import lejos.geom.Point;
-import rp.robotics.mapping.GridMap;
 import rp.warehouse.pc.data.RobotLocation;
-import rp.warehouse.pc.data.Warehouse;
 
 /**
  * An implementation of the localisation interface. Used to actually calculate
@@ -21,50 +18,20 @@ public class Localiser implements Localisation {
 	// Currently assumes that all robots are facing upwards relative to the map.
 
 	private final WarehouseMap warehouseMap = new WarehouseMap();
-	private final GridMap world = Warehouse.build();
 	private final Point[] directionPoint = new Point[4];
-	private final List<Point> blockedPoints = new ArrayList<Point>();
+	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final int MAX_RUNS = 10;
 	private int runCounter = 0;
 	private final Random random = new Random();
 
 	/**
 	 * An implementation of the Localisation interface.
-	 * 
-	 * @param warehouse
-	 *            The LineMap representation of the warehouse.
 	 */
 	public Localiser() {
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
-
-		// Populate blockedPoints with the Locations from the warehouse.
-		Warehouse.getBlockedLocations().forEach(l -> blockedPoints.add(l.toPoint()));
-
-		// Generate the warehouseMap values using world.
-		// One more problem with git and I'm making my own version control software.
-		for (int x = 0; x < world.getXSize(); x++) {
-			for (int y = 0; y < world.getYSize(); y++) {
-				// Create a point from the X and Y co-ordinates.
-				final Point point = new Point(x, y);
-				// Check if the position isn't blocked
-				if (!blockedPoints.contains(point)) {
-					// Take the UP, RIGHT, DOWN and LEFT readings.
-					// Casted to ints to remove floating point (stick to grid).
-					final int up = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
-					final int right = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
-					final int down = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
-					final int left = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
-					// Create a Ranges object from these readings.
-					final Ranges ranges = new Ranges(up, right, down, left);
-
-					// Store them in the warehouse map.
-					warehouseMap.put(ranges, point);
-				}
-			}
-		}
 	}
 
 	@Override
