@@ -58,11 +58,15 @@ public class RobotsControl {
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
-            Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));// Need to implement properly
-            robots.add(newRobot);
-            pool.execute(newRobot);
-            logger.debug("Robot " + robotNames[i] + " created");
-
+            Robot newRobot = null;// Need to implement properly
+            try {
+                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));
+                robots.add(newRobot);
+                pool.execute(newRobot);
+                logger.debug("Robot " + robotNames[i] + " created");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             i++;
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");

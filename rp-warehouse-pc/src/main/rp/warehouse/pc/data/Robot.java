@@ -16,7 +16,6 @@ public class Robot implements Runnable {
     // Communications
     private final String ID;            // Communication ID
     private final String name;          // Communication name
-    private final ExecutorService pool;
     private Communication comms;  // Communication used to connect each robot to the a nxt brick
 
     // Route information
@@ -48,27 +47,21 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) {
+    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) throws IOException {
         this.ID = ID;
         this.name = name;
-        this.pool = pool;
         this.tasks = newTasks;
         this.currentItem = tasks.poll().getItem();
         this.location = startingLocation;
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
-        
+        this.comms = new Communication(ID, name, this);
+        pool.execute(comms);
         plan();
 
     }
 
     // Runs indefinitely and sends commands to Communication
     public void run() {
-        try {
-            init();
-        } catch (IOException e) {
-            logger.error("Couldn't connect to: " + name);
-            running = false;
-        }
         logger.trace("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(20);
         
@@ -229,11 +222,6 @@ public class Robot implements Runnable {
             route.add(6);
             
         }
-    }
-    
-    private void init() throws IOException {
-        this.comms = new Communication(ID, name, this);
-        pool.execute(comms);
     }
     
     /**
