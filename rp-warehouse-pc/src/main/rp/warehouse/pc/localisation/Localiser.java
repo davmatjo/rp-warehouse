@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import lejos.geom.Point;
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.RobotLocation;
 
 /**
@@ -20,14 +21,15 @@ public class Localiser implements Localisation {
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
-	private final int MAX_RUNS = 10;
-	private int runCounter = 0;
+	private final byte MAX_RUNS = 10;
+	private byte runCounter = 0;
 	private final Random random = new Random();
+	private Byte previousDirection = null;
 
 	/**
 	 * An implementation of the Localisation interface.
 	 */
-	public Localiser() {
+	public Localiser(Communication comms) {
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
@@ -38,15 +40,20 @@ public class Localiser implements Localisation {
 	public RobotLocation getPosition() {
 		// Assuming they all face up initially
 		// Get the readings from the sensors (using dummy values now)
-		Ranges ranges = new Ranges(1, 2, 4, 2);
+		Point testPoint = new Point(0, 2);
+		Ranges ranges = warehouseMap.getRanges(testPoint);
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
-			List<Integer> directions = ranges.getAvailableDirections();
+			List<Byte> directions = ranges.getAvailableDirections();
+			if (runCounter > 1) {
+				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
+			}
 			// Choose a random direction from the list of available directions.
-			final int direction = directions.get(random.nextInt(directions.size()));
+			final byte direction = directions.get(random.nextInt(directions.size()));
+			previousDirection = direction;
 			final Point move = directionPoint[direction];
 			if (direction == Ranges.UP) {
 				// Move, get ranges
@@ -57,13 +64,13 @@ public class Localiser implements Localisation {
 			} else {
 				// Move, get ranges
 			}
-			// Dummy range for now
-			ranges = new Ranges(0, 2, 5, 2);
+			testPoint = testPoint.add(move);
+			ranges = warehouseMap.getRanges(testPoint);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 		}
 		// Create the location of the robot using the first possible location from the
 		// list of possible locations.
-		return new RobotLocation(possiblePoints.get(0), 0);
+		return new RobotLocation(possiblePoints.get(0), 90);
 	}
 
 	/**

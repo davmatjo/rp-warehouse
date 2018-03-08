@@ -2,7 +2,6 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +20,7 @@ import rp.warehouse.pc.data.Warehouse;
  */
 public class WarehouseMap {
 
-	private final HashMap<Ranges, HashSet<Point>> positions = new HashMap<Ranges, HashSet<Point>>();
+	private final HashMap<Ranges, ArrayList<Point>> positions = new HashMap<Ranges, ArrayList<Point>>();
 	private final HashMap<Point, Ranges> ranges = new HashMap<Point, Ranges>();
 	private static final List<Point> blockedPoints = Warehouse.getBlockedLocations().stream().map(Location::toPoint)
 			.collect(Collectors.toList());
@@ -32,8 +31,8 @@ public class WarehouseMap {
 	public WarehouseMap() {
 		final GridMap world = Warehouse.build();
 		// Generate the warehouseMap values using world.
-		for (int x = 0; x < world.getXSize(); x++) {
-			for (int y = 0; y < world.getYSize(); y++) {
+		for (byte x = 0; x < world.getXSize(); x++) {
+			for (byte y = 0; y < world.getYSize(); y++) {
 				// Create a point from the X and Y co-ordinates.
 				final Point point = new Point(x, y);
 				// Check if the position isn't blocked
@@ -63,7 +62,7 @@ public class WarehouseMap {
 	 *            The point of which the ranges occur at.
 	 */
 	private void put(final Ranges ranges, final Point point) {
-		final HashSet<Point> points = positions.getOrDefault(ranges, new HashSet<Point>());
+		final ArrayList<Point> points = positions.getOrDefault(ranges, new ArrayList<Point>());
 		points.add(point);
 		this.positions.put(ranges, points);
 		this.ranges.put(point, ranges);
@@ -76,8 +75,8 @@ public class WarehouseMap {
 	 *            The ranges to check for.
 	 * @return The points matching the ranges given.
 	 */
-	public List<Point> getPoints(final Ranges ranges) {
-		return new ArrayList<Point>(this.positions.get(ranges));
+	public ArrayList<Point> getPoints(final Ranges ranges) {
+		return this.positions.get(ranges);
 	}
 
 	/**

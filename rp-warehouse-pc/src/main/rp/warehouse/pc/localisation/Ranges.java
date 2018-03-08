@@ -2,6 +2,7 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class to store the ranges from all directions. Used in partnership with a
@@ -12,8 +13,9 @@ import java.util.List;
  */
 public class Ranges {
 
-	public final static int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
-	private int[] ranges = new int[4];
+	public final static byte UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
+	private final static byte[] opposite = new byte[] { 2, 3, 0, 1 };
+	private byte[] ranges = new byte[4];
 
 	/**
 	 * Create an instance of Ranges given the up, right, down and left ranges to be
@@ -42,7 +44,7 @@ public class Ranges {
 	 *            The direction of which to return the range.
 	 * @return The range in the given direction.
 	 */
-	public int get(final int direction) {
+	public byte get(final byte direction) {
 		assert direction <= LEFT && direction >= UP : direction;
 		return ranges[direction];
 	}
@@ -52,8 +54,8 @@ public class Ranges {
 	 * 
 	 * @return The directions of which can be travelled without collisions.
 	 */
-	public List<Integer> getAvailableDirections() {
-		List<Integer> dirs = new ArrayList<Integer>();
+	public List<Byte> getAvailableDirections() {
+		List<Byte> dirs = new ArrayList<Byte>();
 		if (ranges[0] > 0)
 			dirs.add(UP);
 		if (ranges[1] > 0)
@@ -80,7 +82,7 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot >= 0 && rot <= 3 : rot;
-		final int[] store = new int[4];
+		final byte[] store = new byte[4];
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
@@ -96,14 +98,45 @@ public class Ranges {
 	 *            The range reading from the sensor.
 	 * @return The amount of grid points within that range.
 	 */
-	private static int toGrid(final float range) {
-		final int gridRange = (int) Math.floor((range - 0.14f) / 0.3d);
+	private static byte toGrid(final float range) {
+		final byte gridRange = (byte) Math.floor((range - 0.1f) / 0.3d);
 		return gridRange < 0 ? 0 : gridRange;
+	}
+
+	/**
+	 * 
+	 * @param direction
+	 * @return
+	 */
+	public static byte getOpposite(byte direction) {
+		assert direction >= 0 && direction <= 4 : direction;
+		return opposite[direction];
 	}
 
 	@Override
 	public String toString() {
 		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (!(obj instanceof Ranges)) {
+			return false;
+		} else {
+			Ranges other = (Ranges) obj;
+			for (byte i = 0; i < 4; i++) {
+				if (get(i) != other.get(i))
+					return false;
+			}
+			return true;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ranges[0], ranges[1], ranges[2], ranges[3]);
 	}
 
 }
