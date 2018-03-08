@@ -3,15 +3,19 @@ package rp.warehouse.pc.route;
 import rp.warehouse.pc.data.Location;
 
 public class RoutePlanLocation extends Location{
+	
+	private boolean hasBeenVisited;
 
 	public RoutePlanLocation(int x, int y) {
 		super(x, y);
 		// TODO Auto-generated constructor stub
 		
+		hasBeenVisited = false;
 		
 	}
 	
 	private int pathCost;
+	//private boolean hasBeenVisited = false;
 	
 	public void setPathCost(Location goalLocation) {
 		int xDiff = Math.abs(goalLocation.getX() - getX());
@@ -31,6 +35,18 @@ public class RoutePlanLocation extends Location{
 	public String toString() {
 			return getX() + ", " + getY();
 	}
+
+
+	public boolean hasBeenVisited() {
+		return hasBeenVisited;
+	}
+
+
+	public void setHasBeenVisited(boolean hasBeenVisited) {
+		this.hasBeenVisited = hasBeenVisited;
+	}
+	
+	
 
 
 }

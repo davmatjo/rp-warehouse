@@ -35,7 +35,17 @@ public class Robot implements Runnable {
     private boolean dropOffDone = false;
     private boolean pickUpDone = false;
 
+    //constructor just made for testing - this may be deleted later
+    public Robot (RobotLocation startingLocation) {
+   	 this.location = startingLocation;
+   	 ID = null;
+   	 name = null;
+   	 pool = null;
+   }
+    
     private static final Logger logger = Logger.getLogger(Robot.class);
+    
+   
 
     /**
      * For: Job Assignment (Created here)
