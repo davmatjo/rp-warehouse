@@ -1,6 +1,6 @@
 package rp.warehouse.nxt.interaction;
-import rp.warehouse.nxt.Communication;
-import rp.warehouse.nxt.Protocol;
+import rp.warehouse.nxt.communication.*;
+import rp.warehouse.nxt.motion.Movement;
 import rp.warehouse.nxt.RobotInterface;
 import lejos.nxt.*;
 
@@ -13,15 +13,18 @@ public class RobotInterfaceController implements RobotInterface	{
 	private final static int RIGHT = 11;
 	private static int command;
 	private static int jobAmount;
+	private boolean waiting;
+	
 	
 	/*An interface is created and the communicator to send it is created */
 	
-	RobotInterfaceController theInterface = new RobotInterfaceController();
-	Communication communicator = new Communication();
+	Communication communicator;
 	
-	public RobotInterfaceController()	{
+	public RobotInterfaceController(Communication theCommunicator)	{
+		waiting = true;
 		command = 0;
 		jobAmount = 0;
+		communicator = theCommunicator;
 	}
 	
 	/* In the main method the button listeners are created to listen to the buttons presses and command is changed depending on which one is pressed */
@@ -66,7 +69,7 @@ public class RobotInterfaceController implements RobotInterface	{
 			}
 		});
 		/* the method is called to start it with the value -1 so that it does not trigger any of the switch cases */
-		theInterface.buttonPressed(-1);
+		this.buttonPressed(-1);
 		
 	}
 
@@ -79,7 +82,14 @@ public class RobotInterfaceController implements RobotInterface	{
 				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
 				LCD.refresh();
 				/* The number of jobs is sent*/
-				communicator.sendCommand(jobAmount);
+				if(waiting)	{
+					communicator.sendCommand(jobAmount);
+					waiting = false;
+				}
+				else	{
+					LCD.drawString("Error: Robot not waiting for command", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
+					LCD.refresh();
+				}
 			case LEFT:
 				jobAmount--;
 				LCD.drawInt(jobAmount, LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
@@ -114,8 +124,8 @@ public class RobotInterfaceController implements RobotInterface	{
 	}
 
 	@Override
-	public int pickup() {
-		return jobAmount;
+	public void pickup() {
+		
 	}
 
 

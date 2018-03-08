@@ -6,5 +6,5 @@ public interface RobotInterface	{
 	void displayScreen();
 
 	// Wait for user to pick up a number of items, then return it
-	int pickup();
+	void pickup();
 }
