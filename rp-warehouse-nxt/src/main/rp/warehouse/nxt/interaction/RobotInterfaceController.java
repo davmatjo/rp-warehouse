@@ -74,14 +74,8 @@ public class RobotInterfaceController {
 		LCD.refresh();
 		switch (buttonInput)	{
 			case Protocol.OK:
-<<<<<<< Upstream, based on master
 				LCD.drawString("Amount confirmed", 0, 0);
-=======
 				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
-<<<<<<< Upstream, based on master
->>>>>>> 379a48a rebasing
-=======
->>>>>>> 32c3dd5 rebasing
 				/* The number of jobs is sent*/
 				if(waiting)	{
 					communicator.sendCommand(Protocol.PICKUP);
