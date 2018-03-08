@@ -25,13 +25,6 @@ public class RoutePlan {
 	boolean goalNotFound = true;
 	static Queue<Integer> plan = new LinkedList<Integer>();
 	
-	public static void main (String[] args) {
-		Robot rob = new Robot(new RobotLocation(1, 1, 1));
-		Location goalLocation = new Location(5, 5);
-		//RoutePlan routePlan = new RoutePlan(rob, goalLocation);
-		System.out.println(plan(rob, goalLocation));
-	}
-	
 	public RoutePlan(Robot robot,/*Map map,*/ Location goalLocation) {
 		this.robot = robot;
 		//this.map = map;
