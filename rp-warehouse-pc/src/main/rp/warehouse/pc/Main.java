@@ -24,11 +24,13 @@ public class Main {
         Item myItem2 = new Item(1f, 1f);
         Item myItem3 = new Item(1f, 1f);
         myItem.setLocation(new Location(5, 5));
-        myItem2.setLocation(new Location(5, 5));
-        myItem3.setLocation(new Location(5, 5));
-        myQ.offer(new Task(myItem, 1));
-        myQ2.offer(new Task(myItem2, 1));
-        myQ3.offer(new Task(myItem3, 1));
+        myItem2.setLocation(new Location(1, 1));
+        myItem3.setLocation(new Location(3, 2));
+        myQ.offer(new Task(myItem, 1, ""));
+        myQ.offer(new Task(myItem2, 1, ""));
+        myQ.offer(new Task(myItem3, 1, ""));
+        myQ2.offer(new Task(myItem2, 1, ""));
+        myQ3.offer(new Task(myItem3, 1, ""));
 
         ArrayList<Queue<Task>> myL = new ArrayList<>();
         myL.add(myQ);

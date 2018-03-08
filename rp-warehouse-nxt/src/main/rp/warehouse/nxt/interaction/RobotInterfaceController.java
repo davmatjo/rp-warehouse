@@ -10,8 +10,7 @@ public class RobotInterfaceController {
 	
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
-	private static int command;
-	private static int jobAmount;
+	private int jobAmount;
 	private boolean waiting;
 	
 	
@@ -21,7 +20,6 @@ public class RobotInterfaceController {
 	
 	public RobotInterfaceController(Communication theCommunicator)	{
 		waiting = true;
-		command = 0;
 		jobAmount = 0;
 		communicator = theCommunicator;
 		main();
@@ -73,28 +71,26 @@ public class RobotInterfaceController {
 	/*This method changes the display based on what the user presses */
 	private void displayScreen(int buttonInput) {
 		LCD.clearDisplay();
+		LCD.refresh();
 		switch (buttonInput)	{
 			case Protocol.OK:
 				LCD.drawString("Amount confirmed", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
-				LCD.refresh();
 				/* The number of jobs is sent*/
 				if(waiting)	{
 					communicator.sendCommand(Protocol.PICKUP);
 					communicator.sendCommand(jobAmount);
 					waiting = false;
+					jobAmount = 0;
 				}
 				else	{
 					LCD.drawString("Error: Robot not waiting for command", LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
-					LCD.refresh();
 				}
 			case LEFT:
-				jobAmount--;
-				LCD.drawInt(jobAmount, LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
-				LCD.refresh();
+				LCD.drawString("Amount: " + (--jobAmount), 0, 0);
+				break;
 			case RIGHT:
-				jobAmount++;
-				LCD.drawInt(jobAmount, LCD.SCREEN_WIDTH/2, LCD.SCREEN_HEIGHT/2);
-				LCD.refresh();
+				LCD.drawString("Amount: " + (++jobAmount), 0, 0);
+				break;
 		}
 	}
 
