@@ -34,7 +34,8 @@ public class RoutePlan {
 	ArrayList<RoutePlanLocation> toVisitList = new ArrayList<RoutePlanLocation>();
 	ArrayList<Location> visitedList = new ArrayList<Location>();
 	boolean goalNotFound = true;
-	static Queue<Integer> plan = new LinkedList<Integer>();  
+	static Queue<Integer> plan = new LinkedList<Integer>();
+	final Location originalLocation;
 	
 	/**
 	 * The overloaded constructor for the RoutePlan class
@@ -46,9 +47,9 @@ public class RoutePlan {
 		this.robot = robot;
 		this.goalLocation = goalLocation;
 		
-		Location currentRobotLocation = this.robot.getLocation();
-		currentX = currentRobotLocation.getX();
-		currentY = currentRobotLocation.getY();
+		originalLocation = this.robot.getLocation();
+		currentX = originalLocation.getX();
+		currentY = originalLocation.getY();
 		logger.debug("Calling run method.");
 		run();
 	}
@@ -64,7 +65,11 @@ public class RoutePlan {
 		logger.debug("Now creating a RoutePlan object.");
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
 		Queue<Integer> plan = RoutePlan.plan;
+		
+		//reset the route plan for the next route
 		RoutePlan.plan = new LinkedList<Integer>();
+		
+		//return the route plan
 		return plan;
 	}
 	
@@ -74,7 +79,10 @@ public class RoutePlan {
 	 * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
 	 */
 	public static Queue<Integer> planDropOff(Robot robot) {
-		return null;
+		
+		Location dropOff = new Location(0, 0);
+		
+		return plan(robot, dropOff);
 	}
 	
 	/**
@@ -92,22 +100,30 @@ public class RoutePlan {
 	public void run() {
 		logger.debug("Entered run method.");
 		
-		while (goalNotFound) {
-			
-			RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
-			RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
-			RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
-			RoutePlanLocation westLocation = new RoutePlanLocation(currentX - 1, currentY);	
-			
-			//now, only the VALID locations will be added to 'toVisitList'
-			addToList(northLocation);
-			addToList(eastLocation);
-			addToList(southLocation);
-			addToList(westLocation);
-			
-			//now, we visit the cheapest-path-cost location; we store it in 'visitedList'
-			visitCheapestLocationBasedOnPathCost(currentX, currentY);			
+		//Check the original location to see if we're already at the goal, before checking any other locations.
+		if (isGoal(originalLocation)) {
+			plan.offer(Protocol.PICKUP);
 		}
+		
+		else {
+			while (goalNotFound) {
+				
+				RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
+				RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
+				RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
+				RoutePlanLocation westLocation = new RoutePlanLocation(currentX - 1, currentY);	
+				
+				//now, only the VALID locations will be added to 'toVisitList'
+				addToList(northLocation);
+				addToList(eastLocation);
+				addToList(southLocation);
+				addToList(westLocation);
+				
+				//now, we visit the cheapest-path-cost location; we store it in 'visitedList'
+				visitCheapestLocationBasedOnPathCost(currentX, currentY);			
+			}
+		}
+		
 		
 		logger.debug("Goal location found. 'plan' is now complete with all commands.");
 		
