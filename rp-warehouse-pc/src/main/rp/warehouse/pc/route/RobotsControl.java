@@ -62,10 +62,12 @@ public class RobotsControl {
             try {
                 newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 0, 0, 1));
                 robots.add(newRobot);
-                pool.execute(newRobot);
                 logger.debug("Robot " + robotNames[i] + " created");
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            for (Robot robot : robots) {
+                pool.execute(robot);
             }
             i++;
         }
