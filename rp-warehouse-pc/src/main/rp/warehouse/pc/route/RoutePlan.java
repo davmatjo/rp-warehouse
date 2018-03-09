@@ -24,6 +24,7 @@ import rp.warehouse.pc.data.Warehouse;
 public class RoutePlan {
 	private Robot robot;
 	private Location goalLocation;
+	private static final Logger logger = Logger.getLogger(RoutePlan.class);
 	//private ArrayList<Location> blocked = Warehouse.getBlockedLocations();
 	
 	int currentX;
@@ -41,13 +42,14 @@ public class RoutePlan {
 	 * @param goalLocation the goal location is passed so that we can plan a route to it
 	 */
 	public RoutePlan(Robot robot, Location goalLocation) {
+		logger.debug("Entered RoutePlan overloaded constructor.");
 		this.robot = robot;
 		this.goalLocation = goalLocation;
 		
 		Location currentRobotLocation = this.robot.getLocation();
 		currentX = currentRobotLocation.getX();
 		currentY = currentRobotLocation.getY();
-		
+		logger.debug("Calling run method.");
 		run();
 	}
 	
@@ -58,6 +60,8 @@ public class RoutePlan {
 	 * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
 	 */
 	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
+		logger.debug("Called static plan method.");
+		logger.debug("Now creating a RoutePlan object.");
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
 		Queue<Integer> plan = RoutePlan.plan;
 		RoutePlan.plan = new LinkedList<Integer>();
@@ -86,6 +90,7 @@ public class RoutePlan {
 	 * These locations are converted into commands that RouteExecution understands
 	 */
 	public void run() {
+		logger.debug("Entered run method.");
 		
 		while (goalNotFound) {
 			
@@ -104,6 +109,8 @@ public class RoutePlan {
 			visitCheapestLocationBasedOnPathCost(currentX, currentY);			
 		}
 		
+		logger.debug("Goal location found. 'plan' is now complete with all commands.");
+		
 		//now, we're out of the while loop - the goal has been found.
 		//the locations to get to the goal have now been stored in order in the 'visitedList' array list
 		
@@ -111,25 +118,31 @@ public class RoutePlan {
 	
 	
 	/**
-	 * A method to add each of the north, east, south, and west locations to the 'toVisitList' array list, if it is valid.
+	 * A method to add the north, east, south, and west locations to the 'toVisitList' array list, if they are valid.
 	 * This method also checks if the location passed is the goal location, in which case we break the loop in the run method.
 	 * However, this is done after checking the validity of the location, so that it is added to the 'toVisitList' array list
 	 * before we break the loop.
 	 * @param location
 	 */
 	public void addToList(RoutePlanLocation location) {
-	
+		
+		String loc = location.toString();
+		logger.trace("Checking the validity of " + loc);
+		
 		//check the location given to see if it is valid before proceeding.
 		//if the location given is the goal, it is obviously valid, and we'll enter the if statement below.
 		if (isValid(location)) {
+			logger.trace(loc + " is valid. Its path cost is " + location.getPathCost() + ".");
 			location.setPathCost(goalLocation);
 			toVisitList.add(location);	
+			logger.trace("Added " + loc + " to 'toVisitList'.");
 			
 		}
 		
 		/*this goal check is made AFTER the validity check above, so that if the location sent is the goal location,
 		we have it added to the toVisit array list first, and THEN we may exit. ;)*/
 		if (isGoal(location)) {
+			logger.trace(loc + " is the goal. Goal found.");
 			//exit the loop
 			goalNotFound = false;
 		}
@@ -224,7 +237,7 @@ public class RoutePlan {
 			
 		}
 		
-		System.out.println("Visited: " + cheapestLocation);
+		logger.debug("Visited: " + cheapestLocation);
 		visitedList.add(cheapestLocation);
 		//cheapestLocation.setHasBeenVisited(true);
 		//blocked.add(cheapestLocation);
