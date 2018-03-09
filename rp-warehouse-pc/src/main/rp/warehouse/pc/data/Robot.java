@@ -119,6 +119,7 @@ public class Robot implements Runnable {
             location.setX(x);
             location.setY(y);
             location.setDirection(directionPointing);
+            logger.info("Current location X: " + location.getX() + " Y: "+location.getY());
         }
     }
 
@@ -267,14 +268,22 @@ public class Robot implements Runnable {
         tasks = newTasks;
     }
     
+    private String getDirectionString(int direction) {
+        // Works out the String representation of the command 
+        return (direction <= 4 ? (direction == 3 ? "North" : "East"):(direction == 5 ? "South" : "West"));
+    }
+    
     private int getCurrentInstruction() {
         logger.info("Starting getCurrentInstraction");
 
         lastInstruction = route.poll(); 
         // Check Job ID (Discard cancelled jobs "items" )
+        logger.info("Executing command " + getDirectionString(lastInstruction));
         return lastInstruction;
     }
-// Music to listen to while coding
-// https://www.youtube.com/watch?v=L5gVFYmDWCk
+
     
 }
+
+//Music to listen to while coding
+//https://www.youtube.com/watch?v=L5gVFYmDWCk
