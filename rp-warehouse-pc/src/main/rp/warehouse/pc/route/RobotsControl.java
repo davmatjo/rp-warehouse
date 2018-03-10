@@ -66,10 +66,12 @@ public class RobotsControl {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            for (Robot robot : robots) {
-                pool.execute(robot);
-            }
+            
             i++;
+        }
+        
+        for (Robot robot : robots) {
+            pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
