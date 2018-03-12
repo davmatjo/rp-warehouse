@@ -197,11 +197,11 @@ public class Communication implements Runnable {
             synchronized (waitForRanges) {
                 sendData(Protocol.LOCALISE);
                 waitForRanges.wait();
-                return Ranges.fromArray(ranges);
+                return Ranges.fromArray(ranges, Ranges.physicalConverter);
             }
         } catch (InterruptedException e) {
             logger.error("Interrupted somehow: " + e.getMessage());
-            return Ranges.fromArray(ranges);
+            return Ranges.fromArray(ranges, Ranges.physicalConverter);
         }
     }
 
