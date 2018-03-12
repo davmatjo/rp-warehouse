@@ -48,15 +48,15 @@ public class CommunicationTestMultiple {
     @Test
     public void sendPickupRequest() {
         executorService.execute(() -> {
-            int response = communications[0].sendPickupRequest();
+            int response = communications[0].sendLoadingRequest(1);
             Assert.assertTrue(response > 0);
         });
         executorService.execute(() -> {
-            int response = communications[1].sendPickupRequest();
+            int response = communications[1].sendLoadingRequest(1);
             Assert.assertTrue(response > 0);
         });
         executorService.execute(() -> {
-            int response = communications[2].sendPickupRequest();
+            int response = communications[2].sendLoadingRequest(1);
             Assert.assertTrue(response > 0);
         });
     }
