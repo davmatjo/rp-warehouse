@@ -67,13 +67,13 @@ public class Robot implements Runnable {
 
     // Runs indefinitely and sends commands to Communication
     public void run() {
-        logger.trace("Robot " + ID + " " + name + "was successfully connected");
+        logger.info("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(20);
         
         while (running) {
-            logger.debug("Sending Next instruction");
+            logger.debug(name + ": " +"Sending Next instruction");
             sendInstruction();
-            logger.debug("Instruction executed");
+            logger.debug(name + ": " +"Instruction executed");
             r.sleep();
             
         }
@@ -90,7 +90,7 @@ public class Robot implements Runnable {
      */
     private void updateLocation() {
         if (lastInstruction!=-1) {
-            logger.debug("Updating location");
+            logger.debug(name + ": " +"Updating location");
             int x, y;
             x = location.getX();
             y = location.getY();
@@ -119,7 +119,7 @@ public class Robot implements Runnable {
             location.setX(x);
             location.setY(y);
             location.setDirection(directionPointing);
-            logger.info("Current location X: " + location.getX() + " Y: "+location.getY());
+            logger.info(name + ": " +"Current location X: " + location.getX() + " Y: "+location.getY());
         }
     }
 
@@ -129,13 +129,13 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
         updateLocation();
         if (route.peek() == null) {
-            logger.trace("Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
+            logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
             while (!pickUpDone) {
                 pickUp(comms.sendPickupRequest());
                 r.sleep();
             }
-            logger.trace("Action completed");
+            logger.debug(name + ": " +"Item update completed");
             dropOffDone = false;
             pickUpDone = false;
         }
@@ -146,7 +146,7 @@ public class Robot implements Runnable {
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
-        logger.debug("Starting Job cancellation");
+        logger.debug(name + ": " +"Starting Job cancellation");
 
         // currentItem.getJob()
         // cancelltems.add(getCurrentItem())
@@ -161,35 +161,30 @@ public class Robot implements Runnable {
      *              False, too many items being picked up
      */
     private boolean pickUp(int numberOfItems) {
-        logger.info("Starting pickUp");
+        logger.trace(name + ": " +"Starting pickUp");
         if (route.peek() == null && !dropOffCheck  && numberOfItems == currentTask.getCount()) {
-            logger.info("Pick up valid");
+            logger.info(name + ": " +"Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             if ( newWeight > WEIGHTLIMIT) {
-                logger.debug("To much cargo, going to drop off");
-                logger.error("Should not happen");
-                route = RoutePlan.planDropOff(this);
-                dropOffCheck = true;
+                logger.debug(name + ": " +"To much cargo, going to drop off");
+                logger.error(name + ": " +"Should not happen");
+                goToDropOff(false); 
                 return false;
             }else if (newWeight == WEIGHTLIMIT) {
-                logger.debug("Picked up Item(s), cargo is full. Going to drop off");
+                logger.debug(name + ": " +"Picked up Item(s), cargo is full. Going to drop off");
                 currentWeightOfCargo = newWeight;
-                // Go back to drop off
-                this.currentTask = tasks.poll();
-                this.currentItem = currentTask.getItem();
-                route = RoutePlan.planDropOff(this);
-                dropOffCheck = true;
+                goToDropOff(true); 
                 return true;
             }
-            logger.debug("Picked up " + numberOfItems + " Item(s), continuing with tasks");
+            logger.info(name + ": " +"Picked up " + numberOfItems + " Item(s), continuing with tasks");
             currentWeightOfCargo = newWeight;
-            logger.info("current weight of cargo " + currentWeightOfCargo);
+            logger.info(name + ": " +"current weight of cargo " + currentWeightOfCargo);
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
             if(currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount()) > WEIGHTLIMIT) {
-                logger.info("Will not be able to fit the next item, going to drop off");
-                route = RoutePlan.planDropOff(this);
-                dropOffCheck = true;
+                logger.info(name + ": " +"Will not be able to fit the next item, going to drop off");
+                
+                goToDropOff(false); 
             }else {
                 plan();
             } 
@@ -198,24 +193,34 @@ public class Robot implements Runnable {
             pickUpDone = true;
             return true;
         }else {
-            logger.info("Pick up refused");
+            logger.warn(name + ": " +"Pick up refused");
             return false;
         }
     }
+    
+    private void goToDropOff(boolean nextItem) {
+        if(nextItem) {
+            this.currentTask = tasks.poll();
+            this.currentItem = currentTask.getItem();
+        }
+        route = RoutePlan.planDropOff(this);
+        dropOffCheck = true;
+    }
+    
     
     /**
      * For Communication when performing drop of at the station
      * @return - 
      */
     public boolean dropOff() {
-        logger.info("Starting DropOff");
+        logger.debug(name + ": " +"Starting DropOff");
         if (route.peek()!=null || !dropOffCheck) {
-            logger.debug("Drop off refused");
+            logger.warn(name + ": " +"Drop off refused");
             return false;
         }else {
-            logger.debug("Drof off valid");
+            logger.info(name + ": " +"Drof off valid");
             if (tasks.peek()!=null) {// why?
-                logger.debug("Planning to get current item");
+                logger.debug(name + ": " +"Planning to get current item");
                 plan();
                 lastInstruction = -1;
             }
@@ -228,11 +233,11 @@ public class Robot implements Runnable {
     }
     
     private void plan() {
-        logger.info("Starting plan");
+        logger.info(name + ": " +"Starting plan");
         if (currentItem!=null) {
             route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
-            logger.error("No current Item");
+            logger.error(name + ": " +"No current Item");
             //route = null;
             route.add(3);
             route.add(4);
@@ -274,11 +279,11 @@ public class Robot implements Runnable {
     }
     
     private int getCurrentInstruction() {
-        logger.info("Starting getCurrentInstraction");
+        logger.info(name + ": " +"Starting getCurrentInstraction");
 
         lastInstruction = route.poll(); 
         // Check Job ID (Discard cancelled jobs "items" )
-        logger.info("Executing command " + getDirectionString(lastInstruction));
+        logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
         return lastInstruction;
     }
 
