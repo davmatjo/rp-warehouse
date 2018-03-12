@@ -1,21 +1,15 @@
 package rp.warehouse.pc.route;
 
+import org.apache.log4j.Logger;
+import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.data.Task;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.log4j.Logger;
-
-import lejos.geom.Point;
-
-import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.Robot;
-import rp.warehouse.pc.data.RobotLocation;
-import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.gui.WarehouseInterface;
 
 /**
  * Used to link different part of the system together
