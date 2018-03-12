@@ -164,11 +164,12 @@ public class Communication implements Runnable {
      *
      * @return - true if the correct number of items was picked up
      */
-    public int sendPickupRequest() {
+    public int sendLoadingRequest(int amountToLoad) {
 
         try {
             synchronized (waitForPickup) {
                 sendData(Protocol.PICKUP);
+                sendData(amountToLoad);
                 waitForPickup.wait();
                 return pickupCount;
             }

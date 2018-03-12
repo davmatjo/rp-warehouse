@@ -17,6 +17,7 @@ public class RobotInterfaceController {
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
 	private int jobAmount;
+	private int toPickup;
 	private boolean waiting;
 	
 	
@@ -131,8 +132,16 @@ public class RobotInterfaceController {
 	/* This method is called by other classes when the robot is ready to pickup an item, this prevents the robot from performing it whilst
 	 * doing a job
 	 */
-	public void pickup() {
-		waiting = true;
+	public void pickup(int amount) {
+		toPickup = amount;
+		if (toPickup < 0) {
+			LCD.drawString("Confirm dropoff", 0 ,0);
+			Button.waitForAnyPress();
+			communicator.sendCommand(Protocol.PICKUP);
+			communicator.sendCommand(0);
+		} else {
+			waiting = true;
+		}
 	}
 
 

@@ -78,7 +78,7 @@ public class Communication extends Thread {
                 System.out.println("SEND: " + 1);
                 sendCommand(1);
             } else if (command == Protocol.PICKUP) {
-                robotInterface.pickup();
+                robotInterface.pickup(fromPC.readInt());
             } else if (command == Protocol.LOCALISE) {
                 float[] ranges = rangeFind.getRanges();
                 sendCommand(Protocol.LOCALISE);
