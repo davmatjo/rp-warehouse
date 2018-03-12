@@ -27,7 +27,7 @@ public class Robot implements Runnable {
     private Queue<Task> tasks;                  // The queue of Tasks which need to be done
     private Item currentItem;                   // Current Item
     private Task currentTask;
-    private static HashMap<String, Boolean> cancelledJobs =new HashMap<String, Boolean>();
+    private static HashMap<String, Boolean> cancelledJobs =new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
