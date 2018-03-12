@@ -1,6 +1,7 @@
-package rp.warehouse.pc.localisation;
+package rp.warehouse.pc.localisation.interfaces;
 
 import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
 
 /**
  * An interface for the localisation, simply to get the location of the robot.
