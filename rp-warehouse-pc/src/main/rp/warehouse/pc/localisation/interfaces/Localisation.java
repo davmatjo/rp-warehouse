@@ -1,6 +1,7 @@
-package rp.warehouse.pc.localisation;
+package rp.warehouse.pc.localisation.interfaces;
 
 import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
 
 /**
  * An interface for the localisation, simply to get the location of the robot.
@@ -14,7 +15,8 @@ public interface Localisation {
 	 * Method to get the estimated position with the highest probability.
 	 * 
 	 * @return The estimated position of the robot.
+	 * @throws NoIdeaException
 	 */
-	public RobotLocation getPosition();
+	public RobotLocation getPosition() throws NoIdeaException;
 
 }

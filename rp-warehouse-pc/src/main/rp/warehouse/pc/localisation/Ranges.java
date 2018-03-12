@@ -1,5 +1,9 @@
 package rp.warehouse.pc.localisation;
 
+import rp.warehouse.pc.localisation.implementation.PhysicalRangeConverter;
+import rp.warehouse.pc.localisation.implementation.VirtualRangeConverter;
+import rp.warehouse.pc.localisation.interfaces.RangeConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,12 +18,14 @@ import java.util.Objects;
 public class Ranges {
 
 	public final static byte UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
+	public final static RangeConverter virtualConverter = new VirtualRangeConverter();
+	public final static RangeConverter physicalConverter = new PhysicalRangeConverter();
 	private final static byte[] opposite = new byte[] { 2, 3, 0, 1 };
 	private byte[] ranges = new byte[4];
 
 	/**
 	 * Create an instance of Ranges given the up, right, down and left ranges to be
-	 * stored.
+	 * stored, converting real world or virtual world distances.
 	 * 
 	 * @param up
 	 *            The range <b>upward</b> relative to the current position.
@@ -30,11 +36,27 @@ public class Ranges {
 	 * @param left
 	 *            The range <b>left</b> relative to the current position.
 	 */
-	public Ranges(final float up, final float right, final float down, final float left) {
-		this.ranges[0] = toGrid(up);
-		this.ranges[1] = toGrid(right);
-		this.ranges[2] = toGrid(down);
-		this.ranges[3] = toGrid(left);
+	public Ranges(final float up, final float right, final float down, final float left, RangeConverter converter) {
+		this.ranges[0] = converter.toGrid(up);
+		this.ranges[1] = converter.toGrid(right);
+		this.ranges[2] = converter.toGrid(down);
+		this.ranges[3] = converter.toGrid(left);
+	}
+
+	/**
+	 * Create an instance of Ranges given the up, right, down and left ranges to be
+	 * stored, using pre-converted values.
+	 * 
+	 * @param up
+	 * @param right
+	 * @param down
+	 * @param left
+	 */
+	public Ranges(final byte up, final byte right, final byte down, final byte left) {
+		this.ranges[0] = up;
+		this.ranges[1] = right;
+		this.ranges[2] = down;
+		this.ranges[3] = left;
 	}
 
 	/**
@@ -113,8 +135,13 @@ public class Ranges {
 		return opposite[direction];
 	}
 
-	public static Ranges fromArray(final float[] array) {
+	public static Ranges fromArray(final float[] array, RangeConverter converter) {
 		System.out.println(array[0] + ", " + array[1] + ", " + array[2] + ", " + array[3]);
+		return new Ranges(converter.toGrid(array[0]), converter.toGrid(array[1]), converter.toGrid(array[2]),
+				converter.toGrid(array[3]));
+	}
+
+	public static Ranges fromArray(final byte[] array) {
 		return new Ranges(array[0], array[1], array[2], array[3]);
 	}
 
