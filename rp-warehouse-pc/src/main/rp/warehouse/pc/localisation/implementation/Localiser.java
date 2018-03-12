@@ -1,21 +1,23 @@
-package rp.warehouse.pc.localisation;
+package rp.warehouse.pc.localisation.implementation;
+
+import lejos.geom.Point;
+import org.apache.log4j.Logger;
+import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
+import rp.warehouse.pc.localisation.Ranges;
+import rp.warehouse.pc.localisation.WarehouseMap;
+import rp.warehouse.pc.localisation.interfaces.Localisation;
 
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
-
-import lejos.geom.Point;
-import rp.warehouse.pc.communication.Communication;
-import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.data.RobotLocation;
-
 /**
  * An implementation of the localisation interface. Used to actually calculate
  * the location.
- * 
- * @author Kieran
  *
+ * @author Kieran
  */
 public class Localiser implements Localisation {
 
@@ -86,7 +88,7 @@ public class Localiser implements Localisation {
 	/**
 	 * Method to filter initial positions given new positions and a movement. Used
 	 * to narrow down the possibility of location.
-	 * 
+	 *
 	 * @param initial
 	 *            The initial possible positions recorded.
 	 * @param next

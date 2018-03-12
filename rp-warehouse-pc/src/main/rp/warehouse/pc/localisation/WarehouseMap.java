@@ -44,7 +44,7 @@ public class WarehouseMap {
 					final float down = world.rangeToObstacleFromGridPosition(x, y, -90);
 					final float left = world.rangeToObstacleFromGridPosition(x, y, 180);
 					// Create a Ranges object from these readings.
-					final Ranges ranges = new Ranges(up, right, down, left);
+					final Ranges ranges = new Ranges(up, right, down, left, Ranges.virtualConverter);
 
 					// Store them in the warehouse map.
 					put(ranges, point);
