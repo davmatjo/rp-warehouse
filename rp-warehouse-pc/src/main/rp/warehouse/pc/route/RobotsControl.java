@@ -9,11 +9,13 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 
 import lejos.geom.Point;
+
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.gui.WarehouseInterface;
 
 /**
  * Used to link different part of the system together
@@ -60,17 +62,18 @@ public class RobotsControl {
 
             Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 0, 0, 1));
+                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));
                 robots.add(newRobot);
                 logger.debug("Robot " + robotNames[i] + " created");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            for (Robot robot : robots) {
-                pool.execute(robot);
-            }
             i++;
         }
+        for (Robot robot : robots) {
+            pool.execute(robot);
+        }
+
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
         // Shut down the pool to prevent new threads being created, and allow the program to end
