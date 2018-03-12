@@ -173,6 +173,7 @@ public class Robot implements Runnable {
             logger.info(name + ": " +"Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             
+            // This might happens when Task was cancelled
             if ( newWeight > WEIGHTLIMIT) {
                 logger.error(name + ": " +"To much cargo, going to drop off. Should not happen");
                 goToDropOff(false); 
