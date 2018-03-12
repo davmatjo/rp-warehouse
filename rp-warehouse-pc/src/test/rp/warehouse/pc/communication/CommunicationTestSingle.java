@@ -34,7 +34,7 @@ public class CommunicationTestSingle {
 
     @Test
     public void sendPickupRequest() {
-        int response = communication.sendPickupRequest();
+        int response = communication.sendLoadingRequest(1);
         Assert.assertTrue(response > 0);
     }
 
