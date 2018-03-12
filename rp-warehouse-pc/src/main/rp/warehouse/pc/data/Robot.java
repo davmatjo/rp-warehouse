@@ -132,7 +132,7 @@ public class Robot implements Runnable {
             logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(20);
             while (!pickUpDone) {
-                pickUp(comms.sendPickupRequest());
+                pickUp(comms.sendLoadingRequest(currentTask.getCount()));
                 r.sleep();
             }
             logger.debug(name + ": " +"Item update completed");
