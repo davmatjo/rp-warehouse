@@ -4,7 +4,7 @@ import rp.util.HashMap;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.localisation.Localiser;
+import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
@@ -35,7 +35,8 @@ public class Robot implements Runnable {
     private boolean dropOffCheck = false;       // Indicates if drop off needs to happen 
     private boolean running = true;             
     private boolean dropOffDone = false;        
-    private boolean pickUpDone = false;          
+    private boolean pickUpDone = false;  
+    private int RATE = 20;
 
     
     private static final Logger logger = Logger.getLogger(Robot.class);
@@ -70,7 +71,7 @@ public class Robot implements Runnable {
     // Runs indefinitely and sends commands to Communication
     public void run() {
         logger.info("Robot " + ID + " " + name + "was successfully connected");
-        Rate r = new Rate(20);
+        Rate r = new Rate(RATE);
         
         while (running) {
             logger.debug(name + ": " +"Sending Next instruction");
@@ -132,7 +133,7 @@ public class Robot implements Runnable {
         updateLocation();
         if (route.isEmpty()) {
             logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
-            Rate r = new Rate(20);
+            Rate r = new Rate(RATE);
             
             while (!pickUpDone) {
                 pickUp(comms.sendLoadingRequest(currentTask.getCount()));
