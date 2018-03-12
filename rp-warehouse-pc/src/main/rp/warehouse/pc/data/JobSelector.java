@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import java.util.Collections;
 
+import rp.warehouse.pc.assignment.SimpleAssigner;
 import rp.warehouse.pc.route.*;
 
 public class JobSelector {
@@ -23,6 +24,7 @@ public class JobSelector {
 			this.cancelled = false;
 		}
 		this.value = value;
+		run();
 	}
 
 	public void setPrediction(boolean prediction) {
@@ -58,7 +60,12 @@ public class JobSelector {
 	}
 	
 	public void sortByReward() {
-		logger.trace("Sorting jobs based on total reward.");
+		logger.debug("Sorting jobs based on total reward.");
 		Collections.sort(jobs, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
+	}
+
+	public void run() {
+		sortByReward();
+		new SimpleAssigner(jobs);
 	}
 }
