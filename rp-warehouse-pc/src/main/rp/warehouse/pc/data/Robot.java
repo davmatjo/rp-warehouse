@@ -1,11 +1,15 @@
 package rp.warehouse.pc.data;
 
+import rp.util.HashMap;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.localisation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
+
+import com.sun.javafx.collections.MappingChange.Map;
+
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +30,7 @@ public class Robot implements Runnable {
     private Queue<Task> tasks;                  // The queue of Tasks which need to be done
     private Item currentItem;                   // Current Item
     private Task currentTask;
+    private HashMap<String, Boolean> cancelledJobs =new HashMap<String, Boolean>();
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
@@ -152,12 +157,10 @@ public class Robot implements Runnable {
      */
     public void cancelJob() {
         logger.debug(name + ": " +"Starting Job cancellation");
-
-        // currentItem.getJob()
-        // cancelltems.add(getCurrentItem())
-
-        // Clear all current instructions
-        // and start a new one
+        cancelledJobs.put(currentTask.jobID, true);
+        // Should it do any planning ?
+        // Think about when it can be called
+        // Can mess up the location 
     }
     
     /**
@@ -202,6 +205,9 @@ public class Robot implements Runnable {
         }
     }
     private void updateTask() {
+        while(cancelledJobs.containsKey(tasks.peek().jobID)) {
+        this.currentTask = tasks.poll();
+        }
         this.currentTask = tasks.poll();
         this.currentItem = currentTask.getItem();
     }
@@ -271,16 +277,6 @@ public class Robot implements Runnable {
 
     public RobotLocation getLocation() {
         return location;
-    }
-    
-
-    /**
-     * For: Job Assignment
-     * @param newTasks
-     *            - the new queue of Jobs for this robot to complete
-     */
-    public void setJobs(Queue<Task> newTasks) {
-        tasks = newTasks;
     }
     
     private String getDirectionString(int direction) {
