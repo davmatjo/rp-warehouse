@@ -99,6 +99,10 @@ public class Communication implements Runnable {
                 // Commands from RobotInterface
                 case Protocol.CANCEL: {
                     robot.cancelJob();
+                    pickupCount = -1;
+                    synchronized (waitForPickup) {
+                        waitForPickup.notifyAll();
+                    }
                     break;
                 }
 
