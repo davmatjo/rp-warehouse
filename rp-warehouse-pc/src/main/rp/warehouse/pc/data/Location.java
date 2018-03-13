@@ -49,4 +49,9 @@ public class Location {
         Location l = (Location) o;
         return this.x == l.x && this.y == l.y;
     }
+
+    @Override
+    public int hashCode() {
+        return x * 31 + y;
+    }
 }
