@@ -1,8 +1,14 @@
 package rp.warehouse.nxt.interaction;
 import rp.warehouse.nxt.communication.*;
-import rp.warehouse.nxt.RobotInterface;
 import lejos.nxt.*;
 
+/**
+ * @author Harry Pratlett
+ * 
+ * This class controls the interface on the robot and handles the button presses. The user can send an amount of items to pickup
+ * by using the arrow buttons and confirm it using the middle button. This is all reflected by the display.
+ *
+ */
 
 public class RobotInterfaceController {
 	
@@ -11,13 +17,14 @@ public class RobotInterfaceController {
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
 	private int jobAmount;
+	private int toPickup;
 	private boolean waiting;
 	
 	
-	/*An interface is created and the communicator to send it is created */
-	
+	/*A communicator is created so that commands can be sent*/
 	Communication communicator;
 	
+	/** @param theCommunicator This is the communicator that the class will use in order to send commands about how many items to pick up **/
 	public RobotInterfaceController(Communication theCommunicator)	{
 		waiting = true;
 		jobAmount = 0;
@@ -25,8 +32,8 @@ public class RobotInterfaceController {
 		main();
 	}
 	
-	/* In the main method the button listeners are created to listen to the buttons presses and command is changed depending on which one is pressed */
-	
+	/* In the main method the button listeners are created to listen to the buttons presses and the
+	 * command sent is changed depending on which one is pressed */
 	private void main() {
 		Button.ENTER.addButtonListener(new ButtonListener()	{
 			@Override
@@ -69,6 +76,7 @@ public class RobotInterfaceController {
 	}
 
 	/*This method changes the display based on what the user presses */
+	/** @param buttonInput This is the button that has been pressed, represented in an integer form **/
 	private void displayScreen(int buttonInput) {
 		LCD.clearDisplay();
 		LCD.refresh();
@@ -87,7 +95,12 @@ public class RobotInterfaceController {
 				}
 				break;
 			case LEFT:
-				LCD.drawString("Amount: " + (--jobAmount), 0, 0);
+				if (jobAmount > 0)	{
+					LCD.drawString("Amount: " + (--jobAmount), 0, 0);
+				}
+				else	{
+					LCD.drawString("Error: Items cannot go below zero", 0, 0);
+				}
 				break;
 			case RIGHT:
 				LCD.drawString("Amount: " + (++jobAmount), 0, 0);
@@ -95,7 +108,11 @@ public class RobotInterfaceController {
 		}
 	}
 
-	/*This method is called at the end of the main and loops continuously changing which switch case it is depending on which button has been pressed */
+	/* This method is called at the end of the main and
+	 loops continuously changing which switch case it is depending on which button has been pressed */
+	
+	/** @param command This is the command that is sent by the button press detected by the listeners, it is handled differently depending
+	  on which one it is **/
 	private void buttonEvent(int command) {
 		switch(command)	{
 			case Protocol.CANCEL:
@@ -112,9 +129,19 @@ public class RobotInterfaceController {
 					break;
 		}
 	}
-
-	public void pickup() {
-		waiting = true;
+	/* This method is called by other classes when the robot is ready to pickup an item, this prevents the robot from performing it whilst
+	 * doing a job
+	 */
+	public void pickup(int amount) {
+		toPickup = amount;
+		if (toPickup < 0) {
+			LCD.drawString("Confirm dropoff", 0 ,0);
+			Button.waitForAnyPress();
+			communicator.sendCommand(Protocol.PICKUP);
+			communicator.sendCommand(0);
+		} else {
+			waiting = true;
+		}
 	}
 
 

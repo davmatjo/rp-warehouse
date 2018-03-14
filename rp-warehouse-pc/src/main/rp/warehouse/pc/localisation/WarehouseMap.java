@@ -44,7 +44,7 @@ public class WarehouseMap {
 					final float down = world.rangeToObstacleFromGridPosition(x, y, -90);
 					final float left = world.rangeToObstacleFromGridPosition(x, y, 180);
 					// Create a Ranges object from these readings.
-					final Ranges ranges = new Ranges(up, right, down, left);
+					final Ranges ranges = new Ranges(up, right, down, left, Ranges.virtualConverter);
 
 					// Store them in the warehouse map.
 					put(ranges, point);
@@ -74,9 +74,14 @@ public class WarehouseMap {
 	 * @param ranges
 	 *            The ranges to check for.
 	 * @return The points matching the ranges given.
+	 * @throws NoIdeaException
 	 */
-	public ArrayList<Point> getPoints(final Ranges ranges) {
-		return this.positions.get(ranges);
+	public ArrayList<Point> getPoints(final Ranges ranges) throws NoIdeaException {
+		if (this.positions.containsKey(ranges)) {
+			return this.positions.get(ranges);
+		} else {
+			throw new NoIdeaException(ranges);
+		}
 	}
 
 	/**

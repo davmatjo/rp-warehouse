@@ -31,7 +31,7 @@ public class JobInput {
         readItems();
         readLocations();
         readJobs();
-        new SimpleAssigner(jobs.getJobs());
+        new JobSelector(jobs.getJobs(), 0, false, 0);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
