@@ -1,19 +1,21 @@
-//has an arraylist that holds all the items
+//has a hashmap that holds all the items
 
 package rp.warehouse.pc.data;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Items {
 
-    ArrayList<Item> items = new ArrayList<Item>();
+    private HashMap<String, Item> userTable = new HashMap<String, Item>();
 
-    public void addItem(Item item) {
-        items.add(item);
+    //method to add a new item
+    public void add(String name, Item item) {
+        userTable.put(name, item);
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
+    //method which returns an item
+    public Item getItem(String name) {
+        return userTable.get(name);
     }
 
 

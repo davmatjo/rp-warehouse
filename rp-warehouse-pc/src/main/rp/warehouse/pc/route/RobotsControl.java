@@ -1,19 +1,15 @@
 package rp.warehouse.pc.route;
 
+import org.apache.log4j.Logger;
+import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.data.Task;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.log4j.Logger;
-
-import lejos.geom.Point;
-import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.Robot;
-import rp.warehouse.pc.data.RobotLocation;
-import rp.warehouse.pc.data.Task;
 
 /**
  * Used to link different part of the system together
@@ -58,12 +54,20 @@ public class RobotsControl {
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
-            Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 1, 1, 1));// Need to implement properly
-            robots.add(newRobot);
-            pool.execute(newRobot);
-            logger.debug("Robot " + robotNames[i] + " created");
-
+            Robot newRobot = null;// Need to implement properly
+            try {
+                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 0, 0, 3));
+                robots.add(newRobot);
+                logger.debug("Robot " + robotNames[i] + " created");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
             i++;
+        }
+        
+        for (Robot robot : robots) {
+            pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 

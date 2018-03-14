@@ -6,10 +6,11 @@ public class Job {
 
     //has an item name and the count
     private String name;
-    private ArrayList<Task> items;
+    private ArrayList<Task> tasks;
 
-    Job(String name) {
+    Job(String name, ArrayList<Task> tasks) {
         this.name = name;
+        this.tasks = tasks;
     }
 
     //method to add an task to the list
@@ -19,7 +20,9 @@ public class Job {
     }
 
     public ArrayList<Task> getItems() {
-        return items;
+        return tasks;
     }
+
+
 
 }

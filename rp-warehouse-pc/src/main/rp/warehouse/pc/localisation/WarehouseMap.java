@@ -2,7 +2,6 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +20,7 @@ import rp.warehouse.pc.data.Warehouse;
  */
 public class WarehouseMap {
 
-	private final HashMap<Ranges, HashSet<Point>> positions = new HashMap<Ranges, HashSet<Point>>();
+	private final HashMap<Ranges, ArrayList<Point>> positions = new HashMap<Ranges, ArrayList<Point>>();
 	private final HashMap<Point, Ranges> ranges = new HashMap<Point, Ranges>();
 	private static final List<Point> blockedPoints = Warehouse.getBlockedLocations().stream().map(Location::toPoint)
 			.collect(Collectors.toList());
@@ -32,20 +31,20 @@ public class WarehouseMap {
 	public WarehouseMap() {
 		final GridMap world = Warehouse.build();
 		// Generate the warehouseMap values using world.
-		for (int x = 0; x < world.getXSize(); x++) {
-			for (int y = 0; y < world.getYSize(); y++) {
+		for (byte x = 0; x < world.getXSize(); x++) {
+			for (byte y = 0; y < world.getYSize(); y++) {
 				// Create a point from the X and Y co-ordinates.
 				final Point point = new Point(x, y);
 				// Check if the position isn't blocked
 				if (!blockedPoints.contains(point)) {
 					// Take the UP, RIGHT, DOWN and LEFT readings.
 					// Casted to ints to remove floating point (stick to grid).
-					final int up = (int) world.rangeToObstacleFromGridPosition(x, y, 0);
-					final int right = (int) world.rangeToObstacleFromGridPosition(x, y, 90);
-					final int down = (int) world.rangeToObstacleFromGridPosition(x, y, 180);
-					final int left = (int) world.rangeToObstacleFromGridPosition(x, y, 270);
+					final float up = world.rangeToObstacleFromGridPosition(x, y, 90);
+					final float right = world.rangeToObstacleFromGridPosition(x, y, 0);
+					final float down = world.rangeToObstacleFromGridPosition(x, y, -90);
+					final float left = world.rangeToObstacleFromGridPosition(x, y, 180);
 					// Create a Ranges object from these readings.
-					final Ranges ranges = new Ranges(up, right, down, left);
+					final Ranges ranges = new Ranges(up, right, down, left, Ranges.virtualConverter);
 
 					// Store them in the warehouse map.
 					put(ranges, point);
@@ -63,7 +62,7 @@ public class WarehouseMap {
 	 *            The point of which the ranges occur at.
 	 */
 	private void put(final Ranges ranges, final Point point) {
-		final HashSet<Point> points = positions.getOrDefault(ranges, new HashSet<Point>());
+		final ArrayList<Point> points = positions.getOrDefault(ranges, new ArrayList<Point>());
 		points.add(point);
 		this.positions.put(ranges, points);
 		this.ranges.put(point, ranges);
@@ -75,9 +74,14 @@ public class WarehouseMap {
 	 * @param ranges
 	 *            The ranges to check for.
 	 * @return The points matching the ranges given.
+	 * @throws NoIdeaException
 	 */
-	public List<Point> getPoints(final Ranges ranges) {
-		return new ArrayList<Point>(this.positions.get(ranges));
+	public ArrayList<Point> getPoints(final Ranges ranges) throws NoIdeaException {
+		if (this.positions.containsKey(ranges)) {
+			return this.positions.get(ranges);
+		} else {
+			throw new NoIdeaException(ranges);
+		}
 	}
 
 	/**
@@ -104,7 +108,10 @@ public class WarehouseMap {
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		// Iterate over the points of the warehouse.
-		final Iterator<Point> iterator = this.ranges.keySet().iterator();
+		final List<Point> points = new ArrayList<Point>(this.ranges.keySet());
+		// Sort by X then Y
+		points.sort((p1, p2) -> (int) (p1.x == p2.x ? (p1.y - p2.y) : (p1.x - p2.x)));
+		final Iterator<Point> iterator = points.iterator();
 		while (iterator.hasNext()) {
 			final Point point = iterator.next();
 			builder.append("(").append(point.x).append(",").append(point.y).append(") -> ").append(getRanges(point));

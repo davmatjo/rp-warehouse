@@ -27,6 +27,7 @@ public class SimpleAssigner {
 
 	public SimpleAssigner(ArrayList<Job> jobs) {
 		this.jobs = jobs;
+		assign();
 	}
 
 	public void assign() {

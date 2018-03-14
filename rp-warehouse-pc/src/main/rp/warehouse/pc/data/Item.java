@@ -8,14 +8,14 @@ public class Item {
     private float weight;
     private Location location;
 
-    Item(Float reward, Float weight) {
+    public Item(Float reward, Float weight) {
         this.reward = reward;
         this.weight = weight;
     }
 
     //method to set the location of the item
     public void setLocation(Location location) {
-        location = this.location;
+        this.location = location;
     }
 
     //method to return the items reward

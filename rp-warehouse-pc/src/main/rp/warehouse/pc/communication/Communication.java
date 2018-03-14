@@ -1,14 +1,16 @@
 package rp.warehouse.pc.communication;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Robot;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import rp.warehouse.pc.localisation.Ranges;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
@@ -18,10 +20,19 @@ public class Communication implements Runnable {
     private final DataOutputStream toNXT;
     private final Object waitForMovement = new Object();
     private final Object waitForPickup = new Object();
+    private final Object waitForRanges = new Object();
     private volatile int pickupCount = 0;
+    private final float[] ranges = new float[4];
     private boolean open = true;
 
-    public Communication(String ID, String name, Robot robot) throws IOException {
+    /**
+     *
+     * @param ID Robot ID - hexadecimal string
+     * @param name Robot name string
+     * @param robot Robot object
+     * @throws IOException If could not create the robot
+     */
+    public Communication(final String ID, final String name, final Robot robot) throws IOException {
         this.robot = robot;
         this.name = name;
 
@@ -57,7 +68,7 @@ public class Communication implements Runnable {
             toNXT.close();
 
         } catch (IOException e) {
-            System.err.println("Bluetooth IO Error: " + e.getMessage());
+            logger.error("Bluetooth IO Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -88,14 +99,31 @@ public class Communication implements Runnable {
                 // Commands from RobotInterface
                 case Protocol.CANCEL: {
                     robot.cancelJob();
+                    pickupCount = -1;
+                    synchronized (waitForPickup) {
+                        waitForPickup.notifyAll();
+                    }
                     break;
                 }
 
                 case Protocol.PICKUP: {
                     input = fromNXT.readInt();
-                    synchronized (waitForMovement) {
+                    logger.trace(name + ": Received " + input);
+                    synchronized (waitForPickup) {
                         pickupCount = input;
                         waitForPickup.notifyAll();
+                    }
+                    break;
+                }
+
+                case Protocol.LOCALISE: {
+                    for (int i=0; i < 4; i++) {
+                        float range = fromNXT.readFloat();
+                        logger.trace(name + ": Range read " + range);
+                        ranges[i] = range;
+                    }
+                    synchronized (waitForRanges) {
+                        waitForRanges.notifyAll();
                     }
                     break;
                 }
@@ -108,7 +136,7 @@ public class Communication implements Runnable {
      *
      * @param data int: defined in communication.Protocol
      */
-    private void sendData(int data) {
+    private void sendData(final int data) {
         try {
             logger.debug(name + ": Sending " + data);
             toNXT.writeInt(data);
@@ -125,7 +153,7 @@ public class Communication implements Runnable {
      *
      * @param direction - Protocol.NORTH, EAST, SOUTH, or WEST
      */
-    public void sendMovement(int direction) {
+    public void sendMovement(final int direction) {
         assert direction >= Protocol.NORTH;
         assert direction <= Protocol.WEST;
 
@@ -138,26 +166,46 @@ public class Communication implements Runnable {
                 logger.trace("Finished waiting");
             }
         } catch (InterruptedException e) {
-            System.err.println("Interrupted somehow: " + e.getMessage());
+            logger.error("Interrupted somehow: " + e.getMessage());
         }
     }
 
     /**
      * Send the NXT a signal to pickup a number of items equal to the count
      *
+     * @param amountToLoad number of items to load: -1 if dropping off
      * @return - true if the correct number of items was picked up
      */
-    public int sendPickupRequest() {
+    public int sendLoadingRequest(final int amountToLoad) {
 
         try {
             synchronized (waitForPickup) {
                 sendData(Protocol.PICKUP);
+                sendData(amountToLoad);
                 waitForPickup.wait();
                 return pickupCount;
             }
         } catch (InterruptedException e) {
-            System.err.println("Interrupted somehow: " + e.getMessage());
+            logger.error("Interrupted somehow: " + e.getMessage());
             return -1;
+        }
+    }
+
+    /**
+     * Gets ranges from the robot and puts them into ranges class
+     *
+     * @return Ranges
+     */
+    public Ranges getRanges() {
+        try {
+            synchronized (waitForRanges) {
+                sendData(Protocol.LOCALISE);
+                waitForRanges.wait();
+                return Ranges.fromArray(ranges, Ranges.physicalConverter);
+            }
+        } catch (InterruptedException e) {
+            logger.error("Interrupted somehow: " + e.getMessage());
+            return Ranges.fromArray(ranges, Ranges.physicalConverter);
         }
     }
 
