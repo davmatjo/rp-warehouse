@@ -3,14 +3,9 @@ package rp.warehouse.pc.assignment;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import org.apache.log4j.Logger;
-
 import rp.warehouse.pc.data.Job;
-import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.route.RobotsControl;
 
 /**

@@ -3,23 +3,16 @@ package rp.warehouse.pc.assignment;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import org.apache.log4j.Logger;
-
-import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.route.RobotsControl;
 
+// It all works I think
 /**
  * Assigns items in a job to robots through auctioning
- * 
- * Mostly coded but I got no idea if any of it works WIP
- * 
- * To do: 
- * - The 'if the current job is finished' if statement 
- * - Integration stuff
  * 
  * @author Dylan
  *
@@ -27,64 +20,61 @@ import rp.warehouse.pc.data.Task;
 public class Auctioner {
 
 	private ArrayList<Job> jobs;
-	private ArrayList<Robot> robots;
-	private final ArrayList<Location> dropLocations;
-	
+	private ArrayList<RobotLocation> robots;
+
 	private static final Logger logger = Logger.getLogger(Auctioner.class);
 
 	/**
-	 * Constructor
-	 * 
 	 * @param jobs
-	 *            List of jobs (ordered by utility)
+	 *            List of ordered jobs
 	 * @param robots
-	 *            List of robots
-	 * @param dropLocations
-	 *            List of the drop locations on the map
+	 *            List of robot locations
 	 */
-	public Auctioner(ArrayList<Job> jobs, ArrayList<Robot> robots, ArrayList<Location> dropLocations) {
+	public Auctioner(ArrayList<Job> jobs, ArrayList<RobotLocation> robots) {
 		this.jobs = jobs;
 		this.robots = robots;
-		this.dropLocations = dropLocations;
 	}
 
 	/**
-	 * Will Auction off the items in a job 
-	 * Each robot bids on the item closest to their location 
-	 * Winner is the bid with the lowest cost, winner is assigned their chosen item 
-	 * Repeat until all the items in the job are assigned
+	 * Will Auction off the items in a job. Each robot bids on the item closest to
+	 * their location. Winner is the bid with the lowest cost, winner is assigned
+	 * their chosen item. Repeat until all the items in the job are assigned
 	 */
 	public void assign() {
-
-		Job job = jobs.get(0);
-		jobs.remove(0);
-		logger.debug("Assigning next job");
-
 		ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
-		ArrayList<Task> unassignedItems = job.getItems();
-
-		Location dropLocation = getBestDropLocation(unassignedItems);
-		logger.debug("Job drop location chosen: " + dropLocation.getX() + ", " + dropLocation.getY());
-
-		while (!unassignedItems.isEmpty()) {
-			ArrayList<Bid> bids = new ArrayList<Bid>();
-			for (int i = 0; i < assignedItems.size(); i++) {
-				bids.add(getBid(job, assignedItems.get(i), i, dropLocation));
-			}
-			Bid winner = bids.get(0);
-			for (Bid bid : bids) {
-				if (bid.getItemOrder().getPathCost() < winner.getItemOrder().getPathCost()) {
-					winner = bid;
-				}
-			}
-			assignedItems.get(winner.getOwner()).add(winner.getItem());
-			unassignedItems.remove(winner.getItem());
-			logger.trace("Item assigned to robot " + robots.get(winner.getOwner()).getID());
-
+		for (int i = 0; i < robots.size(); i++) {
+			assignedItems.add(new LinkedList<Task>());
 		}
-		logger.debug("All items assigned");
-		// set robots off
-		// also robots need to receive the drop location
+		
+		while (!jobs.isEmpty()) {
+			Job job = jobs.get(0);
+			jobs.remove(0);
+			logger.debug("Assigning next job");
+			
+			ArrayList<Task> unassignedItems = job.getItems();
+
+			while (!unassignedItems.isEmpty()) {
+				ArrayList<Bid> bids = new ArrayList<Bid>();
+				for (int i = 0; i < assignedItems.size(); i++) {
+					bids.add(getBid(job, assignedItems.get(i), i));
+				}
+				
+				Bid winner = bids.get(0);
+				for (Bid bid : bids) {
+					if (bid.getItemOrder().getPathCost() < winner.getItemOrder().getPathCost()) {
+						winner = bid;
+					}
+				}
+				
+				assignedItems.get(winner.getOwner()).add(winner.getItem());
+				unassignedItems.remove(winner.getItem());
+				logger.trace("Item assigned to robot " + robots.get(winner.getOwner()));
+			}
+			logger.trace("All items assigned");
+		}
+		logger.debug("All jobs assigned");
+		
+		RobotsControl.addRobots(assignedItems);
 
 	}
 
@@ -96,18 +86,16 @@ public class Auctioner {
 	 * @param currentItems
 	 *            The items the robot has won
 	 * @param robot
-	 *            The robot
-	 * @param dropLocation
-	 *            The chosen drop location
+	 *            The robot bidding
 	 * @return The robot's bid
 	 */
-	private Bid getBid(Job job, Queue<Task> currentItems, int robot, Location dropLocation) {
+	private Bid getBid(Job job, Queue<Task> currentItems, int robot) {
 		Task bidItem = null;
 		int bidVal = Integer.MAX_VALUE;
 		ItemOrder bidOrder = null;
 
 		for (Task task : job.getItems()) {
-			ItemOrder newOrder = getLowestCost(task, currentItems, robots.get(robot).getLocation(), dropLocation);
+			ItemOrder newOrder = getLowestCost(task, currentItems, robots.get(robot));
 			int newCost = newOrder.getPathCost();
 			if (newCost < bidVal) {
 				bidItem = task;
@@ -127,11 +115,9 @@ public class Auctioner {
 	 *            The items the robot has won
 	 * @param robotLocation
 	 *            The robot's current location
-	 * @param dropLocation
-	 *            The chosen drop location
 	 * @return The lowest cost order with considered item
 	 */
-	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation, Location dropLocation) {
+	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation) {
 		final LinkedList<Task> current = new LinkedList<Task>(currentPicks);
 
 		int lowest = Integer.MAX_VALUE;
@@ -139,7 +125,7 @@ public class Auctioner {
 		for (int i = 1; i < (currentPicks.size() - 1); i++) {
 			LinkedList<Task> newOrder = current;
 			newOrder.add(i, item);
-			int cost = getTotalDistance(robotLocation, newOrder, dropLocation);
+			int cost = getTotalDistance(robotLocation, newOrder);
 			if (cost < lowest) {
 				lowest = cost;
 				lowestOrder = newOrder;
@@ -155,17 +141,14 @@ public class Auctioner {
 	 *            The start location
 	 * @param items
 	 *            The items (in order of visiting)
-	 * @param end
-	 *            The end location
 	 * @return The total path cost
 	 */
-	private int getTotalDistance(Location start, LinkedList<Task> items, Location end) {
+	private int getTotalDistance(Location start, LinkedList<Task> items) {
 		LinkedList<Location> locations = new LinkedList<Location>();
 		locations.add(start);
 		for (Task item : items) {
 			locations.add(item.getItem().getLocation());
 		}
-		locations.add(end);
 
 		int cost = 0;
 		for (int i = 0; i < (locations.size() - 1); i++) {
@@ -173,44 +156,17 @@ public class Auctioner {
 		}
 		return cost;
 	}
-
+	
+	// no
 	/**
-	 * Calculates distance between two locations
-	 * 
-	 * Yo this just gets the manhattan distance which is no good
+	 * Calculates manhattan distance between two locations
 	 * 
 	 * @param from
 	 * @param to
-	 * @return
+	 * @return Distance between two locations
 	 */
 	private int getDistance(Location from, Location to) {
 		return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
-	}
-
-	/**
-	 * Calculates the best drop off location given the position of all the items
-	 * in a job
-	 * 
-	 * @param items
-	 *            List of items in the job
-	 * @return Location of the chosen drop off point
-	 */
-	private Location getBestDropLocation(ArrayList<Task> items) {
-
-		Location best = null;
-		int bestTotal = Integer.MAX_VALUE;
-		for (Location dropLocation : dropLocations) {
-			int totalDistance = 0;
-			for (Task item : items) {
-				Location itemLocation = item.getItem().getLocation();
-				totalDistance += getDistance(itemLocation, dropLocation);
-			}
-			if (totalDistance < bestTotal) {
-				best = dropLocation;
-				bestTotal = totalDistance;
-			}
-		}
-		return best;
 	}
 
 }
