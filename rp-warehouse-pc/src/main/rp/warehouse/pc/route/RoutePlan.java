@@ -25,6 +25,7 @@ public class RoutePlan {
 	private Robot robot;
 	private Location goalLocation;
 	private static final Logger logger = Logger.getLogger(RoutePlan.class);
+	private static List<Robot> robotsList = new ArrayList<Robot>();
 	//private ArrayList<Location> blocked = Warehouse.getBlockedLocations();
 	
 	int currentX;
@@ -83,6 +84,14 @@ public class RoutePlan {
 		Location dropOff = new Location(0, 0);
 		
 		return plan(robot, dropOff);
+	}
+	
+	/**
+	 * A method to add the list of robots
+	 * @param robots the list of robots to be added
+	 */
+	public static void setRobots(List<Robot> robots) {
+		robotsList = robots;
 	}
 	
 	/**
