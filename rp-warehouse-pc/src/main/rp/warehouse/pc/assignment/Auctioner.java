@@ -11,6 +11,7 @@ import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.route.RobotsControl;
 
 // It all works I think
+// This is the big boy you want to make to replace SimpleAssigner
 /**
  * Assigns items in a job to robots through auctioning
  * 
