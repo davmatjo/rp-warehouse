@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
  *
  */
 public class RobotsControl {
-    private static final ArrayList<Robot> robots = new ArrayList<>();
+    private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
     private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
