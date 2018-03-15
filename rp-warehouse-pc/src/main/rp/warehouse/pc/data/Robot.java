@@ -5,7 +5,6 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
-import sun.util.logging.resources.logging;
 
 import org.apache.log4j.Logger;
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class Robot implements Runnable {
     private RobotLocation location; // Current location of the robot
 
     // Job information
-    private BlockingQueue<Task> tasks; // The queue of Tasks which need to be done
+    private Queue<Task> tasks; // The queue of Tasks which need to be done
     private Item currentItem; // Current Item
     private Task currentTask;
     private static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
@@ -58,7 +57,7 @@ public class Robot implements Runnable {
             throws IOException {
         this.ID = ID;
         this.name = name;
-        this.tasks = (BlockingQueue<Task>) newTasks;
+        this.tasks = newTasks;
         updateTask();
 
         // Communications set up
@@ -231,17 +230,11 @@ public class Robot implements Runnable {
 
     private void updateTask() {
         Rate r = new Rate(RATE);
-        try {
             while (cancelledJobs.containsKey(tasks.peek().jobID)) {
-
-                this.currentTask = tasks.take();
-
+                this.currentTask = tasks.poll();
             }
-            this.currentTask = tasks.take();
+            this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
-        } catch (InterruptedException e) {
-            logger.error(e);
-        }
     }
 
     private void planToDropOff(boolean getNextItem) {
