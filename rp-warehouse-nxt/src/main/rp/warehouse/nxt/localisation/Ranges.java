@@ -18,7 +18,7 @@ public class Ranges {
 		float[] ranges = new float[4];
 		for (int i = 0; i < 4; i++) {
 			float[] tempRanges = new float[10];
-			for (int j = 0; j < 10; j++) {
+			for (int j = 0; j < 20; j++) {
 				Delay.msDelay(20);
 				tempRanges[j] = sensor.getRange();
 			}
