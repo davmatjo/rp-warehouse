@@ -83,6 +83,7 @@ public class Robot implements Runnable {
             logger.debug(name + ": " + "Sending Next instruction");
             sendInstruction();
             logger.debug(name + ": " + "Instruction executed");
+            logger.debug(name + " : Has "+ tasks.size() + " tasks");
             r.sleep();
 
         }
@@ -174,7 +175,8 @@ public class Robot implements Runnable {
     public void cancelJob() {
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
-        cancelledJobs.put(currentTask.jobID, true);
+        cancelledJobs.put(currentTask.getJobID(), true);
+        
 
         // When in pick up mode
         pickUpDone = true;
@@ -234,7 +236,11 @@ public class Robot implements Runnable {
     }
 
     private void updateTask() {
-        Rate r = new Rate(RATE);
+       if (tasks.isEmpty()) {
+           logger.info(name + ": I am done");
+           System.exit(0);
+       }
+        
         while (cancelledJobs.containsKey(tasks.peek().jobID)) {
             this.currentTask = tasks.poll();
         }
@@ -258,11 +264,9 @@ public class Robot implements Runnable {
             route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
         } else {
             logger.error(name + ": " + "No current Item");
-            // route = null;
-            route.add(3);
-            route.add(4);
-            route.add(5);
-            route.add(6);
+            updateTask();
+            plan(getNextItem);
+            logger.error(name + ": " + "No current Item");
 
         }
     }
@@ -294,10 +298,11 @@ public class Robot implements Runnable {
     }
 
     private int getCurrentInstruction() {
-        logger.info(name + ": " + "Starting getting Current Instruction");
+        logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is :" + route.isEmpty());
         lastInstruction = route.poll();
-        if (cancelledJobs.containsKey(currentTask.jobID)) {
+        if (cancelledJobs.containsKey(currentTask.getJobID())) {
+            updateLocation();
             nextItemWeightCheck();
         }
         logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
