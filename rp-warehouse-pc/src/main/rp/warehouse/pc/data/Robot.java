@@ -153,13 +153,13 @@ public class Robot implements Runnable {
             }
             
             // Only needs the button to be pressed once
-            if(!dropOffDone) {
+            if(dropOffCheck) {
                 comms.sendLoadingRequest(currentTask.getCount());
                 dropOff();
             }
             logger.debug(name + ": " +"Item update completed");
             
-            dropOffDone = false;
+            dropOffCheck = false;
             pickUpDone = false;
         }
         
@@ -262,7 +262,7 @@ public class Robot implements Runnable {
             }
             currentWeightOfCargo = 0;
             dropOffCheck = false;
-            dropOffDone = true;
+            //dropOffDone = true;
             return true;
         }
 
