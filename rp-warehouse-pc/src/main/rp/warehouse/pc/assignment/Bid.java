@@ -39,5 +39,12 @@ class Bid {
 	public ItemOrder getItemOrder() {
 		return itemOrder;
 	}
+	
+	public String toString() {
+		return "Bid: "
+				+ "\nItem at: " + "(" + item.getItem().getLocation().getX() + ", " + item.getItem().getLocation().getY() + ")" 
+				+ "\nRobot: " + owner 
+				+ "\nItem order: " + itemOrder.toString();
+	}
 
 }

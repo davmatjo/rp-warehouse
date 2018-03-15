@@ -72,7 +72,7 @@ public class Auctioner {
 						winner = bid;
 					}
 				}
-				
+
 				assigning.get(winner.getOwner()).add(winner.getItem());
 				unassignedItems.remove(winner.getItem());
 				logger.trace("Item assigned to robot " + robots.get(winner.getOwner()));
@@ -142,10 +142,16 @@ public class Auctioner {
 	 */
 	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation) {
 		final LinkedList<Task> current = new LinkedList<Task>(currentPicks);
+		
+		if (current.isEmpty()) {
+			LinkedList<Task> order = new LinkedList<Task>();
+			order.add(item);
+			return new ItemOrder(getTotalDistance(robotLocation, order), order);
+		}
 
 		int lowest = Integer.MAX_VALUE;
 		LinkedList<Task> lowestOrder = current;
-		for (int i = 1; i < (currentPicks.size() - 1); i++) {
+		for (int i = 0; i < currentPicks.size(); i++) {
 			LinkedList<Task> newOrder = current;
 			newOrder.add(i, item);
 			int cost = getTotalDistance(robotLocation, newOrder);

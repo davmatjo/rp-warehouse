@@ -30,5 +30,13 @@ class ItemOrder {
 	public int getPathCost() {
 		return pathCost;
 	}
+	
+	public String toString() {
+		String s = "";
+		for (Task task : order) {
+			s += "(" + task.getItem().getLocation().getX() + ", " + task.getItem().getLocation().getY() + ") ";		
+		}
+		return s;
+	}
 
 }
