@@ -142,7 +142,7 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
         updateLocation();
         
-        if (route.isEmpty()) {
+        if (route.isEmpty() && location.getX() == currentItem.getLocation().getX() && location.getY() == currentItem.getLocation().getY()) {
             logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(RATE);
             
@@ -153,13 +153,13 @@ public class Robot implements Runnable {
             }
             
             // Only needs the button to be pressed once
-            if(!dropOffDone) {
+            if(dropOffCheck) {
                 comms.sendLoadingRequest(currentTask.getCount());
                 dropOff();
             }
             logger.debug(name + ": " +"Item update completed");
             
-            dropOffDone = false;
+            dropOffCheck = false;
             pickUpDone = false;
         }
         
@@ -249,6 +249,7 @@ public class Robot implements Runnable {
      */
     public boolean dropOff() {
         logger.debug(name + ": " +"Starting DropOff");
+        logger.info(name + ": " +"current weight of cargo " + currentWeightOfCargo);
         if (!route.isEmpty() || !dropOffCheck) {
             logger.warn(name + ": " +"Drop off refused");
             return false;
@@ -261,7 +262,7 @@ public class Robot implements Runnable {
             }
             currentWeightOfCargo = 0;
             dropOffCheck = false;
-            dropOffDone = true;
+            //dropOffDone = true;
             return true;
         }
 
