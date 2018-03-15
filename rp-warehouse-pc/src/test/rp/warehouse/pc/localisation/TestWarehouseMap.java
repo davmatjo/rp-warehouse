@@ -1,7 +1,10 @@
 package rp.warehouse.pc.localisation;
 
-import rp.warehouse.pc.localisation.WarehouseMap;
-
+/**
+ * 
+ * @author Kieran
+ *
+ */
 public class TestWarehouseMap {
 
 	public static void main(String[] args) {
