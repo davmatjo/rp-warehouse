@@ -21,4 +21,8 @@ public class Task {
     public int getCount() {
         return count;
     }
-} 
+
+    public String getJobID() {
+        return jobID;
+    }
+}
