@@ -4,6 +4,11 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
 
+/**
+ * 
+ * @author Kieran
+ *
+ */
 public class DummyLocaliser implements Localisation {
 
 	private final int x;
