@@ -59,10 +59,16 @@ public class Robot implements Runnable {
         this.tasks = newTasks;
         this.currentTask = tasks.poll();
         this.currentItem = currentTask.getItem();
+        
+        // Communications set up
         this.comms = new Communication(ID, name, this);
         pool.execute(comms);
+        
+        // Localisation 
         Localiser loc = new Localiser(comms);
         this.location = startingLocation;// loc.getPosition();
+        
+        
         logger.trace("Robot class: " + ID + " " + name + " Has been created" );
         plan(false);
 
@@ -156,11 +162,11 @@ public class Robot implements Runnable {
     public void cancelJob() {
         logger.debug(name + ": " +"Starting Job cancellation");
         cancelledJobs.put(currentTask.jobID, true);
+        
+        // When in pick up mode
         pickUpDone = true;
         pickUp(-1);
-        // Should it do any planning ?
-        // Think about when it can be called
-        // Can mess up the location 
+        plan(true);
     }
     
     /**
@@ -201,13 +207,13 @@ public class Robot implements Runnable {
             pickUpDone = true;
             return true;
         }else {
-            logger.warn(name + ": " +"Pick up refused");
+            logger.warn(name + ": " +"Pick up Cancelled");
             return false;
         }
     }
     private void updateTask() {
         while(cancelledJobs.containsKey(tasks.peek().jobID)) {
-        this.currentTask = tasks.poll();
+            this.currentTask = tasks.poll();
         }
         this.currentTask = tasks.poll();
         this.currentItem = currentTask.getItem();
@@ -284,10 +290,12 @@ public class Robot implements Runnable {
     }
     
     private int getCurrentInstruction() {
-        logger.info(name + ": " +"Starting getCurrentInstraction");
+        logger.info(name + ": " +"Starting getting Current Instruction");
 
         lastInstruction = route.poll(); 
-        // Check Job ID (Discard cancelled jobs "items" )
+        if(cancelledJobs.containsKey(currentTask.jobID)){
+            plan(false);
+        }
         logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
         return lastInstruction;
     }
