@@ -142,7 +142,7 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
         updateLocation();
         
-        if (route.isEmpty()) {
+        if (route.isEmpty() && location.getX() == currentItem.getLocation().getX() && location.getY() == currentItem.getLocation().getY()) {
             logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(RATE);
             
