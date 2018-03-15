@@ -83,9 +83,7 @@ public class Localiser implements Localisation {
 			// Rotate ranges
 			ranges = Ranges.rotate(ranges, reverseRotation[direction]);
 			logger.info("Rotated ranges: " + ranges);
-			final List<Point> newPossibles = warehouseMap.getPoints(ranges);
-			logger.info("Possible positions: " + newPossibles);
-			possiblePoints = filterPositions(possiblePoints, newPossibles, move);
+			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 			logger.info("Filtered positions: " + possiblePoints);
 		}
 		// Create the location of the robot using the first possible location from the
@@ -108,6 +106,8 @@ public class Localiser implements Localisation {
 	 * @return The new list of possible positions of the robot.
 	 */
 	private List<Point> filterPositions(final List<Point> initial, final List<Point> next, final Point change) {
+		logger.info("-- Filtering\nInitial ranges: " + initial);
+		logger.info("Next ranges: " + next);
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
 		next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contains(p));
