@@ -57,7 +57,7 @@ public class Robot implements Runnable {
             throws IOException {
         this.ID = ID;
         this.name = name;
-        this.tasks = (BlockingQueue<Task>) newTasks;
+        this.tasks = newTasks;
         updateTask();
 
         // Communications set up
