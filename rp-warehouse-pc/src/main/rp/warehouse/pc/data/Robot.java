@@ -83,6 +83,7 @@ public class Robot implements Runnable {
             logger.debug(name + ": " + "Sending Next instruction");
             sendInstruction();
             logger.debug(name + ": " + "Instruction executed");
+            logger.debug(name + " : Has "+ tasks.size() + " tasks");
             r.sleep();
 
         }
@@ -262,11 +263,9 @@ public class Robot implements Runnable {
             route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
         } else {
             logger.error(name + ": " + "No current Item");
-            // route = null;
-            route.add(3);
-            route.add(4);
-            route.add(5);
-            route.add(6);
+            updateTask();
+            plan(getNextItem);
+            logger.error(name + ": " + "No current Item");
 
         }
     }
@@ -298,7 +297,7 @@ public class Robot implements Runnable {
     }
 
     private int getCurrentInstruction() {
-        logger.info(name + ": " + "Starting getting Current Instruction");
+        logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is :" + route.isEmpty());
         lastInstruction = route.poll();
         if (cancelledJobs.containsKey(currentTask.jobID)) {
