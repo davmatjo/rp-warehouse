@@ -212,9 +212,8 @@ public class Robot implements Runnable {
     }
     
     private void goToDropOff(boolean getNextItem) {
-        if(getNextItem) {
-            updateTask();
-        }
+        if(getNextItem) updateTask();
+        
         route = RoutePlan.planDropOff(this);
         dropOffCheck = true;
     }
@@ -246,9 +245,8 @@ public class Robot implements Runnable {
     
     private void plan(boolean getNextItem) {
         logger.info(name + ": " +"Starting plan");
-        if(getNextItem) {
-            updateTask();
-        }
+        if(getNextItem) updateTask();
+        
         if (currentItem!=null) {
             route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
