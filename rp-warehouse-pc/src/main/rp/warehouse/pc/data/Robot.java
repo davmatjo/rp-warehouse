@@ -59,6 +59,7 @@ public class Robot implements Runnable {
         this.name = name;
         this.tasks = newTasks;
         updateTask();
+        logger.debug(name + " : Has "+ tasks.size() + " tasks");
 
         // Communications set up
         this.comms = new Communication(ID, name, this);
@@ -179,6 +180,7 @@ public class Robot implements Runnable {
         pickUpDone = true;
         pickUp(-1);
         plan(true);
+        pickUpDone = false;
     }
 
     /**
@@ -293,7 +295,7 @@ public class Robot implements Runnable {
 
     private int getCurrentInstruction() {
         logger.info(name + ": " + "Starting getting Current Instruction");
-
+        logger.info("Route is :" + route.isEmpty());
         lastInstruction = route.poll();
         if (cancelledJobs.containsKey(currentTask.jobID)) {
             nextItemWeightCheck();
