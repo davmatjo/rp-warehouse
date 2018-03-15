@@ -1,48 +1,48 @@
 package rp.warehouse.pc.data;
 
-import rp.util.HashMap;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
+import sun.util.logging.resources.logging;
+
 import org.apache.log4j.Logger;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 public class Robot implements Runnable {
 
     // Communications
-    private final String ID;                    // Communication ID
-    private final String name;                  // Communication name
-    private Communication comms;                // Communication used to connect each robot to the a nxt brick
+    private final String ID; // Communication ID
+    private final String name; // Communication name
+    private Communication comms; // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private Queue<Integer> route;               // Queue of directions for the current task
-    private int lastInstruction = -1;           // The current Instruction being done by robot (For WMI)
-    private RobotLocation location;             // Current location of the robot
+    private LinkedList<Integer> route; // Queue of directions for the current task
+    private int lastInstruction = -1; // The current Instruction being done by robot (For WMI)
+    private RobotLocation location; // Current location of the robot
 
     // Job information
-    private Queue<Task> tasks;                  // The queue of Tasks which need to be done
-    private Item currentItem;                   // Current Item
+    private BlockingQueue<Task> tasks; // The queue of Tasks which need to be done
+    private Item currentItem; // Current Item
     private Task currentTask;
-    private static Map<String, Boolean> cancelledJobs =new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
+    private static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
-    private float currentWeightOfCargo = 0.0f;  
-    private boolean dropOffCheck = false;       // Indicates if drop off needs to happen 
-    private boolean running = true;             
-    private boolean dropOffDone = false;        
-    private boolean pickUpDone = false;  
+    private float currentWeightOfCargo = 0.0f;
+    private boolean dropOffCheck = false; // Indicates if drop off needs to happen
+    private boolean running = true;
+    private boolean pickUpDone = false;
     private int RATE = 20;
 
-    
     private static final Logger logger = Logger.getLogger(Robot.class);
-    
-   
 
     /**
      * For: Job Assignment (Created here)
@@ -54,23 +54,22 @@ public class Robot implements Runnable {
      * @param newTasks
      *            - The queue of task Robot has to complete
      */
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) throws IOException {
+    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation)
+            throws IOException {
         this.ID = ID;
         this.name = name;
-        this.tasks = newTasks;
-        this.currentTask = tasks.poll();
-        this.currentItem = currentTask.getItem();
-        
+        this.tasks = (BlockingQueue<Task>) newTasks;
+        updateTask();
+
         // Communications set up
         this.comms = new Communication(ID, name, this);
         pool.execute(comms);
-        
-        // Localisation 
+
+        // Localisation
         Localiser loc = new Localiser(comms);
         this.location = startingLocation;// loc.getPosition();
-        
-        
-        logger.trace("Robot class: " + ID + " " + name + " Has been created" );
+
+        logger.trace("Robot class: " + ID + " " + name + " Has been created");
         plan(false);
 
     }
@@ -79,17 +78,17 @@ public class Robot implements Runnable {
     public void run() {
         logger.info("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(RATE);
-        
+
         while (running) {
-            logger.debug(name + ": " +"Sending Next instruction");
+            logger.debug(name + ": " + "Sending Next instruction");
             sendInstruction();
-            logger.debug(name + ": " +"Instruction executed");
+            logger.debug(name + ": " + "Instruction executed");
             r.sleep();
-            
+
         }
     }
-    
-    private void sendInstruction(){
+
+    private void sendInstruction() {
         comms.sendMovement(getCurrentInstruction());
         updateCurrentItem();
 
@@ -100,14 +99,14 @@ public class Robot implements Runnable {
      */
     private void updateLocation() {
         if (lastInstruction != -1) {
-            logger.debug(name + ": " +"Updating location");
-            
+            logger.debug(name + ": " + "Updating location");
+
             int x, y;
             x = location.getX();
             y = location.getY();
             int directionPointing = 0;
-            
-            // Works out the direction change 
+
+            // Works out the direction change
             switch (lastInstruction) {
             case Protocol.NORTH:
                 y += 1;
@@ -132,7 +131,7 @@ public class Robot implements Runnable {
             location.setX(x);
             location.setY(y);
             location.setDirection(directionPointing);
-            logger.info(name + ": " +"Current location X: " + location.getX() + " Y: "+location.getY());
+            logger.info(name + ": " + "Current location X: " + location.getX() + " Y: " + location.getY());
         }
     }
 
@@ -141,158 +140,181 @@ public class Robot implements Runnable {
      */
     private void updateCurrentItem() {
         updateLocation();
-        
-        if (route.isEmpty() && location.getX() == currentItem.getLocation().getX() && location.getY() == currentItem.getLocation().getY()) {
-            logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
+
+        if (route.isEmpty() && location.getX() == currentItem.getLocation().getX()
+                && location.getY() == currentItem.getLocation().getY()) {
+            logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
             Rate r = new Rate(RATE);
-            
+
             // Loops until the right number of items is entered
             while (!pickUpDone) {
                 pickUp(comms.sendLoadingRequest(currentTask.getCount()));
                 r.sleep();
             }
-            
+
             // Only needs the button to be pressed once
-            if(dropOffCheck) {
+            if (dropOffCheck) {
                 comms.sendLoadingRequest(currentTask.getCount());
                 dropOff();
             }
-            logger.debug(name + ": " +"Item update completed");
-            
+            logger.debug(name + ": " + "Item update completed");
+
             dropOffCheck = false;
             pickUpDone = false;
         }
-        
+
     }
 
     /**
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
-        logger.debug(name + ": " +"Starting Job cancellation");
+        logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.jobID, true);
-        
+
         // When in pick up mode
         pickUpDone = true;
         pickUp(-1);
         plan(true);
     }
-    
+
     /**
      * For: Communication specify amount loaded for the current item
-     * @return - True, there is still space for more cargo or the cargo is full. 
-     *              False, too many items being picked up
+     * 
+     * @return - True, there is still space for more cargo or the cargo is full.
+     *         False, too many items being picked up
      */
     private boolean pickUp(int numberOfItems) {
-        logger.trace(name + ": " +"Starting pickUp");
-        
-        if (route.isEmpty() && !dropOffCheck  && numberOfItems == currentTask.getCount()) {
-            logger.info(name + ": " +"Pick up valid");
+        logger.trace(name + ": " + "Starting pickUp");
+
+        if (route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount()) {
+            logger.info(name + ": " + "Pick up valid");
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
-            
+
             // This might happens when Task was cancelled
-            if ( newWeight > WEIGHTLIMIT) {
-                logger.error(name + ": " +"To much cargo, going to drop off. Should not happen");
-                goToDropOff(false); 
+            if (newWeight > WEIGHTLIMIT) {
+                logger.error(name + ": " + "To much cargo, going to drop off. Should not happen");
+                planToDropOff(false);
                 return false;
-            }else if (newWeight == WEIGHTLIMIT) {
-                logger.debug(name + ": " +"Picked up Item(s), cargo is full. Going to drop off");
+            } else if (newWeight == WEIGHTLIMIT) {
+                logger.debug(name + ": " + "Picked up Item(s), cargo is full. Going to drop off");
                 currentWeightOfCargo = newWeight;
-                goToDropOff(true); 
+                planToDropOff(true);
                 return true;
             }
-            
+
             currentWeightOfCargo = newWeight;
-            logger.info(name + ": " +"Picked up " + numberOfItems + " Item(s), continuing with tasks");
-            logger.info(name + ": " +"current weight of cargo " + currentWeightOfCargo);
-            
+            logger.info(name + ": " + "Picked up " + numberOfItems + " Item(s), continuing with tasks");
+            logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
+
             nextItemWeightCheck();
-            
+
             pickUpDone = true;
             return true;
-        }else {
-            logger.warn(name + ": " +"Pick up Cancelled");
+        } else {
+            logger.warn(name + ": " + "Pick up Cancelled");
             return false;
         }
     }
 
     private void nextItemWeightCheck() {
-        float weightForNextItem =currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
-        
-        if(weightForNextItem > WEIGHTLIMIT) {
-            logger.info(name + ": " +"Will not be able to fit the next item, going to drop off");
-            goToDropOff(false); 
-        }else {
+        float weightForNextItem = currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
+
+        if (weightForNextItem > WEIGHTLIMIT) {
+            logger.info(name + ": " + "Will not be able to fit the next item, going to drop off");
+            planToDropOff(false);
+        } else {
             plan(true);
         }
     }
+
     private void updateTask() {
-        while(cancelledJobs.containsKey(tasks.peek().jobID)) {
-            this.currentTask = tasks.poll();
+        Rate r = new Rate(RATE);
+        try {
+            while (cancelledJobs.containsKey(tasks.peek().jobID)) {
+
+                this.currentTask = tasks.take();
+
+            }
+            this.currentTask = tasks.take();
+            this.currentItem = currentTask.getItem();
+        } catch (InterruptedException e) {
+            logger.error(e);
         }
-        this.currentTask = tasks.poll();
-        this.currentItem = currentTask.getItem();
     }
-    
-    private void goToDropOff(boolean getNextItem) {
-        if(getNextItem) updateTask();
-        
-        route = RoutePlan.planDropOff(this);
+
+    private void planToDropOff(boolean getNextItem) {
+        if (getNextItem)
+            updateTask();
+
+        route = (LinkedList<Integer>) RoutePlan.planDropOff(this);
         dropOffCheck = true;
     }
-    
-    
+
+    private void plan(boolean getNextItem) {
+        logger.info(name + ": " + "Starting plan");
+        if (getNextItem)
+            updateTask();
+        if (currentItem != null) {
+            route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
+        } else {
+            logger.error(name + ": " + "No current Item");
+            // route = null;
+            route.add(3);
+            route.add(4);
+            route.add(5);
+            route.add(6);
+
+        }
+    }
+
     /**
      * For Communication when performing drop of at the station
-     * @return - 
+     * 
+     * @return -
      */
     public boolean dropOff() {
-        logger.debug(name + ": " +"Starting DropOff");
-        logger.info(name + ": " +"current weight of cargo " + currentWeightOfCargo);
+        logger.debug(name + ": " + "Starting DropOff");
+        logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
         if (!route.isEmpty() || !dropOffCheck) {
-            logger.warn(name + ": " +"Drop off refused");
+            logger.warn(name + ": " + "Drop off refused");
             return false;
-        }else {
-            logger.info(name + ": " +"Drop off valid");
+        } else {
+            logger.info(name + ": " + "Drop off valid");
             if (!tasks.isEmpty()) {// why?
-                logger.debug(name + ": " +"Planning to get current item");
+                logger.debug(name + ": " + "Planning to get current item");
                 plan(false);
                 lastInstruction = -1;
             }
             currentWeightOfCargo = 0;
             dropOffCheck = false;
-            //dropOffDone = true;
+            // dropOffDone = true;
             return true;
         }
 
     }
-    
-    private void plan(boolean getNextItem) {
-        logger.info(name + ": " +"Starting plan");
-        if(getNextItem) updateTask();
-        
-        if (currentItem!=null) {
-            route = RoutePlan.plan(this, currentItem.getLocation());
-        }else {
-            logger.error(name + ": " +"No current Item");
-            //route = null;
-            route.add(3);
-            route.add(4);
-            route.add(5);
-            route.add(6);
-            
+
+    private int getCurrentInstruction() {
+        logger.info(name + ": " + "Starting getting Current Instruction");
+
+        lastInstruction = route.poll();
+        if (cancelledJobs.containsKey(currentTask.jobID)) {
+            nextItemWeightCheck();
         }
+        logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
+        return lastInstruction;
     }
-    
+
     /**
-     * For Warehouse MI 
+     * For Warehouse MI
+     * 
      * @return Queue<Integer> of directions
      */
-    public Queue<Integer> getRoute(){
+    public LinkedList<Integer> getRoute() {
         return route;
     }
-    
+
     public String getID() {
         return ID;
     }
@@ -300,25 +322,13 @@ public class Robot implements Runnable {
     public RobotLocation getLocation() {
         return location;
     }
-    
+
     private String getDirectionString(int direction) {
-        // Works out the String representation of the command 
-        return (direction <= 4 ? (direction == 3 ? "North" : "East"):(direction == 5 ? "South" : "West"));
-    }
-    
-    private int getCurrentInstruction() {
-        logger.info(name + ": " +"Starting getting Current Instruction");
-
-        lastInstruction = route.poll(); 
-        if(cancelledJobs.containsKey(currentTask.jobID)){
-            nextItemWeightCheck();
-        }
-        logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
-        return lastInstruction;
+        // Works out the String representation of the command
+        return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
     }
 
-    
 }
 
-//Music to listen to while coding
-//https://www.youtube.com/watch?v=L5gVFYmDWCk
+// Music to listen to while coding
+// https://www.youtube.com/watch?v=L5gVFYmDWCk
