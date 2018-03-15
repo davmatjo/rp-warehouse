@@ -75,8 +75,9 @@ public class Localiser implements Localisation {
 			} else {
 				comms.sendMovement(Protocol.WEST);
 			}
+			logger.debug("Received ranges: " + ranges);
 			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
-			logger.debug("Retrieved ranges: " + ranges);
+			logger.debug("Rotated ranges: " + ranges);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 			logger.debug("Filtered positions: " + possiblePoints);
 		}
