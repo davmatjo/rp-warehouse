@@ -175,7 +175,8 @@ public class Robot implements Runnable {
     public void cancelJob() {
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
-        cancelledJobs.put(currentTask.jobID, true);
+        cancelledJobs.put(currentTask.getJobID(), true);
+        
 
         // When in pick up mode
         pickUpDone = true;
@@ -300,7 +301,7 @@ public class Robot implements Runnable {
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is :" + route.isEmpty());
         lastInstruction = route.poll();
-        if (cancelledJobs.containsKey(currentTask.jobID)) {
+        if (cancelledJobs.containsKey(currentTask.getJobID())) {
             nextItemWeightCheck();
         }
         logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
