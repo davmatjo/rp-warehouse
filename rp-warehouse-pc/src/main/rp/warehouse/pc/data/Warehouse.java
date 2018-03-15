@@ -25,6 +25,7 @@ public class Warehouse {
 			new Location(10, 1), new Location(10, 2), new Location(10, 3), new Location(10, 4), new Location(10, 5)));
 	private static final float height = 2.48f, width = 3.68f, xInset = 0.14f, yInset = 0.15f, cellSize = 0.30f;
 	private static final int gridWidth = 12, gridHeight = 8;
+	public static final int gridSize = 27;
 
 	// The map of the warehouse
 	private static final GridMap map = new GridMap(gridWidth, gridHeight, xInset, yInset, cellSize,
