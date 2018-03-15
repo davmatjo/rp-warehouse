@@ -156,6 +156,8 @@ public class Robot implements Runnable {
     public void cancelJob() {
         logger.debug(name + ": " +"Starting Job cancellation");
         cancelledJobs.put(currentTask.jobID, true);
+        pickUpDone = true;
+        pickUp(-1);
         // Should it do any planning ?
         // Think about when it can be called
         // Can mess up the location 
