@@ -21,7 +21,7 @@ import rp.warehouse.pc.route.RobotsControl;
 public class Auctioner {
 
 	private ArrayList<Job> jobs;
-	private ArrayList<RobotLocation> robots;
+	private ArrayList<Location> robots;
 
 	private static final Logger logger = Logger.getLogger(Auctioner.class);
 
@@ -31,7 +31,7 @@ public class Auctioner {
 	 * @param robots
 	 *            List of robot locations
 	 */
-	public Auctioner(ArrayList<Job> jobs, ArrayList<RobotLocation> robots) {
+	public Auctioner(ArrayList<Job> jobs, ArrayList<Location> robots) {
 		this.jobs = jobs;
 		this.robots = robots;
 	}
@@ -52,12 +52,18 @@ public class Auctioner {
 			jobs.remove(0);
 			logger.debug("Assigning next job");
 			
+			ArrayList<Queue<Task>> assigning = new ArrayList<Queue<Task>>();
+			for (int i = 0; i < robots.size(); i++) {
+				assigning.add(new LinkedList<Task>());
+			}
+			
 			ArrayList<Task> unassignedItems = job.getItems();
-
+			
+			// Auction items
 			while (!unassignedItems.isEmpty()) {
 				ArrayList<Bid> bids = new ArrayList<Bid>();
-				for (int i = 0; i < assignedItems.size(); i++) {
-					bids.add(getBid(job, assignedItems.get(i), i));
+				for (int i = 0; i < assigning.size(); i++) {
+					bids.add(getBid(job, assigning.get(i), i));
 				}
 				
 				Bid winner = bids.get(0);
@@ -67,9 +73,25 @@ public class Auctioner {
 					}
 				}
 				
-				assignedItems.get(winner.getOwner()).add(winner.getItem());
+				assigning.get(winner.getOwner()).add(winner.getItem());
 				unassignedItems.remove(winner.getItem());
 				logger.trace("Item assigned to robot " + robots.get(winner.getOwner()));
+			}
+			
+			// Final assignment
+			for (int i = 0; i < assignedItems.size(); i++) {
+				for (Task assignedTask : assigning.get(i)) {
+					assignedItems.get(i).offer(assignedTask);
+				}
+			}
+			
+			// Update locations
+			for (int i = 0; i < assignedItems.size(); i++) {
+				LinkedList<Task> robotTasks = (LinkedList<Task>) assignedItems.get(i);
+				if (!robotTasks.isEmpty()) {
+					robots.remove(i);
+					robots.add(i, robotTasks.get(robotTasks.size() - 1).getItem().getLocation());
+				}	
 			}
 			logger.trace("All items assigned");
 		}
