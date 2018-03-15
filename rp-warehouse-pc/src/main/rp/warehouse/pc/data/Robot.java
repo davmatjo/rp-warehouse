@@ -1,6 +1,5 @@
 package rp.warehouse.pc.data;
 
-import rp.util.HashMap;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
@@ -8,6 +7,7 @@ import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -34,8 +34,7 @@ public class Robot implements Runnable {
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
     private float currentWeightOfCargo = 0.0f;  
     private boolean dropOffCheck = false;       // Indicates if drop off needs to happen 
-    private boolean running = true;             
-    private boolean dropOffDone = false;        
+    private boolean running = true;    
     private boolean pickUpDone = false;  
     private int RATE = 20;
 
@@ -284,6 +283,16 @@ public class Robot implements Runnable {
             
         }
     }
+    private int getCurrentInstruction() {
+        logger.info(name + ": " +"Starting getting Current Instruction");
+
+        lastInstruction = route.poll(); 
+//        if(cancelledJobs.containsKey(currentTask.jobID)){
+//            nextItemWeightCheck();
+//        }
+        logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
+        return lastInstruction;
+    }
     
     /**
      * For Warehouse MI 
@@ -306,16 +315,7 @@ public class Robot implements Runnable {
         return (direction <= 4 ? (direction == 3 ? "North" : "East"):(direction == 5 ? "South" : "West"));
     }
     
-    private int getCurrentInstruction() {
-        logger.info(name + ": " +"Starting getting Current Instruction");
 
-        lastInstruction = route.poll(); 
-        if(cancelledJobs.containsKey(currentTask.jobID)){
-            nextItemWeightCheck();
-        }
-        logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
-        return lastInstruction;
-    }
 
     
 }
