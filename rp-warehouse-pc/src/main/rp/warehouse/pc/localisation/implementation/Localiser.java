@@ -26,7 +26,7 @@ public class Localiser implements Localisation {
 	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
-	private final byte[] reverseRotation = new byte[] { 0, 1, 2, 3 };
+	private final byte[] reverseRotation = new byte[] { 0, 3, 2, 1 };
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;

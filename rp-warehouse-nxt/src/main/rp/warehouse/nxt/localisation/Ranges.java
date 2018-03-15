@@ -17,31 +17,15 @@ public class Ranges {
 	public float[] getRanges() {
 		float[] ranges = new float[4];
 		for (int i = 0; i < 4; i++) {
-			float[] tempRanges = new float[5];
+			float totalRanges = 0;
 			for (int j = 0; j < 5; j++) {
 				Delay.msDelay(20);
-				tempRanges[j] = sensor.getRange();
+				totalRanges += sensor.getRange();
 			}
-			ranges[i] = mode(tempRanges);
+			ranges[i] = totalRanges / 5;
 			motion.rotate();
 		}
 		return ranges;
 	}
 
-	private static float mode(float a[]) {
-		float maxValue = 0;
-		int maxCount = 0;
-		for (int i = 0; i < a.length; ++i) {
-			int count = 0;
-			for (int j = 0; j < a.length; ++j) {
-				if (a[j] == a[i])
-					++count;
-			}
-			if (count > maxCount) {
-				maxCount = count;
-				maxValue = a[i];
-			}
-		}
-		return maxValue;
-	}
 }
