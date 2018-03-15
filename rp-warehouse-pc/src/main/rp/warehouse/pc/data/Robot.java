@@ -59,7 +59,7 @@ public class Robot implements Runnable {
         this.name = name;
         this.tasks = newTasks;
         updateTask();
-        logger.debug(name + " : Has "+ tasks.size() + " taskss");
+        logger.debug(name + " : Has "+ tasks.size() + " tasks");
 
         // Communications set up
         this.comms = new Communication(ID, name, this);
@@ -180,6 +180,7 @@ public class Robot implements Runnable {
         pickUpDone = true;
         pickUp(-1);
         plan(true);
+        pickUpDone = false;
     }
 
     /**
