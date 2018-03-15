@@ -75,6 +75,8 @@ public class Localiser implements Localisation {
 			} else {
 				comms.sendMovement(Protocol.WEST);
 			}
+			logger.debug("Previous direction: " + previousDirection);
+			logger.debug("Reversal rotation amount: " + reverseRotation[direction]);
 			logger.debug("Received ranges: " + ranges);
 			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
 			logger.debug("Rotated ranges: " + ranges);
