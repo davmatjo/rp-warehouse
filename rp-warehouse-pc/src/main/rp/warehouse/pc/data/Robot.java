@@ -302,6 +302,7 @@ public class Robot implements Runnable {
         logger.info("Route is :" + route.isEmpty());
         lastInstruction = route.poll();
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
+            updateLocation();
             nextItemWeightCheck();
         }
         logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
