@@ -25,8 +25,8 @@ public class MotionController implements Movement {
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
 		calibrateSensors();
-		leftLineLimit = leftSensor.getLightValue() - 25;
-		rightLineLimit = rightSensor.getLightValue() - 25;
+		leftLineLimit = leftSensor.getLightValue() - 15;
+		rightLineLimit = rightSensor.getLightValue() - 15;
 
 	}
 

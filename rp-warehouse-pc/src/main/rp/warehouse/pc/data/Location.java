@@ -43,9 +43,6 @@ public class Location {
 
     @Override
     public boolean equals(Object o) {
-        if (o.getClass() != this.getClass()) {
-            return false;
-        }
         Location l = (Location) o;
         return this.x == l.x && this.y == l.y;
     }

@@ -30,6 +30,8 @@ public class RobotsControl {
     //Will crash as only has one element 
     private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
     private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
+    private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(11, 7, 3),
+    new RobotLocation(0, 0, 3), new RobotLocation(0, 7, 3)};
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -56,7 +58,7 @@ public class RobotsControl {
 
             Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, new RobotLocation( 0, 0, 3));
+                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, robotLocations[i]);
                 robots.add(newRobot);
                 logger.debug("Robot " + robotNames[i] + " created");
             } catch (IOException e) {
@@ -65,6 +67,8 @@ public class RobotsControl {
             
             i++;
         }
+
+        RoutePlan.setRobots(robots);
         
         for (Robot robot : robots) {
             pool.execute(robot);

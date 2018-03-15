@@ -1,8 +1,5 @@
 package rp.warehouse.pc.route;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +23,7 @@ public class RoutePlan {
 	private Location goalLocation;
 	private static final Logger logger = Logger.getLogger(RoutePlan.class);
 	private static List<Robot> robotsList = new ArrayList<Robot>();
-	//private ArrayList<Location> blocked = Warehouse.getBlockedLocations();
+	private HashSet<Location> blocked = new HashSet<>(Warehouse.getBlockedLocations());
 	
 	int currentX;
 	int currentY;
@@ -37,6 +34,7 @@ public class RoutePlan {
 	boolean goalNotFound = true;
 	static Queue<Integer> plan = new LinkedList<Integer>();
 	final Location originalLocation;
+	private HashSet<Location> tempBlocked;
 	
 	/**
 	 * The overloaded constructor for the RoutePlan class
@@ -65,13 +63,18 @@ public class RoutePlan {
 		logger.debug("Called static plan method.");
 		logger.debug("Now creating a RoutePlan object.");
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
-		Queue<Integer> plan = RoutePlan.plan;
+		LinkedList<Integer> plan = new LinkedList<>(RoutePlan.plan);
 		
 		//reset the route plan for the next route
 		RoutePlan.plan = new LinkedList<Integer>();
-		
+		List<Integer> cutoff;
+		if (plan.size() > 4) {
+			cutoff = plan.subList(0, 4);
+		} else {
+			cutoff = plan;
+		}
 		//return the route plan
-		return plan;
+		return new LinkedList<>(cutoff);
 	}
 	
 	/**
@@ -115,8 +118,13 @@ public class RoutePlan {
 		}
 		
 		else {
+			int tick = 0;
 			while (goalNotFound) {
-				
+
+				List<Robot> others = new ArrayList<>(robotsList);
+				others.remove(robot);
+				tempBlocked = getTempBlockedLocations(others, tick);
+
 				RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
 				RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
 				RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
@@ -129,7 +137,9 @@ public class RoutePlan {
 				addToList(westLocation);
 				
 				//now, we visit the cheapest-path-cost location; we store it in 'visitedList'
-				visitCheapestLocationBasedOnPathCost(currentX, currentY);			
+				visitCheapestLocationBasedOnPathCost(currentX, currentY);
+
+				tick++;
 			}
 		}
 		
@@ -187,7 +197,7 @@ public class RoutePlan {
 		final int MAX_X = 11;
 		final int MAX_Y = 7;
 		
-		boolean locationIsBlocked = false;
+		boolean locationIsBlocked = blocked.contains(location) || tempBlocked.contains(location);
 
 		
 		//PLEASE DO NOT DELETE THIS
@@ -198,7 +208,7 @@ public class RoutePlan {
 		}
 		
 		for (int i = 0; i < visitedList.size(); i++) {
-			
+			startingLocation
 			if (visitedList.get(i).getX() == x && visitedList.get(i).getY() == y) {
 				locationIsBlocked = true;
 			}
@@ -206,18 +216,12 @@ public class RoutePlan {
 		}*/
 		
 		
-		if (x >= 0
-			&& y >= 0
-			&& x <= MAX_X
-			&& y <= MAX_Y
-			&& visitedList.contains(location) == false
-			&& locationIsBlocked == false)
-			{	
-				//might need Bluetooth to check for robots in the path when doing multi-route planning
-				return true;
-			}
-		
-		else return false;	
+		return x >= 0
+				&& y >= 0
+				&& x <= MAX_X
+				&& y <= MAX_Y
+				&& !visitedList.contains(location)
+				&& !locationIsBlocked;
 	}
 	
 	/**
@@ -286,6 +290,44 @@ public class RoutePlan {
 		
 		//reset the array list
 		toVisitList = new ArrayList<RoutePlanLocation>();
+	}
+
+	private static HashSet<Location> getTempBlockedLocations(List<Robot> robots, int tick) {
+		HashSet<Location> blocked = new HashSet<>();
+		int prevTick = tick - 1;
+		int nextTick = tick + 1;
+
+		for (Robot robot : robots) {
+			logger.debug("New robot blocked locations");
+			LinkedList<Integer> directions = (LinkedList) robot.getRoute();
+
+			int currX = robot.getLocation().getX();
+			int currY = robot.getLocation().getY();
+
+			for (int i=0; i<=nextTick; i++) {
+				try {
+					if (directions.get(i) == Protocol.NORTH) {
+						currY += 1;
+					} else if (directions.get(i) == Protocol.EAST) {
+						currX += 1;
+					} else if (directions.get(i) == Protocol.SOUTH) {
+						currY -= 1;
+					} else if (directions.get(i) == Protocol.WEST) {
+						currX -= 1;
+					}
+
+					if (i == tick || i == prevTick || i == nextTick) {
+						blocked.add(new Location(currX, currY));
+					}
+				} catch (IndexOutOfBoundsException e) {
+					logger.debug("ignoring blocked location");
+				}
+				if (i == tick || i == prevTick || i == nextTick) {
+					blocked.add(new Location(currX, currY));
+				}
+			}
+		}
+		return blocked;
 	}
 	
 }
