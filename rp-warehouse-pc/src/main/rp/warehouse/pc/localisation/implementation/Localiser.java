@@ -52,7 +52,7 @@ public class Localiser implements Localisation {
 		Ranges ranges = comms.getRanges();
 
 		List<Point> possiblePoints = warehouseMap.getPoints(ranges);
-		logger.debug("Possible points: " + possiblePoints);
+		logger.info("Possible points: " + possiblePoints);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
@@ -60,12 +60,12 @@ public class Localiser implements Localisation {
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
-			logger.debug("Available directions: " + directions);
+			logger.info("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
 			final byte direction = directions.get(random.nextInt(directions.size()));
 			previousDirection = direction;
 			final Point move = directionPoint[direction];
-			logger.debug("Chosen move: " + move);
+			logger.info("Chosen move: " + move);
 			if (direction == Ranges.UP) {
 				comms.sendMovement(Protocol.NORTH);
 			} else if (direction == Ranges.RIGHT) {
@@ -75,18 +75,21 @@ public class Localiser implements Localisation {
 			} else {
 				comms.sendMovement(Protocol.WEST);
 			}
-			logger.debug("Previous direction: " + previousDirection);
-			logger.debug("Reversal rotation amount: " + reverseRotation[direction]);
+			logger.info("Previous direction: " + previousDirection);
+			logger.info("Reversal rotation amount: " + reverseRotation[direction]);
 			// Update ranges
 			ranges = comms.getRanges();
-			logger.debug("Received ranges: " + ranges);
+			logger.info("Received ranges: " + ranges);
 			// Rotate ranges
 			ranges = Ranges.rotate(ranges, reverseRotation[direction]);
-			logger.debug("Rotated ranges: " + ranges);
-			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
-			logger.debug("Filtered positions: " + possiblePoints);
+			logger.info("Rotated ranges: " + ranges);
+			final List<Point> newPossibles = warehouseMap.getPoints(ranges);
+			logger.info("Possible positions: " + newPossibles);
+			possiblePoints = filterPositions(possiblePoints, newPossibles, move);
+			logger.info("Filtered positions: " + possiblePoints);
 		}
-		// Create the location of the robot using the first possible location from the			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
+		// Create the location of the robot using the first possible location from the
+		// ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
 
 		// list of possible locations.
 		return new RobotLocation(possiblePoints.get(0), Protocol.NORTH);
