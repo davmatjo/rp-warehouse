@@ -26,7 +26,7 @@ public class Localiser implements Localisation {
 	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
-	private final byte[] reverseRotation = new byte[] { 0, 3, 2, 1 };
+	private final byte[] reverseRotation = new byte[] { 0, 1, 2, 3 };
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
@@ -86,7 +86,8 @@ public class Localiser implements Localisation {
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 			logger.debug("Filtered positions: " + possiblePoints);
 		}
-		// Create the location of the robot using the first possible location from the
+		// Create the location of the robot using the first possible location from the			ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
+
 		// list of possible locations.
 		return new RobotLocation(possiblePoints.get(0), Protocol.NORTH);
 	}
