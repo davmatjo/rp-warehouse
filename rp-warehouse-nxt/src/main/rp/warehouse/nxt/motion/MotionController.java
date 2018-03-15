@@ -110,7 +110,7 @@ public class MotionController implements Movement {
 		boolean junction = false;
 
 		pilot.rotate(rotation);
-		pilot.setTravelSpeed(0.15);
+		pilot.setTravelSpeed(0.12);
 		pilot.forward();
 
 		Rate r = new Rate(20);
@@ -127,9 +127,9 @@ public class MotionController implements Movement {
 			}
 			// check is robot has gone off the line and adjust
 			else if (leftValue < leftLineLimit) {
-				pilot.steer(35);
+				pilot.steer(42);
 			} else if (rightValue < rightLineLimit) {
-				pilot.steer(-35);
+				pilot.steer(-42);
 				;
 			} else {
 				pilot.steer(0);
