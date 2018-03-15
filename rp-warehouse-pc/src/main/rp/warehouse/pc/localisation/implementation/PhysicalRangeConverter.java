@@ -6,7 +6,7 @@ public class PhysicalRangeConverter implements RangeConverter {
 
 	@Override
 	public boolean toGrid(float range) {
-		return ((range + 5) / 27) > 0;
+		return (int) ((range + 5) / 27) > 0;
 	}
 
 }
