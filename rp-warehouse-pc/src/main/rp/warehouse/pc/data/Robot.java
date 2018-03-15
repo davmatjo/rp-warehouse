@@ -8,6 +8,7 @@ import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 import org.apache.log4j.Logger;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
@@ -27,7 +28,7 @@ public class Robot implements Runnable {
     private Queue<Task> tasks;                  // The queue of Tasks which need to be done
     private Item currentItem;                   // Current Item
     private Task currentTask;
-    private static HashMap<String, Boolean> cancelledJobs =new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
+    private static Map<String, Boolean> cancelledJobs =new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
@@ -100,10 +101,13 @@ public class Robot implements Runnable {
     private void updateLocation() {
         if (lastInstruction != -1) {
             logger.debug(name + ": " +"Updating location");
+            
             int x, y;
             x = location.getX();
             y = location.getY();
             int directionPointing = 0;
+            
+            // Works out the direction change 
             switch (lastInstruction) {
             case Protocol.NORTH:
                 y += 1;
@@ -137,19 +141,24 @@ public class Robot implements Runnable {
      */
     private void updateCurrentItem() {
         updateLocation();
+        
         if (route.isEmpty()) {
             logger.debug(name + ": " +"Waiting for " + ((dropOffCheck)? "Drop Off":"Pick Up"));
             Rate r = new Rate(RATE);
             
+            // Loops until the right number of items is entered
             while (!pickUpDone) {
                 pickUp(comms.sendLoadingRequest(currentTask.getCount()));
                 r.sleep();
             }
+            
+            // Only needs the button to be pressed once
             if(!dropOffDone) {
                 comms.sendLoadingRequest(currentTask.getCount());
                 dropOff();
             }
             logger.debug(name + ": " +"Item update completed");
+            
             dropOffDone = false;
             pickUpDone = false;
         }
@@ -161,6 +170,7 @@ public class Robot implements Runnable {
      */
     public void cancelJob() {
         logger.debug(name + ": " +"Starting Job cancellation");
+        // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.jobID, true);
         
         // When in pick up mode
@@ -196,19 +206,25 @@ public class Robot implements Runnable {
             currentWeightOfCargo = newWeight;
             logger.info(name + ": " +"Picked up " + numberOfItems + " Item(s), continuing with tasks");
             logger.info(name + ": " +"current weight of cargo " + currentWeightOfCargo);
-            float weightForNextItem =currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
             
-            if(weightForNextItem > WEIGHTLIMIT) {
-                logger.info(name + ": " +"Will not be able to fit the next item, going to drop off");
-                goToDropOff(false); 
-            }else {
-                plan(true);
-            }
+            nextItemWeightCheck();
+            
             pickUpDone = true;
             return true;
         }else {
             logger.warn(name + ": " +"Pick up Cancelled");
             return false;
+        }
+    }
+
+    private void nextItemWeightCheck() {
+        float weightForNextItem =currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
+        
+        if(weightForNextItem > WEIGHTLIMIT) {
+            logger.info(name + ": " +"Will not be able to fit the next item, going to drop off");
+            goToDropOff(false); 
+        }else {
+            plan(true);
         }
     }
     private void updateTask() {
@@ -294,7 +310,7 @@ public class Robot implements Runnable {
 
         lastInstruction = route.poll(); 
         if(cancelledJobs.containsKey(currentTask.jobID)){
-            plan(false);
+            nextItemWeightCheck();
         }
         logger.info(name + ": " +"Executing command " + getDirectionString(lastInstruction));
         return lastInstruction;
