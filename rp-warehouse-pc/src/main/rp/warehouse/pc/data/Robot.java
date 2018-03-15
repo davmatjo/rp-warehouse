@@ -234,7 +234,11 @@ public class Robot implements Runnable {
     }
 
     private void updateTask() {
-        Rate r = new Rate(RATE);
+       if (tasks.isEmpty()) {
+           logger.info(name + ": I am done");
+           System.exit(0);
+       }
+        
         while (cancelledJobs.containsKey(tasks.peek().jobID)) {
             this.currentTask = tasks.poll();
         }
