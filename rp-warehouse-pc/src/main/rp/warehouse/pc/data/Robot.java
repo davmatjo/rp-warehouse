@@ -1,19 +1,19 @@
 package rp.warehouse.pc.data;
 
-import rp.util.Rate;
-import rp.warehouse.pc.communication.Communication;
-import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.localisation.implementation.Localiser;
-import rp.warehouse.pc.route.RoutePlan;
-
-import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+
+import org.apache.log4j.Logger;
+
+import rp.util.Rate;
+import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.localisation.implementation.Localiser;
+import rp.warehouse.pc.route.RoutePlan;
 
 public class Robot implements Runnable {
 
@@ -140,26 +140,29 @@ public class Robot implements Runnable {
     private void updateCurrentItem() {
         updateLocation();
 
-        if (route.isEmpty() && location.getX() == currentItem.getLocation().getX()
-                && location.getY() == currentItem.getLocation().getY()) {
-            logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
-            Rate r = new Rate(RATE);
+        if (route.isEmpty()) {
+            if (location.equals(currentItem.getLocation())) {
+                logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
+                Rate r = new Rate(RATE);
 
-            // Loops until the right number of items is entered
-            while (!pickUpDone) {
-                pickUp(comms.sendLoadingRequest(currentTask.getCount()));
-                r.sleep();
+                // Loops until the right number of items is entered
+                while (!pickUpDone) {
+                    pickUp(comms.sendLoadingRequest(currentTask.getCount()));
+                    r.sleep();
+                }
+
+                // Only needs the button to be pressed once
+                if (dropOffCheck) {
+                    comms.sendLoadingRequest(currentTask.getCount());
+                    dropOff();
+                }
+                logger.debug(name + ": " + "Item update completed");
+
+                dropOffCheck = false;
+                pickUpDone = false;
+            } else {
+                plan(false);
             }
-
-            // Only needs the button to be pressed once
-            if (dropOffCheck) {
-                comms.sendLoadingRequest(currentTask.getCount());
-                dropOff();
-            }
-            logger.debug(name + ": " + "Item update completed");
-
-            dropOffCheck = false;
-            pickUpDone = false;
         }
 
     }
@@ -230,11 +233,11 @@ public class Robot implements Runnable {
 
     private void updateTask() {
         Rate r = new Rate(RATE);
-            while (cancelledJobs.containsKey(tasks.peek().jobID)) {
-                this.currentTask = tasks.poll();
-            }
+        while (cancelledJobs.containsKey(tasks.peek().jobID)) {
             this.currentTask = tasks.poll();
-            this.currentItem = currentTask.getItem();
+        }
+        this.currentTask = tasks.poll();
+        this.currentItem = currentTask.getItem();
     }
 
     private void planToDropOff(boolean getNextItem) {
