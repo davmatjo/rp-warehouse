@@ -77,7 +77,7 @@ public class WarehouseMap {
 	 */
 	public ArrayList<Point> getPoints(final Ranges ranges) throws NoIdeaException {
 		if (this.positions.containsKey(ranges)) {
-			return this.positions.get(ranges);
+			return new ArrayList<>(this.positions.get(ranges));
 		} else {
 			throw new NoIdeaException(ranges);
 		}
