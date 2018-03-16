@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class RobotsControl {
     //Will crash as only has one element 
     private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
     private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
-    private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(11, 7, 3),
+    private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(0, 0, 3), new RobotLocation(0, 7, 3)};
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
@@ -74,6 +75,8 @@ public class RobotsControl {
             pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
+
+        new MainView(robots);
 
         // Shut down the pool to prevent new threads being created, and allow the program to end
         pool.shutdown();

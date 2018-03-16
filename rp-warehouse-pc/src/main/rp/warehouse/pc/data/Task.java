@@ -25,4 +25,9 @@ public class Task {
     public String getJobID() {
         return jobID;
     }
+
+    @Override
+    public String toString() {
+        return count + " of item " + item.toString();
+    }
 }

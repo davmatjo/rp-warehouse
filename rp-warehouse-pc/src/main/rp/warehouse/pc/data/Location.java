@@ -1,6 +1,9 @@
 package rp.warehouse.pc.data;
 
 import lejos.geom.Point;
+import lejos.robotics.navigation.Pose;
+import rp.robotics.navigation.GridPose;
+import rp.robotics.navigation.Heading;
 
 public class Location {
     private int x;
@@ -34,6 +37,10 @@ public class Location {
 
     public Point toPoint() {
         return new Point(x, y);
+    }
+
+    public Pose toPose() {
+        return Warehouse.build().toPose(new GridPose(getX(), getY(), Heading.PLUS_Y));
     }
 
     @Override
