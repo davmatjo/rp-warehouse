@@ -321,6 +321,10 @@ public class Robot implements Runnable {
     public String getID() {
         return ID;
     }
+    
+    public Task getTask() {
+        return currentTask;
+    }
 
     public RobotLocation getLocation() {
         return location;
