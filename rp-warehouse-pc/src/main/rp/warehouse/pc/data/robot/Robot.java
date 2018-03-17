@@ -288,24 +288,24 @@ public class Robot implements Runnable{
      * @return Queue<Integer> of directions
      */
     public LinkedList<Integer> getRoute() {
-        LinkedList<Integer> copy = (LinkedList<Integer>) route.clone();
-        
-        return copy;
+        return new LinkedList<>(route);
     }
 
     public String getID() {
-        String copy = ID;
-        return copy;
+        return ID;
     }
 
+    public String getName() {
+        return name;
+    }
+    
     public Task getTask() {
-        Task copy = currentTask;
-        return copy;
+        return currentTask;
     }
 
     public RobotLocation getLocation() {
         RobotLocation copy = location;
-        return copy;
+        return new RobotLocation(location);
     }
 
     private String getDirectionString(int direction) {
