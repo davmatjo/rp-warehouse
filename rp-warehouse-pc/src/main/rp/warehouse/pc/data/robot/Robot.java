@@ -147,15 +147,13 @@ public class Robot implements Runnable{
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
+        pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
 
         // When in pick up mode
-        pickUpDone = true;
-        pickUp(-1);
         plan(true);
-        pickUpDone = false;
     }
 
     /**
@@ -306,7 +304,6 @@ public class Robot implements Runnable{
     }
 
     public RobotLocation getLocation() {
-        RobotLocation copy = location;
         return new RobotLocation(location);
     }
 
