@@ -1,4 +1,4 @@
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.data.robot;
 
 import lejos.geom.Point;
 import lejos.robotics.localization.PoseProvider;
@@ -6,6 +6,8 @@ import lejos.robotics.navigation.Pose;
 import rp.robotics.navigation.GridPose;
 import rp.robotics.navigation.Heading;
 import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.data.Location;
+import rp.warehouse.pc.data.Warehouse;
 
 public class RobotLocation extends Location {
 	private int direction;

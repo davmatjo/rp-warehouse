@@ -2,7 +2,7 @@ package rp.warehouse.pc.management.providers;
 
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
-import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.robot.Robot;
 
 public class ItemPoseProvider implements PoseProvider {
     private Robot robot;

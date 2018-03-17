@@ -5,9 +5,9 @@ import org.apache.log4j.Logger;
 
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.Robot;
-import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Warehouse;
+import rp.warehouse.pc.data.robot.Robot;
+import rp.warehouse.pc.data.robot.RobotLocation;
 
 /**
  * Used to plan the route to the goal location.

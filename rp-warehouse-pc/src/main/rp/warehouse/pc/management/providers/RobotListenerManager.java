@@ -1,8 +1,8 @@
 package rp.warehouse.pc.management.providers;
 
 import rp.util.Rate;
-import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.Robot;
 
 import javax.swing.*;
 
