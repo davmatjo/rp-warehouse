@@ -41,6 +41,7 @@ public class Robot implements Runnable{
     private boolean dropOffCheck = false;               // Indicates if drop off needs to happen
     private boolean running = true;
     private boolean pickUpDone = false;
+    private boolean cancel = false;
     private int RATE = 20;
 
     RobotUtils robotUtils;
@@ -117,7 +118,7 @@ public class Robot implements Runnable{
         }
 
 
-        if (route.isEmpty()) {
+        if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
                 Rate r = new Rate(RATE);
@@ -139,6 +140,7 @@ public class Robot implements Runnable{
                 pickUpDone = false;
                 cancel = false;
             } else {
+                cancel = false;
                 plan(false);
             }
         }
@@ -149,6 +151,7 @@ public class Robot implements Runnable{
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
+        cancel = true;
         pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
