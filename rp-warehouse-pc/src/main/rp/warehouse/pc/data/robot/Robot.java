@@ -43,6 +43,7 @@ public class Robot implements Runnable{
     private boolean pickUpDone = false;
     private boolean cancel = false;
     private int RATE = 20;
+    private String status = "No Job";
 
     RobotUtils robotUtils;
 
@@ -87,6 +88,7 @@ public class Robot implements Runnable{
         logger.info("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(RATE);
 
+        status = "Traveling";
         while (running) {
             logger.debug(name + ": " + "Sending Next instruction");
             sendInstruction();
@@ -122,17 +124,19 @@ public class Robot implements Runnable{
 
                 // Loops until the right number of items is entered
                 while (!pickUpDone && !cancel) {
+                    status ="Picking Up"; 
                     pickUp(comms.sendLoadingRequest(currentTask.getCount()));
                     r.sleep();
                 }
 
                 // Only needs the button to be pressed once
                 if (dropOffCheck) {
+                    status = "Dropping Off";
                     comms.sendLoadingRequest(currentTask.getCount());
                     dropOff();
                 }
                 logger.debug(name + ": " + "Item update completed");
-
+                status ="Traveling";
                 dropOffCheck = false;
                 pickUpDone = false;
                 cancel = false;
@@ -169,7 +173,7 @@ public class Robot implements Runnable{
 
         if (readyForPickUp(numberOfItems)) {
             logger.info(name + ": " + "Pick up valid");
-
+            pickUpDone = true;
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             // This might happens when Task was cancelled
             if (newWeight > WEIGHTLIMIT) {
@@ -189,7 +193,7 @@ public class Robot implements Runnable{
 
             nextItemWeightCheck();
 
-            pickUpDone = true;
+            
             return true;
         } else {
             logger.warn(name + ": " + "Wrong number, Please try again");
@@ -224,6 +228,10 @@ public class Robot implements Runnable{
     }
 
     private void nextItemWeightCheck() {
+        if (tasks.size() == 0) {
+            plan(false);
+            return;
+        }
         float weightForNextItem = currentWeightOfCargo + (tasks.peek().getItem().getWeight() * tasks.peek().getCount());
 
         if (weightForNextItem > WEIGHTLIMIT) {
@@ -313,7 +321,8 @@ public class Robot implements Runnable{
     @Override
     public String toString() {
         return "Cargo weight: " + currentWeightOfCargo
-                + "\nEstimated items remaining: " + tasks.size();
+                + "\nEstimated items remaining: " + tasks.size()
+                + "\nStatus: " + status;
     }
 }
 
