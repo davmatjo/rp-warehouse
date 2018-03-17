@@ -1,5 +1,6 @@
 package rp.warehouse.pc.localisation.implementation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -65,9 +66,13 @@ public class Localiser implements Localisation {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
 			// Filter if it can go somewhere
-			if (directions.size() > 1) {
+			if (directions.size() > 0) {
+				List<Byte> tempDirections = new ArrayList<>(directions);
 				// Remove all directions that would lead to visiting the same point again.
-				directions.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
+				tempDirections.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
+				if (tempDirections.size() > 0) {
+					directions = tempDirections;
+				}
 			}
 			logger.info("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
