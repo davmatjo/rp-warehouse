@@ -64,8 +64,11 @@ public class Localiser implements Localisation {
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
-			// Remove all directions that would lead to visiting the same point again.
-			directions.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
+			// Filter if it can go somewhere
+			if (directions.size() > 1) {
+				// Remove all directions that would lead to visiting the same point again.
+				directions.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
+			}
 			logger.info("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
 			final byte direction = directions.get(random.nextInt(directions.size()));
