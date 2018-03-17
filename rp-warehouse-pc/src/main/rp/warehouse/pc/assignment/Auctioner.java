@@ -7,8 +7,8 @@ import java.util.Queue;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.Robot;
 
 /**
  * Assigns items in a job to robots through auctioning

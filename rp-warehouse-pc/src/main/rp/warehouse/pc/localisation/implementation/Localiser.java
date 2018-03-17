@@ -4,7 +4,7 @@ import lejos.geom.Point;
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.data.RobotLocation;
+import rp.warehouse.pc.data.robot.RobotLocation;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.WarehouseMap;

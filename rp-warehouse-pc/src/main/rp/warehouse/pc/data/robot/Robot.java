@@ -1,4 +1,4 @@
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.data.robot;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,31 +12,33 @@ import org.apache.log4j.Logger;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
+import rp.warehouse.pc.data.Item;
+import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 
 public class Robot implements Runnable {
 
     // Communications
-    private final String ID; // Communication ID
-    private final String name; // Communication name
-    private Communication comms; // Communication used to connect each robot to the a nxt brick
+    private final String ID;                            // Communication ID
+    private final String name;                          // Communication name
+    private Communication comms;                        // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private LinkedList<Integer> route; // Queue of directions for the current task
-    private int lastInstruction = -1; // The current Instruction being done by robot (For WMI)
-    private RobotLocation location; // Current location of the robot
+    private LinkedList<Integer> route;                  // Queue of directions for the current task
+    private int lastInstruction = -1;                   // The current Instruction being done by robot (For WMI)
+    private RobotLocation location;                     // Current location of the robot
 
     // Job information
-    private Queue<Task> tasks; // The queue of Tasks which need to be done
-    private Item currentItem; // Current Item
+    private Queue<Task> tasks;                          // The queue of Tasks which need to be done
+    private Item currentItem;                           // Current Item
     private Task currentTask;
-    private static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>(); // Stores ID's of cancelled Jobs
+    private static Map<String, Boolean> cancelledJobs;  // Stores ID's of cancelled Jobs
 
     // Robot Information
-    private final static float WEIGHTLIMIT = 50.0f;// The maximum load robot can carry
+    private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
     private float currentWeightOfCargo = 0.0f;
-    private boolean dropOffCheck = false; // Indicates if drop off needs to happen
+    private boolean dropOffCheck = false;               // Indicates if drop off needs to happen
     private boolean running = true;
     private boolean pickUpDone = false;
     private int RATE = 20;
@@ -58,8 +60,9 @@ public class Robot implements Runnable {
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
+        cancelledJobs = new HashMap<String, Boolean>();
         updateTask();
-        logger.debug(name + " : Has "+ tasks.size() + " tasks");
+        logger.debug(name + " : Has " + tasks.size() + " tasks");
 
         // Communications set up
         this.comms = new Communication(ID, name, this);
@@ -83,7 +86,7 @@ public class Robot implements Runnable {
             logger.debug(name + ": " + "Sending Next instruction");
             sendInstruction();
             logger.debug(name + ": " + "Instruction executed");
-            logger.debug(name + " : Has "+ tasks.size() + " tasks");
+            logger.debug(name + " : Has " + tasks.size() + " tasks");
             r.sleep();
 
         }
@@ -176,7 +179,6 @@ public class Robot implements Runnable {
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
-        
 
         // When in pick up mode
         pickUpDone = true;
@@ -224,6 +226,32 @@ public class Robot implements Runnable {
         }
     }
 
+    /**
+     * For Communication when performing drop of at the station
+     * 
+     * @return -
+     */
+    public boolean dropOff() {
+        logger.debug(name + ": " + "Starting DropOff");
+        logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
+        if (!route.isEmpty() || !dropOffCheck) {
+            logger.warn(name + ": " + "Drop off refused");
+            return false;
+        } else {
+            logger.info(name + ": " + "Drop off valid");
+            if (!tasks.isEmpty()) {// why?
+                logger.debug(name + ": " + "Planning to get current item");
+                plan(false);
+                lastInstruction = -1;
+            }
+            currentWeightOfCargo = 0;
+            dropOffCheck = false;
+            // dropOffDone = true;
+            return true;
+        }
+
+    }
+
     private void nextItemWeightCheck() {
         float weightForNextItem = currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
 
@@ -236,11 +264,11 @@ public class Robot implements Runnable {
     }
 
     private void updateTask() {
-       if (tasks.isEmpty()) {
-           logger.info(name + ": I am done");
-           System.exit(0);
-       }
-        
+        if (tasks.isEmpty()) {
+            logger.info(name + ": I am done");
+            System.exit(0);
+        }
+
         while (cancelledJobs.containsKey(tasks.peek().jobID)) {
             this.currentTask = tasks.poll();
         }
@@ -271,32 +299,6 @@ public class Robot implements Runnable {
         }
     }
 
-    /**
-     * For Communication when performing drop of at the station
-     * 
-     * @return -
-     */
-    public boolean dropOff() {
-        logger.debug(name + ": " + "Starting DropOff");
-        logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
-        if (!route.isEmpty() || !dropOffCheck) {
-            logger.warn(name + ": " + "Drop off refused");
-            return false;
-        } else {
-            logger.info(name + ": " + "Drop off valid");
-            if (!tasks.isEmpty()) {// why?
-                logger.debug(name + ": " + "Planning to get current item");
-                plan(false);
-                lastInstruction = -1;
-            }
-            currentWeightOfCargo = 0;
-            dropOffCheck = false;
-            // dropOffDone = true;
-            return true;
-        }
-
-    }
-
     private int getCurrentInstruction() {
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is :" + route.isEmpty());
@@ -323,7 +325,7 @@ public class Robot implements Runnable {
         String copy = ID;
         return copy;
     }
-    
+
     public Task getTask() {
         Task copy = currentTask;
         return copy;

@@ -1,6 +1,6 @@
 package rp.warehouse.pc.management;
 
-import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.management.panels.InfoPanel;
 import rp.warehouse.pc.management.panels.WarehouseMapPanel;
 

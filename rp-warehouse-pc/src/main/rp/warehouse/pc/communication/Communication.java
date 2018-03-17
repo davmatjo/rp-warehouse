@@ -9,7 +9,7 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-import rp.warehouse.pc.data.Robot;
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.localisation.Ranges;
 
 public class Communication implements Runnable {
