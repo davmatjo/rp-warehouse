@@ -27,8 +27,7 @@ public class RobotListenerManager implements Runnable {
         Rate r = new Rate(2);
         Task previousTask = robot.getTask();
         while (true) {
-            listModel.insertElementAt(robot.getTask().toString(), ID);
-            logger.debug(robot.getTask().toString() + " <---------------------------------------------");
+            listModel.set(ID, robot.getTask().toString());
             r.sleep();
         }
     }
