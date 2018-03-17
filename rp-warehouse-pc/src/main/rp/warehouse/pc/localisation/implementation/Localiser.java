@@ -60,7 +60,7 @@ public class Localiser implements Localisation {
 		logger.info("Possible points: " + possiblePoints);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
-		while (possiblePoints.size() > 1 || runCounter++ < MAX_RUNS) {
+		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
 			List<Byte> directions = ranges.getAvailableDirections();
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
