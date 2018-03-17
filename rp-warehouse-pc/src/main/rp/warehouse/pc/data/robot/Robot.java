@@ -37,7 +37,7 @@ public class Robot implements Runnable{
     private Queue<Task> tasks;                          // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
     private Task currentTask;
-    private static Map<String, Boolean> cancelledJobs;  // Stores ID's of cancelled Jobs
+    private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
@@ -67,7 +67,7 @@ public class Robot implements Runnable{
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
-        cancelledJobs = new HashMap<String, Boolean>();
+        
         updateTask();
         logger.debug(name + " : Has " + tasks.size() + " tasks");
 
@@ -146,7 +146,7 @@ public class Robot implements Runnable{
     /**
      * For: Communication Cancels Job of the current item
      */
-    public void cancelJob() {
+    public synchronized void cancelJob() {
         pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
@@ -266,7 +266,7 @@ public class Robot implements Runnable{
         }
     }
 
-    private int getCurrentInstruction() {
+    private synchronized int getCurrentInstruction() {
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is Empty: " + route.isEmpty());
         
