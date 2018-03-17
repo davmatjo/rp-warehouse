@@ -189,7 +189,7 @@ public class Robot implements Runnable{
 
             nextItemWeightCheck();
 
-            pickUpDone = true;
+            
             return true;
         } else {
             logger.warn(name + ": " + "Wrong number, Please try again");
