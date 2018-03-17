@@ -141,6 +141,9 @@ public class Robot implements Runnable{
                 status ="Traveling";
                 pickUpDone = false;
                 cancel = false;
+            } else if (dropOffCheck){
+                cancel = false;
+                planToDropOff(false);
             } else {
                 cancel = false;
                 plan(false);
