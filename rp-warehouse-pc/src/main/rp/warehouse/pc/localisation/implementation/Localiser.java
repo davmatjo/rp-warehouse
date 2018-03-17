@@ -1,7 +1,12 @@
 package rp.warehouse.pc.localisation.implementation;
 
-import lejos.geom.Point;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+
 import org.apache.log4j.Logger;
+
+import lejos.geom.Point;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.RobotLocation;
@@ -9,9 +14,6 @@ import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.WarehouseMap;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
-
-import java.util.List;
-import java.util.Random;
 
 /**
  * An implementation of the localisation interface. Used to actually calculate
@@ -26,18 +28,20 @@ public class Localiser implements Localisation {
 	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
-	private final byte[] reverseRotation = new byte[] { 0, 1, 2, 3 };
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
 	private final Random random = new Random();
 	private Byte previousDirection = null;
 	private final Communication comms;
+	private Point relativePoint = new Point(0, 0);
+	private final HashSet<Point> relativeVisitedPoints = new HashSet<Point>();
 
 	/**
 	 * An implementation of the Localisation interface.
 	 */
 	public Localiser(Communication comms) {
+		relativeVisitedPoints.add(new Point(0, 0));
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
@@ -55,11 +59,13 @@ public class Localiser implements Localisation {
 		logger.info("Possible points: " + possiblePoints);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
-		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
+		while (possiblePoints.size() > 1 || runCounter++ < MAX_RUNS) {
 			List<Byte> directions = ranges.getAvailableDirections();
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
+			// Remove all directions that would lead to visiting the same point again.
+			directions.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
 			logger.info("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
 			final byte direction = directions.get(random.nextInt(directions.size()));
@@ -75,19 +81,24 @@ public class Localiser implements Localisation {
 			} else {
 				comms.sendMovement(Protocol.WEST);
 			}
+			// Update relative position
+			relativePoint = relativePoint.add(move);
+			relativeVisitedPoints.add(relativePoint);
 			logger.info("Previous direction: " + previousDirection);
-			logger.info("Reversal rotation amount: " + reverseRotation[direction]);
+			logger.info("Reversal rotation amount: " + direction);
 			// Update ranges
 			ranges = comms.getRanges();
 			logger.info("Received ranges: " + ranges);
 			// Rotate ranges
-			ranges = Ranges.rotate(ranges, reverseRotation[direction]);
+			ranges = Ranges.rotate(ranges, direction);
 			logger.info("Rotated ranges: " + ranges);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 			logger.info("Filtered positions: " + possiblePoints);
 		}
-		// Create the location of the robot using the first possible location from the
-		// ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
+
+		if (possiblePoints.isEmpty()) {
+			throw new NoIdeaException(ranges);
+		}
 
 		// list of possible locations.
 		return new RobotLocation(possiblePoints.get(0), Protocol.NORTH);
@@ -106,7 +117,8 @@ public class Localiser implements Localisation {
 	 * @return The new list of possible positions of the robot.
 	 */
 	private List<Point> filterPositions(final List<Point> initial, final List<Point> next, final Point change) {
-		logger.info("-- Filtering\nInitial ranges: " + initial);
+		logger.info("-- Filtering");
+		logger.info("Initial ranges: " + initial);
 		logger.info("Next ranges: " + next);
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
