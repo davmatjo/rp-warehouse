@@ -112,8 +112,7 @@ public class Robot implements Runnable{
         //updateLocation();
         robotUtils.updateLocation(lastInstruction);
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
-            updateTask();
-            plan(false);
+            plan(true);
             nextItemWeightCheck();
             cancel = false;
         } else if (route.isEmpty() || cancel) {
