@@ -83,6 +83,7 @@ public class Localiser implements Localisation {
 			}
 			// Update relative position
 			relativePoint = relativePoint.add(move);
+			relativeVisitedPoints.add(relativePoint);
 			logger.info("Previous direction: " + previousDirection);
 			logger.info("Reversal rotation amount: " + direction);
 			// Update ranges
