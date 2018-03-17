@@ -1,7 +1,12 @@
 package rp.warehouse.pc.localisation.implementation;
 
-import lejos.geom.Point;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+
 import org.apache.log4j.Logger;
+
+import lejos.geom.Point;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.RobotLocation;
@@ -9,9 +14,6 @@ import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.WarehouseMap;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
-
-import java.util.List;
-import java.util.Random;
 
 /**
  * An implementation of the localisation interface. Used to actually calculate
@@ -32,11 +34,14 @@ public class Localiser implements Localisation {
 	private final Random random = new Random();
 	private Byte previousDirection = null;
 	private final Communication comms;
+	private Point relativePoint = new Point(0, 0);
+	private final HashSet<Point> relativeVisitedPoints = new HashSet<Point>();
 
 	/**
 	 * An implementation of the Localisation interface.
 	 */
 	public Localiser(Communication comms) {
+		relativeVisitedPoints.add(new Point(0, 0));
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
@@ -59,6 +64,8 @@ public class Localiser implements Localisation {
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
 			}
+			// Remove all directions that would lead to visiting the same point again.
+			directions.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
 			logger.info("Available directions: " + directions);
 			// Choose a random direction from the list of available directions.
 			final byte direction = directions.get(random.nextInt(directions.size()));
@@ -74,6 +81,8 @@ public class Localiser implements Localisation {
 			} else {
 				comms.sendMovement(Protocol.WEST);
 			}
+			// Update relative position
+			relativePoint = relativePoint.add(move);
 			logger.info("Previous direction: " + previousDirection);
 			logger.info("Reversal rotation amount: " + direction);
 			// Update ranges
