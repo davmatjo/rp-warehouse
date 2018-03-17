@@ -5,19 +5,23 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
+
+import com.intel.bluetooth.Utils;
 
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 
-public class Robot implements Runnable {
+public class Robot implements Runnable{
 
     // Communications
     private final String ID;                            // Communication ID
@@ -42,6 +46,8 @@ public class Robot implements Runnable {
     private boolean running = true;
     private boolean pickUpDone = false;
     private int RATE = 20;
+    
+    RobotUtils robotUtils;
 
     private static final Logger logger = Logger.getLogger(Robot.class);
 
@@ -57,6 +63,7 @@ public class Robot implements Runnable {
      */
     public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation)
             throws IOException {
+        //super( ID, name, newTasks, pool, startingLocation);
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
@@ -71,6 +78,7 @@ public class Robot implements Runnable {
         // Localisation
         Localiser loc = new Localiser(comms);
         this.location = startingLocation;// loc.getPosition();
+        robotUtils = new RobotUtils(location, name);
 
         logger.trace("Robot class: " + ID + " " + name + " Has been created");
         plan(false);
@@ -98,52 +106,15 @@ public class Robot implements Runnable {
 
     }
 
-    /**
-     * Updates robots location
-     */
-    private void updateLocation() {
-        if (lastInstruction != -1) {
-            logger.debug(name + ": " + "Updating location");
-
-            int x, y;
-            x = location.getX();
-            y = location.getY();
-            int directionPointing = 0;
-
-            // Works out the direction change
-            switch (lastInstruction) {
-            case Protocol.NORTH:
-                y += 1;
-                directionPointing = Protocol.NORTH;
-                break;
-            case Protocol.EAST:
-                x += 1;
-                directionPointing = Protocol.EAST;
-                break;
-            case Protocol.SOUTH:
-                y -= 1;
-                directionPointing = Protocol.SOUTH;
-                break;
-            case Protocol.WEST:
-                x -= 1;
-                directionPointing = Protocol.WEST;
-                break;
-
-            default:
-                break;
-            }
-            location.setX(x);
-            location.setY(y);
-            location.setDirection(directionPointing);
-            logger.info(name + ": " + "Current location X: " + location.getX() + " Y: " + location.getY());
-        }
-    }
+   
 
     /**
      * Used to update the current item
      */
     private void updateCurrentItem() {
-        updateLocation();
+        //updateLocation();
+        robotUtils.updateLocation(lastInstruction);
+        
 
         if (route.isEmpty()) {
             if (location.equals(currentItem.getLocation())) {
@@ -196,10 +167,10 @@ public class Robot implements Runnable {
     private boolean pickUp(int numberOfItems) {
         logger.trace(name + ": " + "Starting pickUp");
 
-        if (route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount()) {
+        if (readyForPickUp(numberOfItems)) {
             logger.info(name + ": " + "Pick up valid");
+            
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
-
             // This might happens when Task was cancelled
             if (newWeight > WEIGHTLIMIT) {
                 logger.error(name + ": " + "To much cargo, going to drop off. Should not happen");
@@ -221,9 +192,13 @@ public class Robot implements Runnable {
             pickUpDone = true;
             return true;
         } else {
-            logger.warn(name + ": " + "Pick up Cancelled");
+            logger.warn(name + ": " + "Wrong number, Please try again");
             return false;
         }
+    }
+    
+    private boolean readyForPickUp(int numberOfItems) {
+        return route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount();
     }
 
     /**
@@ -239,21 +214,17 @@ public class Robot implements Runnable {
             return false;
         } else {
             logger.info(name + ": " + "Drop off valid");
-            if (!tasks.isEmpty()) {// why?
-                logger.debug(name + ": " + "Planning to get current item");
-                plan(false);
-                lastInstruction = -1;
-            }
+            logger.debug(name + ": " + "Planning to get current item");
+            plan(false);
             currentWeightOfCargo = 0;
             dropOffCheck = false;
-            // dropOffDone = true;
             return true;
         }
 
     }
 
     private void nextItemWeightCheck() {
-        float weightForNextItem = currentWeightOfCargo + (currentItem.getWeight() * currentTask.getCount());
+        float weightForNextItem = currentWeightOfCargo + (tasks.peek().getItem().getWeight() * tasks.peek().getCount());
 
         if (weightForNextItem > WEIGHTLIMIT) {
             logger.info(name + ": " + "Will not be able to fit the next item, going to drop off");
@@ -269,7 +240,7 @@ public class Robot implements Runnable {
             System.exit(0);
         }
 
-        while (cancelledJobs.containsKey(tasks.peek().jobID)) {
+        while (cancelledJobs.containsKey(tasks.peek().getJobID())) {
             this.currentTask = tasks.poll();
         }
         this.currentTask = tasks.poll();
@@ -277,8 +248,7 @@ public class Robot implements Runnable {
     }
 
     private void planToDropOff(boolean getNextItem) {
-        if (getNextItem)
-            updateTask();
+        if (getNextItem)updateTask();
 
         route = (LinkedList<Integer>) RoutePlan.planDropOff(this);
         dropOffCheck = true;
@@ -286,27 +256,28 @@ public class Robot implements Runnable {
 
     private void plan(boolean getNextItem) {
         logger.info(name + ": " + "Starting plan");
-        if (getNextItem)
-            updateTask();
+        if (getNextItem) updateTask();
+        
         if (currentItem != null) {
             route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
         } else {
-            logger.error(name + ": " + "No current Item");
+            logger.error(name + ": " + "No current Item, I thing I am done");
             updateTask();
-            plan(getNextItem);
-            logger.error(name + ": " + "No current Item");
+            plan(true);
 
         }
     }
 
     private int getCurrentInstruction() {
         logger.info(name + ": " + " getting Current Instruction");
-        logger.info("Route is :" + route.isEmpty());
-        lastInstruction = route.poll();
+        logger.info("Route is Empty: " + route.isEmpty());
+        
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
-            updateLocation();
+            robotUtils.updateLocation(lastInstruction);
             nextItemWeightCheck();
         }
+        lastInstruction = route.poll();
+        
         logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
         return lastInstruction;
     }
@@ -318,6 +289,7 @@ public class Robot implements Runnable {
      */
     public LinkedList<Integer> getRoute() {
         LinkedList<Integer> copy = (LinkedList<Integer>) route.clone();
+        
         return copy;
     }
 
