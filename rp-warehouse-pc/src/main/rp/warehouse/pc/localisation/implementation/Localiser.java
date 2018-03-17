@@ -26,7 +26,6 @@ public class Localiser implements Localisation {
 	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private final WarehouseMap warehouseMap = new WarehouseMap();
 	private final Point[] directionPoint = new Point[4];
-	private final byte[] reverseRotation = new byte[] { 0, 1, 2, 3 };
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
@@ -55,7 +54,7 @@ public class Localiser implements Localisation {
 		logger.info("Possible points: " + possiblePoints);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
-		while (possiblePoints.size() > 1 && runCounter++ < MAX_RUNS) {
+		while (possiblePoints.size() > 1 || runCounter++ < MAX_RUNS) {
 			List<Byte> directions = ranges.getAvailableDirections();
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
@@ -76,18 +75,20 @@ public class Localiser implements Localisation {
 				comms.sendMovement(Protocol.WEST);
 			}
 			logger.info("Previous direction: " + previousDirection);
-			logger.info("Reversal rotation amount: " + reverseRotation[direction]);
+			logger.info("Reversal rotation amount: " + direction);
 			// Update ranges
 			ranges = comms.getRanges();
 			logger.info("Received ranges: " + ranges);
 			// Rotate ranges
-			ranges = Ranges.rotate(ranges, reverseRotation[direction]);
+			ranges = Ranges.rotate(ranges, direction);
 			logger.info("Rotated ranges: " + ranges);
 			possiblePoints = filterPositions(possiblePoints, warehouseMap.getPoints(ranges), move);
 			logger.info("Filtered positions: " + possiblePoints);
 		}
-		// Create the location of the robot using the first possible location from the
-		// ranges = Ranges.rotate(comms.getRanges(), reverseRotation[direction]);
+
+		if (possiblePoints.isEmpty()) {
+			throw new NoIdeaException(ranges);
+		}
 
 		// list of possible locations.
 		return new RobotLocation(possiblePoints.get(0), Protocol.NORTH);
@@ -106,7 +107,8 @@ public class Localiser implements Localisation {
 	 * @return The new list of possible positions of the robot.
 	 */
 	private List<Point> filterPositions(final List<Point> initial, final List<Point> next, final Point change) {
-		logger.info("-- Filtering\nInitial ranges: " + initial);
+		logger.info("-- Filtering");
+		logger.info("Initial ranges: " + initial);
 		logger.info("Next ranges: " + next);
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.

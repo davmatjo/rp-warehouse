@@ -113,21 +113,39 @@ public class Ranges {
 	}
 
 	/**
+	 * Get the opposite direction from the given one.
 	 * 
 	 * @param direction
-	 * @return
+	 *            the opposite direction to retrieve.
+	 * @return the opposite direction from the one given.
 	 */
 	public static byte getOpposite(final byte direction) {
-		assert direction >= 0 && direction <= 4 : direction;
+		assert direction >= 0 && direction <= 3 : direction;
 		return opposite[direction];
 	}
 
+	/**
+	 * Create a Ranges object from an array of ranges and a range converter.
+	 * 
+	 * @param array
+	 *            the values to use.
+	 * @param converter
+	 *            the converter to use.
+	 * @return the Ranges object made from the values.
+	 */
 	public static Ranges fromArray(final float[] array, RangeConverter converter) {
 		System.out.println(array[0] + ", " + array[1] + ", " + array[2] + ", " + array[3]);
 		return new Ranges(converter.toGrid(array[0]), converter.toGrid(array[1]), converter.toGrid(array[2]),
 				converter.toGrid(array[3]));
 	}
 
+	/**
+	 * Create a Ranges object from an array of pre-converted values.
+	 * 
+	 * @param array
+	 *            the pre-converted values
+	 * @return the Ranges object made from these values.
+	 */
 	public static Ranges fromArray(final boolean[] array) {
 		return new Ranges(array[0], array[1], array[2], array[3]);
 	}
