@@ -122,13 +122,6 @@ public class Robot implements Runnable{
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
                 Rate r = new Rate(RATE);
 
-                // Only needs the button to be pressed once
-                if (dropOffCheck) {
-                    status = "Dropping Off";
-                    comms.sendLoadingRequest(-1);
-                    dropOff();
-                }
-                
                 // Loops until the right number of items is entered
                 while (!pickUpDone && !cancel) {
                     status ="Picking Up"; 
@@ -144,6 +137,14 @@ public class Robot implements Runnable{
             } else if (dropOffCheck){
                 cancel = false;
                 planToDropOff(false);
+                if (route.peek() == 8 ) {
+                 // Only needs the button to be pressed once
+                    if (dropOffCheck) {
+                        status = "Dropping Off";
+                        comms.sendLoadingRequest(0);
+                        dropOff();
+                    }
+                }
             } else {
                 cancel = false;
                 plan(false);
