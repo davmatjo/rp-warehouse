@@ -11,13 +11,14 @@ import java.util.List;
 public class InfoPanel extends JPanel {
 
     public InfoPanel(List<Robot> robots) {
+        super();
         List<RobotListenerManager> managers = new ArrayList<>();
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
         int i = 0;
         for (Robot robot : robots) {
-            managers.add(new RobotListenerManager(robot, listModel, i++));
             listModel.addElement("ERROR NO TASK");
+            managers.add(new RobotListenerManager(robot, listModel, i++));
         }
 
         this.setLayout(new VerticalLayout());
