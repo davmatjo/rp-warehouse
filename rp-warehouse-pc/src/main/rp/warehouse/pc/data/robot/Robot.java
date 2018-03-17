@@ -5,16 +5,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
-import com.intel.bluetooth.Utils;
-
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
-import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
@@ -115,7 +111,11 @@ public class Robot implements Runnable{
     private void updateCurrentItem() {
         //updateLocation();
         robotUtils.updateLocation(lastInstruction);
-        
+        if (cancelledJobs.containsKey(currentTask.getJobID())) {
+            updateTask();
+            nextItemWeightCheck();
+            cancel = false;
+        }
 
         if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
@@ -137,6 +137,7 @@ public class Robot implements Runnable{
 
                 dropOffCheck = false;
                 pickUpDone = false;
+                cancel = false;
             } else {
                 cancel = false;
                 plan(false);
@@ -273,10 +274,6 @@ public class Robot implements Runnable{
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is Empty: " + route.isEmpty());
         
-        if (cancelledJobs.containsKey(currentTask.getJobID())) {
-            robotUtils.updateLocation(lastInstruction);
-            nextItemWeightCheck();
-        }
         lastInstruction = route.poll();
         
         logger.info(name + ": " + "Executing command " + getDirectionString(lastInstruction));
