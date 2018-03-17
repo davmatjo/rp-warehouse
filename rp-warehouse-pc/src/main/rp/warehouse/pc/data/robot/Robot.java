@@ -37,7 +37,7 @@ public class Robot implements Runnable{
     private Queue<Task> tasks;                          // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
     private Task currentTask;
-    private static Map<String, Boolean> cancelledJobs;  // Stores ID's of cancelled Jobs
+    private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
@@ -45,6 +45,7 @@ public class Robot implements Runnable{
     private boolean dropOffCheck = false;               // Indicates if drop off needs to happen
     private boolean running = true;
     private boolean pickUpDone = false;
+    private boolean cancel = false;
     private int RATE = 20;
     
     RobotUtils robotUtils;
@@ -67,7 +68,7 @@ public class Robot implements Runnable{
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
-        cancelledJobs = new HashMap<String, Boolean>();
+        
         updateTask();
         logger.debug(name + " : Has " + tasks.size() + " tasks");
 
@@ -116,7 +117,7 @@ public class Robot implements Runnable{
         robotUtils.updateLocation(lastInstruction);
         
 
-        if (route.isEmpty()) {
+        if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
                 Rate r = new Rate(RATE);
@@ -137,6 +138,7 @@ public class Robot implements Runnable{
                 dropOffCheck = false;
                 pickUpDone = false;
             } else {
+                cancel = false;
                 plan(false);
             }
         }
@@ -146,14 +148,15 @@ public class Robot implements Runnable{
     /**
      * For: Communication Cancels Job of the current item
      */
-    public void cancelJob() {
+    public synchronized void cancelJob() {
+        cancel = true;
         pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
 
         // When in pick up mode
-        plan(true);
+        //plan(true);
     }
 
     /**
@@ -266,7 +269,7 @@ public class Robot implements Runnable{
         }
     }
 
-    private int getCurrentInstruction() {
+    private synchronized int getCurrentInstruction() {
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is Empty: " + route.isEmpty());
         
