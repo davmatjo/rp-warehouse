@@ -292,15 +292,17 @@ public class Robot implements Runnable{
     }
 
     public String getID() {
-        return ID;
+        String copy = ID;
+        return copy;
     }
 
     public String getName() {
         return name;
     }
-    
+
     public Task getTask() {
-        return currentTask;
+        Task copy = currentTask;
+        return copy;
     }
 
     public RobotLocation getLocation() {
