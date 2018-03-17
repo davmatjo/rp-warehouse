@@ -125,7 +125,7 @@ public class Robot implements Runnable{
                 // Only needs the button to be pressed once
                 if (dropOffCheck) {
                     status = "Dropping Off";
-                    comms.sendLoadingRequest(currentTask.getCount());
+                    comms.sendLoadingRequest(-1);
                     dropOff();
                 }
                 
