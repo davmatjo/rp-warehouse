@@ -218,8 +218,8 @@ public class Robot implements Runnable{
     public boolean dropOff() {
         logger.debug(name + ": " + "Starting DropOff");
         logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
-        if (!route.isEmpty() || !dropOffCheck) {
-            logger.warn(name + ": " + "Drop off refused");
+        if (!dropOffCheck) {
+            logger.error(name + ": " + "Drop off refused");
             return false;
         } else {
             logger.info(name + ": " + "Drop off valid");
