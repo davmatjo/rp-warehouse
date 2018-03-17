@@ -121,7 +121,7 @@ public class Robot implements Runnable{
                 Rate r = new Rate(RATE);
 
                 // Loops until the right number of items is entered
-                while (!pickUpDone) {
+                while (!pickUpDone && !cancel) {
                     pickUp(comms.sendLoadingRequest(currentTask.getCount()));
                     r.sleep();
                 }
@@ -197,7 +197,7 @@ public class Robot implements Runnable{
     }
 
     private boolean readyForPickUp(int numberOfItems) {
-        return route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount();
+        return route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount() && !cancel;
     }
 
     /**
