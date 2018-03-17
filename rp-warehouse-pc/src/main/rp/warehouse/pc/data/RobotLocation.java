@@ -15,6 +15,11 @@ public class RobotLocation extends Location {
 		this.direction = direction;
 	}
 
+	public RobotLocation(RobotLocation l) {
+		super(l);
+		this.direction = l.getDirection();
+	}
+
 	public RobotLocation(Point point, int direction) {
 		super(point);
 		this.direction = direction;
@@ -50,5 +55,14 @@ public class RobotLocation extends Location {
 	@Override
 	public String toString() {
 		return super.toString() + ", D: " + this.direction;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() == Location.class) {
+			return super.equals(o);
+		}
+		RobotLocation l = (RobotLocation) o;
+		return this.getX() == l.getX() && this.getY() == l.getY() && this.getDirection() == l.getDirection();
 	}
 }

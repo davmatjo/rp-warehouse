@@ -14,6 +14,11 @@ public class Location {
         this.y = y;
     }
 
+    public Location(Location l) {
+        this.x = l.x;
+        this.y = l.y;
+    }
+
     public Location(Point point) {
         this.x = (int) point.x;
         this.y = (int) point.y;
