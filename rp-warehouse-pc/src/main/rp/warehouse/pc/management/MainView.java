@@ -19,9 +19,9 @@ public class MainView extends JFrame {
         top.add(new InfoPanel(robots));
 
         this.add(top);
-        this.pack();
         this.setSize(top.getPreferredSize());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.pack();
         this.setVisible(true);
     }
 }

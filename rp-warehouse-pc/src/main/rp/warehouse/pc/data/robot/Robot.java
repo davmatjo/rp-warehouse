@@ -33,7 +33,7 @@ public class Robot implements Runnable{
     private Queue<Task> tasks;                          // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
     private Task currentTask;
-    private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
+    private static Map<String, Boolean> cancelledJobs;  // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
@@ -41,9 +41,8 @@ public class Robot implements Runnable{
     private boolean dropOffCheck = false;               // Indicates if drop off needs to happen
     private boolean running = true;
     private boolean pickUpDone = false;
-    private boolean cancel = false;
     private int RATE = 20;
-    
+
     RobotUtils robotUtils;
 
     private static final Logger logger = Logger.getLogger(Robot.class);
@@ -64,7 +63,7 @@ public class Robot implements Runnable{
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
-        
+        cancelledJobs = new HashMap<String, Boolean>();
         updateTask();
         logger.debug(name + " : Has " + tasks.size() + " tasks");
 
@@ -103,7 +102,7 @@ public class Robot implements Runnable{
 
     }
 
-   
+
 
     /**
      * Used to update the current item
@@ -117,7 +116,8 @@ public class Robot implements Runnable{
             cancel = false;
         }
 
-        if (route.isEmpty() || cancel) {
+
+        if (route.isEmpty()) {
             if (location.equals(currentItem.getLocation())) {
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
                 Rate r = new Rate(RATE);
@@ -139,7 +139,6 @@ public class Robot implements Runnable{
                 pickUpDone = false;
                 cancel = false;
             } else {
-                cancel = false;
                 plan(false);
             }
         }
@@ -150,19 +149,18 @@ public class Robot implements Runnable{
      * For: Communication Cancels Job of the current item
      */
     public void cancelJob() {
-        cancel = true;
         pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
 
         // When in pick up mode
-        //plan(true);
+        plan(true);
     }
 
     /**
      * For: Communication specify amount loaded for the current item
-     * 
+     *
      * @return - True, there is still space for more cargo or the cargo is full.
      *         False, too many items being picked up
      */
@@ -171,7 +169,7 @@ public class Robot implements Runnable{
 
         if (readyForPickUp(numberOfItems)) {
             logger.info(name + ": " + "Pick up valid");
-            
+
             float newWeight = currentWeightOfCargo + (currentItem.getWeight() * numberOfItems);
             // This might happens when Task was cancelled
             if (newWeight > WEIGHTLIMIT) {
@@ -198,14 +196,14 @@ public class Robot implements Runnable{
             return false;
         }
     }
-    
+
     private boolean readyForPickUp(int numberOfItems) {
         return route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount();
     }
 
     /**
      * For Communication when performing drop of at the station
-     * 
+     *
      * @return -
      */
     public boolean dropOff() {
@@ -259,7 +257,7 @@ public class Robot implements Runnable{
     private void plan(boolean getNextItem) {
         logger.info(name + ": " + "Starting plan");
         if (getNextItem) updateTask();
-        
+
         if (currentItem != null) {
             route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
         } else {
