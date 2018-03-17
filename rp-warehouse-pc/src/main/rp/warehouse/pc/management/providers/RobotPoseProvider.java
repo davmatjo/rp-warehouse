@@ -6,11 +6,6 @@ import rp.util.Rate;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.RobotLocation;
-<<<<<<< HEAD
-
-import java.util.concurrent.BlockingQueue;
-=======
->>>>>>> f986e0d7638da8bc63a0483779b0e1c1ce5a211e
 
 public class RobotPoseProvider implements PoseProvider, Runnable {
     private Robot robot;
