@@ -8,18 +8,23 @@ import rp.warehouse.pc.management.providers.RobotListenerManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InfoPanel extends JPanel {
+    private Robot currentSelected;
 
     public InfoPanel(List<Robot> robots) {
         List<RobotListenerManager> managers = new ArrayList<>();
         DefaultListModel<String> listModel = new DefaultListModel<>();
         listModel.setSize(robots.size());
 
+        Map<Integer, Robot> listElements = new HashMap<>();
+
         int i = 0;
         for (Robot robot : robots) {
-            listModel.addElement("ERROR NO TASK");
+            listElements.put(i, robot);
             managers.add(new RobotListenerManager(robot, listModel, i++));
         }
 
@@ -32,7 +37,22 @@ public class InfoPanel extends JPanel {
         taskPanel.add(tasks);
         taskPanel.add(list);
 
+        JButton cancel = new JButton("Cancel");
+        cancel.addActionListener((e) -> {
+            int[] selections = list.getSelectedIndices();
+            if (selections.length != 0) {
+                for (int selection : selections) {
+                    listElements.get(selection).cancelJob();
+                }
+            }
+        });
+        taskPanel.add(cancel);
+
         this.add(taskPanel, BorderLayout.NORTH);
 
+    }
+
+    public void setCurrentSelected(Robot currentSelected) {
+        this.currentSelected = currentSelected;
     }
 }
