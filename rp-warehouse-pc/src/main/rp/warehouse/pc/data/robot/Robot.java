@@ -112,8 +112,8 @@ public class Robot implements Runnable{
         //updateLocation();
         robotUtils.updateLocation(lastInstruction);
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
-            plan(true);
-            nextItemWeightCheck();
+            //plan(true);
+            //nextItemWeightCheck();
             cancel = false;
         } else if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
@@ -155,6 +155,7 @@ public class Robot implements Runnable{
 
         // When in pick up mode
         plan(true);
+        nextItemWeightCheck();
     }
 
     /**
@@ -309,6 +310,11 @@ public class Robot implements Runnable{
         return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
     }
 
+    @Override
+    public String toString() {
+        return "Cargo weight: " + currentWeightOfCargo
+                + "\nEstimated items remaining: " + tasks.size();
+    }
 }
 
 // Music to listen to while coding

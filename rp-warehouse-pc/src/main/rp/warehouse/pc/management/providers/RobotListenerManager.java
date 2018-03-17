@@ -9,12 +9,14 @@ import javax.swing.*;
 
 public class RobotListenerManager implements Runnable {
     private static final Logger logger = Logger.getLogger(RobotListenerManager.class);
+    private final JTextArea textArea;
     private final Robot robot;
     private final int ID;
     private final DefaultListModel<String> listModel;
 
-    public RobotListenerManager(Robot robot, DefaultListModel<String> listModel, int position) {
+    public RobotListenerManager(Robot robot, JTextArea textArea, DefaultListModel<String> listModel, int position) {
         this.robot = robot;
+        this.textArea = textArea;
         this.listModel = listModel;
         this.ID = position;
         Thread t = new Thread(this);
@@ -27,7 +29,8 @@ public class RobotListenerManager implements Runnable {
         Rate r = new Rate(2);
         Task previousTask = robot.getTask();
         while (true) {
-            listModel.set(ID, robot.getTask().toString());
+            textArea.setText(robot.toString());
+            listModel.set(ID, robot.getName() + ": " + robot.getTask().toString());
             r.sleep();
         }
     }

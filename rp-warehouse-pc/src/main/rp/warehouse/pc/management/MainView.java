@@ -13,13 +13,12 @@ public class MainView extends JFrame {
 
     public MainView(List<Robot> robots) {
         JPanel top = new JPanel();
-        top.setMinimumSize(new Dimension(900, 600));
         top.setLayout(new FlowLayout());
         top.add(new WarehouseMapPanel(robots));
         top.add(new InfoPanel(robots));
 
         this.add(top);
-        this.setSize(top.getPreferredSize());
+        this.setSize(top.getMinimumSize());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);

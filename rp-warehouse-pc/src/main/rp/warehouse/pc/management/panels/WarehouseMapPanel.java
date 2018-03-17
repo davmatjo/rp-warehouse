@@ -18,11 +18,14 @@ public class WarehouseMapPanel extends JPanel {
 
     public WarehouseMapPanel(List<Robot> robots) {
         this.add(mapVisualisation);
-        mapVisualisation.setPreferredSize(new Dimension(1000, 600));
+        mapVisualisation.setPreferredSize(new Dimension(800, 580));
 
         for (Robot robot : robots) {
             mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.12f, 0.22f), new RobotPoseProvider(robot)));
             mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.07f, 0.07f), new ItemPoseProvider(robot)));
         }
+
+        this.setBackground(Color.WHITE);
     }
+
 }

@@ -22,13 +22,26 @@ public class InfoPanel extends JPanel {
 
         Map<Integer, Robot> listElements = new HashMap<>();
 
+        JPanel robotPanel = new JPanel();
+        robotPanel.setLayout(new GridLayout(1, 3));
+
         int i = 0;
         for (Robot robot : robots) {
             listElements.put(i, robot);
-            managers.add(new RobotListenerManager(robot, listModel, i++));
+            JTextArea robotInfo = new JTextArea();
+            robotInfo.setMargin(new Insets(0, 5, 5, 5));
+            managers.add(new RobotListenerManager(robot, robotInfo, listModel, i++));
+
+            JPanel panel = new JPanel();
+            panel.setBackground(Color.RED);
+            panel.setLayout(new VerticalLayout());
+            panel.add(new JLabel(robot.getName()));
+            panel.add(robotInfo);
+            robotPanel.add(panel);
+
         }
 
-        this.setLayout(new BorderLayout());
+        this.setLayout(new VerticalLayout());
         JPanel taskPanel = new JPanel();
         taskPanel.setLayout(new VerticalLayout());
         JLabel tasks = new JLabel("Tasks");
@@ -47,8 +60,19 @@ public class InfoPanel extends JPanel {
             }
         });
         taskPanel.add(cancel);
+        taskPanel.setBackground(Color.ORANGE);
 
-        this.add(taskPanel, BorderLayout.NORTH);
+        taskPanel.add(robotPanel);
+
+        JPanel logo = new JPanel();
+        logo.setSize(300, 200);
+        ImageIcon icon = new ImageIcon("./logo.jpg");
+        JLabel label = new JLabel();
+        label.setIcon(icon);
+        logo.add(label);
+        taskPanel.add(logo);
+
+        this.add(taskPanel);
 
     }
 
