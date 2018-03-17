@@ -112,13 +112,10 @@ public class Robot implements Runnable{
         //updateLocation();
         robotUtils.updateLocation(lastInstruction);
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
-            updateTask();
+            plan(true);
             nextItemWeightCheck();
             cancel = false;
-        }
-
-
-        if (route.isEmpty() || cancel) {
+        } else if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
                 Rate r = new Rate(RATE);
@@ -152,7 +149,6 @@ public class Robot implements Runnable{
      */
     public void cancelJob() {
         cancel = true;
-        pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
