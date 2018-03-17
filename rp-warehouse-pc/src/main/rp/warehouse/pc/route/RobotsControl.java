@@ -1,9 +1,10 @@
 package rp.warehouse.pc.route;
 
 import org.apache.log4j.Logger;
-import rp.warehouse.pc.data.Robot;
-import rp.warehouse.pc.data.RobotLocation;
+
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.Robot;
+import rp.warehouse.pc.data.robot.RobotLocation;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;

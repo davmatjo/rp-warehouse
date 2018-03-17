@@ -1,6 +1,9 @@
 package rp.warehouse.pc.data;
 
 import org.junit.Test;
+
+import rp.warehouse.pc.data.robot.RobotLocation;
+
 import org.junit.Assert;
 
 import java.util.HashSet;

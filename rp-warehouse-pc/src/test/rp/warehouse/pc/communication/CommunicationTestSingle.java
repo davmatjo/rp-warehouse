@@ -4,7 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import rp.warehouse.pc.data.Robot;
+
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.localisation.Ranges;
 
 import java.util.concurrent.ExecutorService;

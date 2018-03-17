@@ -3,8 +3,8 @@ package rp.warehouse.pc.management.panels;
 import rp.config.MobileRobotConfiguration;
 import rp.robotics.MobileRobot;
 import rp.robotics.visualisation.GridMapVisualisation;
-import rp.warehouse.pc.data.Robot;
 import rp.warehouse.pc.data.Warehouse;
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.management.providers.ItemPoseProvider;
 import rp.warehouse.pc.management.providers.RobotPoseProvider;
 

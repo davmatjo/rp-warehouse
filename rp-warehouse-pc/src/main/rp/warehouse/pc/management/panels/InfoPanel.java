@@ -1,7 +1,8 @@
 package rp.warehouse.pc.management.panels;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
-import rp.warehouse.pc.data.Robot;
+
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.management.providers.RobotListenerManager;
 
 import javax.swing.*;
