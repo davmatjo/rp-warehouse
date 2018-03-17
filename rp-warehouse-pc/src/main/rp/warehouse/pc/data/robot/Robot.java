@@ -148,7 +148,7 @@ public class Robot implements Runnable{
     /**
      * For: Communication Cancels Job of the current item
      */
-    public synchronized void cancelJob() {
+    public void cancelJob() {
         cancel = true;
         pickUpDone = true;
         logger.debug(name + ": " + "Starting Job cancellation");
@@ -269,7 +269,7 @@ public class Robot implements Runnable{
         }
     }
 
-    private synchronized int getCurrentInstruction() {
+    private int getCurrentInstruction() {
         logger.info(name + ": " + " getting Current Instruction");
         logger.info("Route is Empty: " + route.isEmpty());
         
