@@ -17,7 +17,7 @@ public class Route {
         this.route = new LinkedList<>(route.route);
     }
 
-    Route(List<Node> nodes) {
+    Route(List<Node> nodes, boolean pickup, Node goalNode) {
         locations = new LinkedList<>();
         nodes.stream().limit(4).forEach((n) -> locations.add(n.toLocation()));
 
@@ -42,6 +42,13 @@ public class Route {
             }
 
         }
+        if (nodes.size() < 4) {
+            if (!nodes.get(nodes.size() - 1).equals(goalNode)) {
+                route.add(Protocol.WAITING);
+            } else {
+                route.add(pickup ? Protocol.PICKUP : Protocol.DROPOFF);
+            }
+        }
     }
 
     public int poll() throws NullPointerException {
@@ -61,4 +68,8 @@ public class Route {
         return route.isEmpty();
     }
 
+    @Override
+    public String toString() {
+        return locations.toString() + "\n" + route.toString();
+    }
 }

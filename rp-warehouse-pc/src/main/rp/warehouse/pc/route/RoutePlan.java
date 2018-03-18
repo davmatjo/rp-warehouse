@@ -1,7 +1,6 @@
 package rp.warehouse.pc.route;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
@@ -30,14 +29,14 @@ public class RoutePlan {
 	 * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
 	 */
 	public static Route plan(Robot robot, Location goalLocation) {
-		logger.debug("Called static plan method.");
-		logger.debug("Now creating a RoutePlan object.");
-		
+		return planRoute(robot, goalLocation, true);
+	}
+
+	private static Route planRoute(Robot robot, Location goalLocation, boolean pickup) {
 		Node start = new Node(robot.getLocation().getX(), robot.getLocation().getY(), robot);
 		Node end = new Node(goalLocation.getX(), goalLocation.getY(), robot);
-		
-		return start.plan(start, end);
-		
+
+		return start.plan(start, end, pickup);
 	}
 	
 	/**
@@ -49,7 +48,7 @@ public class RoutePlan {
 		
 		Location dropOff = new Location(0, 0);
 		
-		return plan(robot, dropOff);
+		return planRoute(robot, dropOff, false);
 	}
 	
 	/**

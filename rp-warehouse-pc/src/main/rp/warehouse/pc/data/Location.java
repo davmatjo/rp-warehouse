@@ -4,6 +4,7 @@ import lejos.geom.Point;
 import lejos.robotics.navigation.Pose;
 import rp.robotics.navigation.GridPose;
 import rp.robotics.navigation.Heading;
+import rp.warehouse.pc.data.robot.RobotLocation;
 
 public class Location {
     private int x;
@@ -55,8 +56,15 @@ public class Location {
 
     @Override
     public boolean equals(Object o) {
-        Location l = (Location) o;
-        return this.x == l.x && this.y == l.y;
+        if (o.getClass() == Location.class) {
+            Location l = (Location) o;
+            return this.x == l.x && this.y == l.y;
+        } else if (o.getClass() == RobotLocation.class) {
+            RobotLocation r = (RobotLocation) o;
+            return this.x == r.getX() && this.y == r.getY();
+        } else {
+            return false;
+        }
     }
 
     @Override

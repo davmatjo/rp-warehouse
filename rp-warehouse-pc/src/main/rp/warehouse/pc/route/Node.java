@@ -3,7 +3,6 @@ package rp.warehouse.pc.route;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Warehouse;
 import rp.warehouse.pc.data.robot.Robot;
@@ -40,7 +39,7 @@ public class Node {
 		else return printCoordinates(node.getParent()) + ", " + node.toString();
 	}
 	
-	public Route plan(Node start, Node end) {
+	Route plan(Node start, Node end, boolean pickup) {
 		
 		List<Node> openList = new ArrayList<Node>();
 		List<Node> closedList = new ArrayList<Node>();
@@ -49,7 +48,7 @@ public class Node {
 		
 		ArrayList<Node> nodes = returnNodes(endNodeWithParentPointersSorted);
 		
-		return new Route(nodes);
+		return new Route(nodes, pickup, end);
 	}
 	
 	/**
@@ -93,17 +92,19 @@ public class Node {
 		if (currentNode.getX() == goalNode.getX() && currentNode.getY() == goalNode.getY()) {
 			return currentNode;
 		}
-		
-		Node northNode = new Node(currentNode.getX(), currentNode.getY() + 1, robot);
-		Node eastNode = new Node(currentNode.getX() + 1, currentNode.getY(), robot);
-		Node southNode = new Node(currentNode.getX(), currentNode.getY() - 1, robot);
-		Node westNode = new Node(currentNode.getX() - 1, currentNode.getY(), robot);
-		
-		addToOpenList(northNode, currentNode, goalNode, openList, closedList);
-		addToOpenList(eastNode, currentNode, goalNode, openList, closedList);
-		addToOpenList(southNode, currentNode, goalNode, openList, closedList);
-		addToOpenList(westNode, currentNode, goalNode, openList, closedList);
-		
+
+		List<Node> possibleNodes = new ArrayList<>(4);
+		possibleNodes.add(new Node(currentNode.getX(), currentNode.getY() + 1, robot));
+		possibleNodes.add(new Node(currentNode.getX() + 1, currentNode.getY(), robot));
+		possibleNodes.add(new Node(currentNode.getX(), currentNode.getY() - 1, robot));
+		possibleNodes.add(new Node(currentNode.getX() - 1, currentNode.getY(), robot));
+
+		for (Node node : possibleNodes) {
+			if (addToOpenList(node, currentNode, goalNode, openList, closedList)) {
+				return currentNode;
+			}
+		}
+
 		int lowestF_Value = 10000000;
 		Node lowestF_ValueNode = null;
 
@@ -143,14 +144,15 @@ public class Node {
 		
 	}
 	
-	private void addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
+	private boolean addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
 		node.setG_cost(parentNode.getG_cost() + 1);
+		node.setParent(parentNode);
+		node.setH_cost(Math.abs(goalNode.getX() - node.getX()) + Math.abs(goalNode.getY() - node.getY()));
+		node.computeF_Cost();
 		if (isValid(node, openList, closedList)) {
-			node.setParent(parentNode);
-			node.setH_cost(Math.abs(goalNode.getX() - node.getX()) + Math.abs(goalNode.getY() - node.getY()));
-			node.computeF_Cost();
 			openList.add(node);
-		}
+			return false;
+		} else return node.equals(goalNode);
 	}
 	
 	private boolean isValid(Node node, List<Node> openList, List<Node> closedList) {
@@ -189,7 +191,7 @@ public class Node {
 
 	private HashSet<Location> getTempBlockedLocations(int tick) {
 		HashSet<Location> blocked = new HashSet<>();
-		if (tick < 3) {
+		if (tick > 3) {
 			return blocked;
 		} else {
 			List<Robot> others = new ArrayList<>(robotList);
@@ -264,6 +266,18 @@ public class Node {
 
 	public String toString() {
 		return x + "," + y;
-	}		
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() == Node.class) {
+			Node n = (Node) o;
+			return n.x == this.x && n.y == this.y;
+		} else if (o.getClass() == Location.class) {
+			Location l = (Location) o;
+			return l.getX() == this.x && l.getX() == this.y;
+		} else {
+			return false;
+		}
+	}
 }
