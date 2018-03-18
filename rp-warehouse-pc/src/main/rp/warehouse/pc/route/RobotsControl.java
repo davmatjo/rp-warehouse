@@ -10,6 +10,7 @@ import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +56,8 @@ public class RobotsControl {
 
         ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
         int i = 0;
+
+        RoutePlan.setRobots(robots);
         
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
@@ -70,8 +73,6 @@ public class RobotsControl {
             
             i++;
         }
-
-        RoutePlan.setRobots(robots);
         
         for (Robot robot : robots) {
             pool.execute(robot);
