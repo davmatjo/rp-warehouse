@@ -17,6 +17,7 @@ import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
+import sun.util.logging.resources.logging;
 
 public class Robot implements Runnable{
 
@@ -265,6 +266,7 @@ public class Robot implements Runnable{
         }
 
         while (cancelledJobs.containsKey(tasks.peek().getJobID())) {
+            logger.debug(name + ": Cancelling Job " + currentTask.getJobID() + " for item " + currentItem.toString());
             this.currentTask = tasks.poll();
         }
         this.currentTask = tasks.poll();
