@@ -2,7 +2,6 @@ package rp.warehouse.pc.data.robot;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -14,11 +13,9 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
-import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
-import sun.util.logging.resources.logging;
 
 public class Robot implements Runnable{
 
@@ -268,7 +265,11 @@ public class Robot implements Runnable{
             logger.info(name + ": I am done");
             System.exit(0);
         }
-
+        if(currentTask == null) {
+            this.currentTask = tasks.poll();
+            this.currentItem = currentTask.getItem();
+        } 
+        
         while (cancelledJobs.containsKey(currentTask.getJobID())) {
             logger.debug(name + ": Cancelling Job " + currentTask.getJobID() + " for item " + currentItem.toString());
             this.currentTask = tasks.poll();
