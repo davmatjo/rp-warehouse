@@ -9,6 +9,8 @@ import lejos.geom.Point;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 
 /**
+ * Class to handle the different direction assumptions so that the robot can
+ * localise from any given position and direction.
  * 
  * @author Kieran
  *
@@ -25,35 +27,94 @@ public class LocalisationCollection {
 	private List<Point> possibleLocations = new ArrayList<Point>();
 	private byte heading;
 
+	/**
+	 * Create an assumption handler for the given direction.
+	 * 
+	 * @param direction
+	 *            the starting direction of the robot.
+	 */
 	public LocalisationCollection(final byte direction) {
 		this.startingDirection = direction;
 		this.heading = direction;
 	}
 
-	public void update(final byte direction, final Ranges ranges) {
-		heading = (byte) ((heading + direction) % 4);
-		final Point move = directionPoint[heading];
+	/**
+	 * Method to initialise the available positions given a set of ranges.
+	 * 
+	 * @param ranges
+	 *            the ranges currently read from the robot to start with.
+	 */
+	public void start(final Ranges ranges) {
+		// Populate the initial possible locations given a set of ranges by rotating the
+		// ranges so that they are north-based using the heading assumption and the
+		// warehouse map.
 		try {
-			List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
-			possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
+			possibleLocations = map.getPoints(Ranges.rotate(ranges, heading));
 		} catch (NoIdeaException e) {
 			logger.info("(" + startingDirection + "): No more directions");
-			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Update the assumption handler with the direction of which the robot just
+	 * moved in (relative to the robot), as well as the ranges discovered after
+	 * moving in that direction.
+	 * 
+	 * @param direction
+	 *            the direction just moved in, relative to the robot.
+	 * @param ranges
+	 *            the ranges discovered after moving.
+	 */
+	public void update(final byte direction, final Ranges ranges) {
+		// Update the current heading using modulo.
+		heading = (byte) ((heading + direction) % 4);
+		// Get the respective change in direction, relative to the initial assumption
+		// and the heading.
+		final Point move = directionPoint[heading];
+		try {
+			// Get the possible points of which the robot could be in given the current
+			// ranges, rotated by the current heading to use north-based ranges.
+			List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
+			// Then filter these positions.
+			possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
+		} catch (NoIdeaException e) {
+			logger.info("(" + startingDirection + "): No more directions");
+		}
+	}
+
+	/**
+	 * Method to determine whether this assumption is complete or not.
+	 * 
+	 * @return whether this assumption has completed its localisation or not.
+	 */
 	public boolean isComplete() {
 		return possibleLocations.size() == 1;
 	}
 
+	/**
+	 * Method to determine whether this assumption still needs to run.
+	 * 
+	 * @return whether this assumption still needs to run.
+	 */
 	public boolean notComplete() {
-		return possibleLocations.size() > 1;
+		return !isComplete();
 	}
 
+	/**
+	 * The point in the first position of the possible locations array. Will give
+	 * the location of the robot after localisation has completed.
+	 * 
+	 * @return the point of the robot.
+	 */
 	public Point getPoint() {
 		return possibleLocations.get(0);
 	}
 
+	/**
+	 * The heading following this assumption.
+	 * 
+	 * @return the robot's heading.
+	 */
 	public byte getHeading() {
 		return heading;
 	}

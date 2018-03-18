@@ -59,10 +59,10 @@ public class Localiser implements Localisation {
 		Ranges ranges = comms.getRanges();
 
 		// Update ranges
-		northAssumption.update(Ranges.UP, ranges);
-		eastAssumption.update(Ranges.UP, ranges);
-		southAssumption.update(Ranges.UP, ranges);
-		westAssumption.update(Ranges.UP, ranges);
+		northAssumption.start(ranges);
+		eastAssumption.start(ranges);
+		southAssumption.start(ranges);
+		westAssumption.start(ranges);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (northAssumption.notComplete() && eastAssumption.notComplete() && southAssumption.notComplete()

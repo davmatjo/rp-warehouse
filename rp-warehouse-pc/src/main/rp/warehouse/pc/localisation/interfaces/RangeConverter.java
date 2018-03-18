@@ -1,6 +1,9 @@
 package rp.warehouse.pc.localisation.interfaces;
 
 /**
+ * An interface for a generic range converter, which takes in values read in
+ * different scenarios and converts them as though they were taken from within
+ * the grid of the warehouse map.
  * 
  * @author Kieran
  *
