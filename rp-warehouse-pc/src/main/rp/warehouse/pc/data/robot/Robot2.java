@@ -1,6 +1,5 @@
 package rp.warehouse.pc.data.robot;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -15,9 +14,9 @@ import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 
-public class Robot implements Runnable {
+public class Robot2 implements Runnable {
     
-   // Communications
+ // Communications
     private final String ID;                            // Communication ID
     private final String name;                          // Communication name
     private Communication comms;                        // Communication used to connect each robot to the a nxt brick
@@ -46,7 +45,7 @@ public class Robot implements Runnable {
     private boolean pickUpDone = false;
 
     RobotUtils robotUtils;
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) throws IOException {
+    public Robot2(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) {
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
@@ -101,9 +100,7 @@ public class Robot implements Runnable {
                 //rate.sleep();
                 
             } else {
-                robotUtils.updateLocation(lastInstruction);
-                lastInstruction = route.poll();
-                comms.sendMovement(lastInstruction);
+                comms.sendMovement(route.poll());
                 
             }
             
@@ -188,39 +185,6 @@ public class Robot implements Runnable {
             // plan drop off for current item
             route = RoutePlan.planDropOff(this);
         }
-    }
-    public Route getRoute() {
-        return new Route(route);
-    }
-
-    public String getID() {
-        String copy = ID;
-        return copy;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Task getTask() {
-        Task copy = currentTask;
-        return copy;
-    }
-
-    public RobotLocation getLocation() {
-        return new RobotLocation(location);
-    }
-
-    private String getDirectionString(int direction) {
-        // Works out the String representation of the command
-        return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
-    }
-
-    @Override
-    public String toString() {
-        return "Cargo weight: " + currentWeightOfCargo
-                + "\nEstimated items remaining: " + tasks.size()
-                + "\nStatus: " + status;
     }
 
 }
