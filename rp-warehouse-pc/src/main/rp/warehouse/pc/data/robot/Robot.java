@@ -17,7 +17,11 @@ import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
-
+/**
+ *
+ * @author roman
+ *
+ */
 public class Robot implements Runnable {
     
    // Communications
@@ -41,7 +45,6 @@ public class Robot implements Runnable {
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
     private float currentWeightOfCargo = 0.0f;
     private int RATE = 20;
-    private String robotStatus = "No Job";
     private int status = Status.NOTHING;
 
     RobotUtils robotUtils;
@@ -94,12 +97,14 @@ public class Robot implements Runnable {
                 }
                 
             } else if(route.peek() == Protocol.PICKUP) {
+                status = Status.WAITING_FOR_PICKUP;
                 logger.debug(name + ": Waiting for Pick Up");
                 while(!pickUp(comms.sendLoadingRequest(currentTask.getCount()))) {
                     r.sleep();
                 }
                 route = null;
             } else if(route.peek() == Protocol.DROPOFF) {
+                status = Status.WAITING_FOR_DROPOFF;
                 logger.debug(name + ": Waiting for Drop Off");
                 comms.sendLoadingRequest(0);
                 dropOff();
@@ -120,7 +125,11 @@ public class Robot implements Runnable {
     }
     
     private boolean pickUp(int numberOfItems){
-        if (numberOfItems == currentTask.getCount()) {
+        if (cancelledJobs.containsKey(currentTask.jobID)) {
+            logger.debug(name + ": Canceled Job");
+            status = Status.PICKING_UP;
+            return true;
+        } else if (numberOfItems == currentTask.getCount()) {
             // check if cancelled
             float newWeight = currentWeightOfCargo + currentItem.getWeight() * currentTask.getCount();
             if (newWeight > WEIGHTLIMIT) {
@@ -174,6 +183,7 @@ public class Robot implements Runnable {
     
     public void cancelJob() {
         cancelledJobs.put(currentTask.getJobID(), true);
+        logger.debug(name + ": Canceled Job");
     }
 
     private void updateTasks() {
@@ -231,7 +241,7 @@ public class Robot implements Runnable {
     public String toString() {
         return "Cargo weight: " + currentWeightOfCargo
                 + "\nEstimated items remaining: " + tasks.size()
-                + "\nStatus: " + status;
+                + "\nStatus: " +Status.getWord(status);
     }
 
 }
