@@ -13,7 +13,7 @@ public class VisualiseWarehouse {
 	public static void main(String[] args) {
 		// Grid map configuration
 		GridMap gridMap = Warehouse.build();
-		GridMapVisualisation mapVis = new GridMapVisualisation(gridMap, gridMap, 200f);
+		GridMapVisualisation mapVis = new GridMapVisualisation(gridMap, gridMap, 150f);
 		displayVisualisation(mapVis);
 	}
 

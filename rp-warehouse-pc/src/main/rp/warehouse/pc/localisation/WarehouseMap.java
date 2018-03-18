@@ -38,7 +38,6 @@ public class WarehouseMap {
 				// Check if the position isn't blocked
 				if (!blockedPoints.contains(point)) {
 					// Take the UP, RIGHT, DOWN and LEFT readings.
-					// Casted to ints to remove floating point (stick to grid).
 					final float up = world.rangeToObstacleFromGridPosition(x, y, 90);
 					final float right = world.rangeToObstacleFromGridPosition(x, y, 0);
 					final float down = world.rangeToObstacleFromGridPosition(x, y, -90);
@@ -78,7 +77,7 @@ public class WarehouseMap {
 	 */
 	public ArrayList<Point> getPoints(final Ranges ranges) throws NoIdeaException {
 		if (this.positions.containsKey(ranges)) {
-			return this.positions.get(ranges);
+			return new ArrayList<>(this.positions.get(ranges));
 		} else {
 			throw new NoIdeaException(ranges);
 		}

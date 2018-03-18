@@ -1,7 +1,8 @@
 package rp.warehouse.pc.communication;
 
 import org.junit.*;
-import rp.warehouse.pc.data.Robot;
+
+import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.localisation.Ranges;
 
 import java.util.concurrent.ExecutorService;
