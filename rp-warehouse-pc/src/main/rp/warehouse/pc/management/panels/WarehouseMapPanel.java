@@ -21,7 +21,7 @@ public class WarehouseMapPanel extends JPanel {
         mapVisualisation.setPreferredSize(new Dimension(800, 580));
 
         for (Robot robot : robots) {
-            mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.12f, 0.22f), new RobotPoseProvider(robot)));
+            mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.22f, 0.12f), new RobotPoseProvider(robot)));
             mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.07f, 0.07f), new ItemPoseProvider(robot)));
         }
 

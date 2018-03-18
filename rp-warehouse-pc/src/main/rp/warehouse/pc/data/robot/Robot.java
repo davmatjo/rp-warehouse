@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
+import lejos.util.Delay;
 import org.apache.log4j.Logger;
 
 import rp.util.Rate;
@@ -101,6 +102,7 @@ public class Robot implements Runnable {
                 logger.debug(name + ": Waiting for Pick Up");
                 while(!pickUp(comms.sendLoadingRequest(currentTask.getCount()))) {
                     r.sleep();
+                    Delay.msDelay(200);
                 }
                 route = null;
             } else if(route.peek() == Protocol.DROPOFF) {
@@ -211,7 +213,7 @@ public class Robot implements Runnable {
         }
     }
     public Route getRoute() {
-        return new Route(route);
+        return route == null ? null : new Route(route);
     }
 
     public String getID() {

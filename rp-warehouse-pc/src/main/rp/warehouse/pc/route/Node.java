@@ -206,7 +206,9 @@ public class Node {
 				} catch (IndexOutOfBoundsException e) {
 					logger.debug("Ignoring robot blocked location");
 					blocked.add(robot.getLocation());
-				}
+				} catch (NullPointerException e) {
+				    logger.debug("Robot has no route");
+                }
 			}
 			return blocked;
 		}
