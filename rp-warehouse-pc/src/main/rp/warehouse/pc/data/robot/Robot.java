@@ -37,15 +37,15 @@ public class Robot implements Runnable {
     Localiser loc;
     
     // Job information
-    private Queue<Task> tasks;                          // The queue of Tasks which need to be done
+    private final Queue<Task> tasks;                          // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
     private Task currentTask;
-    private static Map<String, Boolean> cancelledJobs;  // Stores ID's of cancelled Jobs
+    private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
     private float currentWeightOfCargo = 0.0f;
-    private int RATE = 20;
+    private final int RATE = 20;
     private int status = Status.NOTHING;
 
     RobotUtils robotUtils;
@@ -56,7 +56,6 @@ public class Robot implements Runnable {
         this.ID = ID;
         this.name = name;
         this.tasks = newTasks;
-        cancelledJobs = new HashMap<String, Boolean>();
         this.currentTask = tasks.poll();
         this.currentItem = currentTask.getItem();
 
@@ -136,13 +135,13 @@ public class Robot implements Runnable {
             float newWeight = currentWeightOfCargo + currentItem.getWeight() * currentTask.getCount();
             if (newWeight > WEIGHTLIMIT) {
                 logger.warn(name + ": Not enough spacem going to drop off. Should not happen");
-                //drop off
+                // drop off
                 status = Status.DROPPING_OFF;
-                //come back
+                // come back
             } else if (newWeight == WEIGHTLIMIT) {
                 logger.debug(name + ": Picked up, cargo is full");
                 currentWeightOfCargo = newWeight;
-                //drop off
+                // drop off
                 status = Status.DROPPING_OFF;
 
                 // Get next item
@@ -212,15 +211,24 @@ public class Robot implements Runnable {
             route = RoutePlan.planDropOff(this);
         }
     }
+    
+    /**
+     * @return - returns copy of the route 
+     */
     public Route getRoute() {
         return route == null ? null : new Route(route);
     }
 
+    /**
+     * @return - returns ID of the robot
+     */
     public String getID() {
-        String copy = ID;
-        return copy;
+        return ID;
     }
 
+    /**
+     * @return - returns name of the robot
+     */
     public String getName() {
         return name;
     }
