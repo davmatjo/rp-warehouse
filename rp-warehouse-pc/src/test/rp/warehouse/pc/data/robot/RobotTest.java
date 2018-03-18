@@ -1,6 +1,7 @@
 package rp.warehouse.pc.data.robot;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
@@ -32,6 +33,7 @@ public class RobotTest {
     @Test
     public void locationTest() {
         setup();
+        Assertions.assertEquals(robot.getID(),"0016531AFBE1");
         
     }
 
