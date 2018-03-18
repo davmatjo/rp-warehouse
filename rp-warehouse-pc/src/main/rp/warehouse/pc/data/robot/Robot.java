@@ -251,7 +251,7 @@ public class Robot implements Runnable{
             logger.info(name + ": " + "Will not be able to fit the next item, going to drop off");
             planToDropOff(false);
         } else if(cancel) {
-            
+            plan(false);
         } else {
             logger.info(name + ": Picked up. All good");
             plan(true);
