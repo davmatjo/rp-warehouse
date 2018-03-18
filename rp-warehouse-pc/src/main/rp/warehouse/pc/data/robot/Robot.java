@@ -154,7 +154,7 @@ public class Robot implements Runnable{
 
         //nextItemWeightCheck();
         cancel = false;
-        status ="Traveling for" + ((dropOffCheck)?"Pick Up":"Drop Off");
+        status ="Traveling for " + ((dropOffCheck)?"Drop Off":"Pick Up");
 
     }
 
