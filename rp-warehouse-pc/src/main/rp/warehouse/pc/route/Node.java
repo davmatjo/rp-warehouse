@@ -35,7 +35,7 @@ public class Node {
 		else return printCoordinates(node.getParent()) + ", " + node.toString();
 	}
 	
-	public Queue<Integer> plan(Node start, Node end) {
+	public Route plan(Node start, Node end) {
 		
 		List<Node> openList = new ArrayList<Node>();
 		List<Node> closedList = new ArrayList<Node>();
@@ -44,29 +44,7 @@ public class Node {
 		
 		ArrayList<Node> nodes = returnNodes(endNodeWithParentPointersSorted);
 		
-		Queue<Integer> plan = new LinkedList<Integer>();
-		
-		for (int i = 1; i < nodes.size(); i ++) {
-			
-			if (nodes.get(i-1).getX() == nodes.get(i).getX() - 1) {
-				plan.add(Protocol.EAST);
-			}
-			
-			if (nodes.get(i-1).getX() == nodes.get(i).getX() + 1) {
-				plan.add(Protocol.WEST);
-			}
-			
-			if (nodes.get(i-1).getY() == nodes.get(i).getY() + 1) {
-				plan.add(Protocol.SOUTH);
-			}
-			
-			if (nodes.get(i-1).getY() == nodes.get(i).getY() - 1) {
-				plan.add(Protocol.NORTH);
-			}
-			
-		}
-		
-		return plan;
+		return new Route(nodes);
 	}
 	
 	/**
@@ -245,6 +223,10 @@ public class Node {
 
 	public void setParent(Node parent) {
 		this.parent = parent;
+	}
+
+	public Location toLocation() {
+		return new Location(this.x, this.y);
 	}
 
 	public String toString() {

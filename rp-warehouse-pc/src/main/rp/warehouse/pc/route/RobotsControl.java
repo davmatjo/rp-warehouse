@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.management.LoadingFrame;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
@@ -77,6 +78,7 @@ public class RobotsControl {
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
+        LoadingFrame.finishedLoading();
         new MainView(robots);
 
         // Shut down the pool to prevent new threads being created, and allow the program to end

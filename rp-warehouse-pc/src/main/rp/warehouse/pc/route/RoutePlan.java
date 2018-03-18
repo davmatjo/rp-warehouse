@@ -29,7 +29,7 @@ public class RoutePlan {
 	 * @param goalLocation the goal location is passed so that we can plan a route to it
 	 * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
 	 */
-	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
+	public static Route plan(Robot robot, Location goalLocation) {
 		logger.debug("Called static plan method.");
 		logger.debug("Now creating a RoutePlan object.");
 		
@@ -45,7 +45,7 @@ public class RoutePlan {
 	 * @param robot The robot is passed so that we know its current location, in order to plan the route for the next drop off point
 	 * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
 	 */
-	public static Queue<Integer> planDropOff(Robot robot) {
+	public static Route planDropOff(Robot robot) {
 		
 		Location dropOff = new Location(0, 0);
 		

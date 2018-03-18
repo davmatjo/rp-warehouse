@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 public class InfoPanel extends JPanel {
-    private Robot currentSelected;
 
     public InfoPanel(List<Robot> robots) {
+        this.setLayout(new BorderLayout(0, 10));
+        this.setPreferredSize(new Dimension(500, 600));
+
         List<RobotListenerManager> managers = new ArrayList<>();
         DefaultListModel<String> listModel = new DefaultListModel<>();
         listModel.setSize(robots.size());
@@ -23,13 +25,12 @@ public class InfoPanel extends JPanel {
         Map<Integer, Robot> listElements = new HashMap<>();
 
         JPanel robotPanel = new JPanel();
-        robotPanel.setLayout(new GridLayout(1, 3));
+        robotPanel.setLayout(new GridLayout(3, 1, 0, 10));
 
         int i = 0;
         for (Robot robot : robots) {
             listElements.put(i, robot);
             JTextArea robotInfo = new JTextArea();
-            robotInfo.setMargin(new Insets(0, 5, 5, 5));
             managers.add(new RobotListenerManager(robot, robotInfo, listModel, i++));
 
             JPanel panel = new JPanel();
@@ -41,14 +42,13 @@ public class InfoPanel extends JPanel {
 
         }
 
-        this.setLayout(new VerticalLayout());
         JPanel taskPanel = new JPanel();
-        taskPanel.setLayout(new VerticalLayout());
+        taskPanel.setLayout(new BorderLayout(0, 5));
         JLabel tasks = new JLabel("Tasks");
 
         JList<String> list = new JList<>(listModel);
-        taskPanel.add(tasks);
-        taskPanel.add(list);
+        taskPanel.add(tasks, BorderLayout.NORTH);
+        taskPanel.add(list, BorderLayout.CENTER);
 
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener((e) -> {
@@ -59,24 +59,22 @@ public class InfoPanel extends JPanel {
                 }
             }
         });
-        taskPanel.add(cancel);
+        taskPanel.add(cancel, BorderLayout.SOUTH);
         taskPanel.setBackground(Color.ORANGE);
 
-        taskPanel.add(robotPanel);
 
         JPanel logo = new JPanel();
-        logo.setSize(300, 200);
+        logo.setSize(150, 100);
         ImageIcon icon = new ImageIcon("./logo.jpg");
         JLabel label = new JLabel();
+        label.setSize(150, 100);
         label.setIcon(icon);
         logo.add(label);
-        taskPanel.add(logo);
 
-        this.add(taskPanel);
+        this.add(taskPanel, BorderLayout.NORTH);
+        this.add(robotPanel, BorderLayout.CENTER);
+        this.add(logo, BorderLayout.SOUTH);
 
     }
 
-    public void setCurrentSelected(Robot currentSelected) {
-        this.currentSelected = currentSelected;
-    }
 }
