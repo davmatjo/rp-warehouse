@@ -17,13 +17,8 @@ public class RobotInterfaceController {
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
 	private int jobAmount;
-<<<<<<< Upstream, based on origin/master
 	private int toPickup;
-=======
-	private int requestedAmount;
->>>>>>> c33a39f commit
 	private boolean waiting;
-	
 	
 	
 	/*A communicator is created so that commands can be sent*/
@@ -137,7 +132,6 @@ public class RobotInterfaceController {
 	/* This method is called by other classes when the robot is ready to pickup an item, this prevents the robot from performing it whilst
 	 * doing a job
 	 */
-<<<<<<< Upstream, based on origin/master
 	public void pickup(int amount) {
 		toPickup = amount;
 		if (toPickup < 0) {
@@ -148,14 +142,10 @@ public class RobotInterfaceController {
 		} else {
 			waiting = true;
 		}
-=======
-	public void pickup(int itemAmount) {
-		waiting = true;
-		requestedAmount = itemAmount;
->>>>>>> c33a39f commit
 	}
 	//add dropoff on middle button
 	//add value display
 	//display when picking up etc
+
 
 }
