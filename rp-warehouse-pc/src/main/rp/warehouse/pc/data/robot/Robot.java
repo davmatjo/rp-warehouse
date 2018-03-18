@@ -147,13 +147,11 @@ public class Robot implements Runnable{
             } else if (dropOffCheck){
                 cancel = false;
                 planToDropOff(false);
-                if (route.peek() == 8 ) {
+                if (route.isEmpty()) {
                  // Only needs the button to be pressed once
-                    if (dropOffCheck) {
-                        status = "Dropping Off";
-                        comms.sendLoadingRequest(0);
-                        dropOff();
-                    }
+                    status = "Dropping Off";
+                    comms.sendLoadingRequest(0);
+                    dropOff();
                 }
             } else {
                 cancel = false;
