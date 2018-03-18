@@ -35,7 +35,7 @@ public class RobotsControl {
     private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
     private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
-    new RobotLocation(0, 0, 3), new RobotLocation(0, 7, 3)};
+    new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 

@@ -33,8 +33,8 @@ public class RoutePlan {
 		logger.debug("Called static plan method.");
 		logger.debug("Now creating a RoutePlan object.");
 		
-		Node start = new Node(robot.getLocation().getX(), robot.getLocation().getY());
-		Node end = new Node(goalLocation.getX(), goalLocation.getY());
+		Node start = new Node(robot.getLocation().getX(), robot.getLocation().getY(), robot);
+		Node end = new Node(goalLocation.getX(), goalLocation.getY(), robot);
 		
 		return start.plan(start, end);
 		

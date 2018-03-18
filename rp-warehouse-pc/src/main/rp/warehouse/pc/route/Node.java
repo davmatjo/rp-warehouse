@@ -11,6 +11,7 @@ import rp.warehouse.pc.data.robot.Robot;
 public class Node {
 	private static final Logger logger = Logger.getLogger(Node.class);
 	private static List<Robot> robotList;
+	private final Robot robot;
 	private int x;
 	private int y;
 	private int h_cost;
@@ -22,7 +23,8 @@ public class Node {
 		robotList = robots;
 	}
 
-	Node (int x, int y) {
+	Node (int x, int y, Robot robot) {
+		this.robot = robot;
 		this.x = x;
 		this.y = y;
 		//parent is null until set; original starting node has null parent.
@@ -92,10 +94,10 @@ public class Node {
 			return currentNode;
 		}
 		
-		Node northNode = new Node(currentNode.getX(), currentNode.getY() + 1);
-		Node eastNode = new Node(currentNode.getX() + 1, currentNode.getY());
-		Node southNode = new Node(currentNode.getX(), currentNode.getY() - 1);
-		Node westNode = new Node(currentNode.getX() - 1, currentNode.getY());
+		Node northNode = new Node(currentNode.getX(), currentNode.getY() + 1, robot);
+		Node eastNode = new Node(currentNode.getX() + 1, currentNode.getY(), robot);
+		Node southNode = new Node(currentNode.getX(), currentNode.getY() - 1, robot);
+		Node westNode = new Node(currentNode.getX() - 1, currentNode.getY(), robot);
 		
 		addToOpenList(northNode, currentNode, goalNode, openList, closedList);
 		addToOpenList(eastNode, currentNode, goalNode, openList, closedList);
@@ -155,7 +157,7 @@ public class Node {
 		
 		List<Location> blockedNodes = Warehouse.getBlockedLocations();
 
-		HashSet<Location> tempBlocked = getTempBlockedLocations(robotList, node.g_cost);
+		HashSet<Location> tempBlocked = getTempBlockedLocations(node.g_cost);
 
 		boolean nodeNotBlocked = true;
 
@@ -185,32 +187,34 @@ public class Node {
 		
 	}
 
-	private static HashSet<Location> getTempBlockedLocations(List<Robot> robots, int tick) {
+	private HashSet<Location> getTempBlockedLocations(int tick) {
 		HashSet<Location> blocked = new HashSet<>();
+		if (tick < 3) {
+			return blocked;
+		} else {
+			List<Robot> others = new ArrayList<>(robotList);
+			others.remove(robot);
 
-		for (Robot robot : robots) {
-			logger.debug("New robot blocked locations");
-			Route directions = robot.getRoute();
+			for (Robot robot : others) {
+				logger.debug("New robot blocked locations");
+				Route directions = robot.getRoute();
 
-			try {
-				blocked.add(directions.getLocation(tick - 1));
-			} catch (IndexOutOfBoundsException e) {
-				logger.debug("Ignoring robot blocked location");
+				try {
+					blocked.add(directions.getLocation(tick));
+				} catch (IndexOutOfBoundsException e) {
+					logger.debug("Ignoring robot blocked location");
+					blocked.add(robot.getLocation());
+				}
+
+				try {
+					blocked.add(directions.getLocation(tick + 1));
+				} catch (IndexOutOfBoundsException e) {
+					logger.debug("Ignoring robot blocked location");
+					blocked.add(robot.getLocation());
+				}
 			}
-
-			try {
-				blocked.add(directions.getLocation(tick));
-			} catch (IndexOutOfBoundsException e) {
-				logger.debug("Ignoring robot blocked location");
-			}
-
-			try {
-				blocked.add(directions.getLocation(tick + 1));
-			} catch (IndexOutOfBoundsException e) {
-				logger.debug("Ignoring robot blocked location");
-			}
+			return blocked;
 		}
-		return blocked;
 	}
 
 
