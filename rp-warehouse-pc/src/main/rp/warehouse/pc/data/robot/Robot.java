@@ -300,7 +300,7 @@ public class Robot implements Runnable{
      * @return Queue<Integer> of directions
      */
     public LinkedList<Integer> getRoute() {
-        return new LinkedList<>(route);
+        return new LinkedList<Integer>(route);
     }
 
     public String getID() {
