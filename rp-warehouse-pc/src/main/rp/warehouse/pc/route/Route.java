@@ -12,7 +12,12 @@ public class Route {
     private final LinkedList<Location> locations;
     private final Queue<Integer> route;
 
-    public Route(List<Node> nodes) {
+    public Route(Route route) {
+        locations = new LinkedList<>(route.locations);
+        this.route = new LinkedList<>(route.route);
+    }
+
+    Route(List<Node> nodes) {
         locations = new LinkedList<>();
         nodes.forEach((n) -> locations.add(n.toLocation()));
 
