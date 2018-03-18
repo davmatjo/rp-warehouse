@@ -207,13 +207,6 @@ public class Node {
 					logger.debug("Ignoring robot blocked location");
 					blocked.add(robot.getLocation());
 				}
-
-				try {
-					blocked.add(directions.getLocation(tick + 1));
-				} catch (IndexOutOfBoundsException e) {
-					logger.debug("Ignoring robot blocked location");
-					blocked.add(robot.getLocation());
-				}
 			}
 			return blocked;
 		}
