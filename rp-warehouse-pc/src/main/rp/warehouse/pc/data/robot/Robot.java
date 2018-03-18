@@ -124,8 +124,6 @@ public class Robot implements Runnable{
         robotUtils.updateLocation(lastInstruction);
         if (cancelledJobs.containsKey(currentTask.getJobID())) {
             //plan(true);
-            //nextItemWeightCheck();
-            cancel = false;
         } else if (route.isEmpty() || cancel) {
             if (location.equals(currentItem.getLocation())) {
                 logger.debug(name + ": " + "Waiting for " + ((dropOffCheck) ? "Drop Off" : "Pick Up"));
@@ -140,7 +138,6 @@ public class Robot implements Runnable{
 
                 
                 logger.debug(name + ": " + "Item update completed");
-                status ="Traveling";
                 pickUpDone = false;
             } else if (dropOffCheck){
                 planToDropOff(false);
@@ -153,9 +150,11 @@ public class Robot implements Runnable{
             } else {
                 plan(false);
             }
-            
-            cancel = false;
         }
+
+        //nextItemWeightCheck();
+        cancel = false;
+        status ="Traveling for" + ((dropOffCheck)?"Pick Up":"Drop Off");
 
     }
 
