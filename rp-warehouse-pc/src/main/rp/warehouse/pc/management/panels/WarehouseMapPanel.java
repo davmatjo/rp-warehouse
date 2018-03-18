@@ -13,10 +13,11 @@ import java.awt.*;
 import java.util.List;
 
 public class WarehouseMapPanel extends JPanel {
-    private static final GridMapVisualisation mapVisualisation = new GridMapVisualisation(Warehouse.build(), Warehouse.build(), 200f);
 
 
     public WarehouseMapPanel(List<Robot> robots) {
+        WarehouseMapVisualisation mapVisualisation = new WarehouseMapVisualisation(Warehouse.build(), Warehouse.build(), 200f, robots);
+
         this.add(mapVisualisation);
         mapVisualisation.setPreferredSize(new Dimension(800, 580));
 

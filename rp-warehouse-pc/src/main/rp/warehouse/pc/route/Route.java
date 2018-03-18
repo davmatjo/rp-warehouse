@@ -5,12 +5,9 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.robot.Robot;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
-public class Route {
+public class Route implements Iterable<Integer> {
     private static final Logger logger = Logger.getLogger(Route.class);
     private final LinkedList<Location> locations;
     private final Queue<Integer> route;
@@ -83,5 +80,10 @@ public class Route {
     @Override
     public String toString() {
         return locations.toString() + "\n" + route.toString();
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return route.iterator();
     }
 }
