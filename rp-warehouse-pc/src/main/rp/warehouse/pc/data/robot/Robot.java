@@ -247,12 +247,10 @@ public class Robot implements Runnable{
 
         if (weightForNextItem > WEIGHTLIMIT) {
             logger.info(name + ": " + "Will not be able to fit the next item, going to drop off");
-            planToDropOff(false);
-        } else if(cancel) {
-            plan(false);
+            planToDropOff(nextItem);
         } else {
             logger.info(name + ": Picked up. All good");
-            plan(true);
+            plan(nextItem);
         }
         
         return;
