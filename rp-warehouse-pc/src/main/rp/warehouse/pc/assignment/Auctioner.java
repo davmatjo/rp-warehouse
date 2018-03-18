@@ -6,7 +6,6 @@ import java.util.Queue;
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.route.RobotsControl;
 
