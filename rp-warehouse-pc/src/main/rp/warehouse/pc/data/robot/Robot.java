@@ -16,6 +16,7 @@ import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
+import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 import sun.util.logging.resources.logging;
 
@@ -27,7 +28,7 @@ public class Robot implements Runnable{
     private Communication comms;                        // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private LinkedList<Integer> route;                  // Queue of directions for the current task
+    private Route route;                  // Queue of directions for the current task
     private int lastInstruction = -1;                   // The current Instruction being done by robot (For WMI)
     private RobotLocation location;                     // Current location of the robot
     Localiser loc;
@@ -280,7 +281,7 @@ public class Robot implements Runnable{
     private void planToDropOff(boolean getNextItem) {
         if (getNextItem)updateTask();
 
-        route = (LinkedList<Integer>) RoutePlan.planDropOff(this);
+        route = RoutePlan.planDropOff(this);
         dropOffCheck = true;
     }
 
@@ -289,7 +290,7 @@ public class Robot implements Runnable{
         if (getNextItem) updateTask();
 
         if (currentItem != null) {
-            route = (LinkedList<Integer>) RoutePlan.plan(this, currentItem.getLocation());
+            route =  RoutePlan.plan(this, currentItem.getLocation());
         } else {
             logger.error(name + ": " + "No current Item, I thing I am done");
             updateTask();
@@ -313,8 +314,8 @@ public class Robot implements Runnable{
      * 
      * @return Queue<Integer> of directions
      */
-    public LinkedList<Integer> getRoute() {
-        return new LinkedList<Integer>(route);
+    public Route getRoute() {
+        return new Route(route);
     }
 
     public String getID() {
