@@ -4,7 +4,7 @@ import lejos.geom.Point;
 import lejos.robotics.navigation.Pose;
 import rp.robotics.navigation.GridPose;
 import rp.robotics.navigation.Heading;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
 public class Location {
     private int x;

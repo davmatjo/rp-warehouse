@@ -7,7 +7,7 @@ import org.mockito.Matchers;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;

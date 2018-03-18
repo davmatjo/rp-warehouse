@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.management.LoadingFrame;
 import rp.warehouse.pc.management.MainView;
 

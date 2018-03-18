@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -1,7 +1,9 @@
 package rp.warehouse.pc.data.robot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +16,10 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
+import rp.warehouse.pc.data.robot.utils.Status;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
@@ -47,6 +52,7 @@ public class Robot implements Runnable {
     private float currentWeightOfCargo = 0.0f;
     private final int RATE = 20;
     private int status = Status.NOTHING;
+    private final List<Task> tasksInTheCargo = new ArrayList<>();
 
     RobotUtils robotUtils;
     
@@ -143,7 +149,10 @@ public class Robot implements Runnable {
                 currentWeightOfCargo = newWeight;
                 // drop off
                 status = Status.DROPPING_OFF;
-
+                
+                // Place task to the cargo
+                tasksInTheCargo.add(currentTask);
+                
                 // Get next item
                 currentTask = tasks.poll();
                 currentItem = currentTask.getItem();
@@ -160,6 +169,9 @@ public class Robot implements Runnable {
                 // Plan next item
                 status = Status.PICKING_UP;
 
+                // Place task to the cargo
+                tasksInTheCargo.add(currentTask);
+                
                 // Get next item
                 currentTask = tasks.poll();
                 currentItem = currentTask.getItem();
@@ -177,6 +189,10 @@ public class Robot implements Runnable {
         logger.debug(name + ": Dropped of");
         // empty cargo
         currentWeightOfCargo = 0;
+        for (Task task : tasksInTheCargo) {
+            RewardCounter.addReward(task.getItem().getReward());
+        }
+        tasksInTheCargo.clear();
 
         // plan
         status = Status.PICKING_UP;

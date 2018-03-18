@@ -1,4 +1,4 @@
-package rp.warehouse.pc.data.robot;
+package rp.warehouse.pc.data.robot.utils;
 
 /**
  * Signifies the status of robot
