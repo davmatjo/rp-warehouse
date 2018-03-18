@@ -33,7 +33,10 @@ public class JobInput {
         readItems();
         readLocations();
         readJobs();
-        new JobSelector(jobs.getJobs(), 0, false, 0);
+    }
+
+    public Jobs getJobs() {
+        return jobs;
     }
 
     public void readItems() throws FileNotFoundException {
