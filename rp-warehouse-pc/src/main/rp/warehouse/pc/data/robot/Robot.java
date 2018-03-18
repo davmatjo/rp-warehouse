@@ -14,6 +14,7 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
+import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.RoutePlan;
 
@@ -28,7 +29,8 @@ public class Robot implements Runnable{
     private LinkedList<Integer> route;                  // Queue of directions for the current task
     private int lastInstruction = -1;                   // The current Instruction being done by robot (For WMI)
     private RobotLocation location;                     // Current location of the robot
-
+    Localiser loc;
+    
     // Job information
     private Queue<Task> tasks;                          // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
@@ -74,7 +76,7 @@ public class Robot implements Runnable{
         pool.execute(comms);
 
         // Localisation
-        Localiser loc = new Localiser(comms);
+        loc = new Localiser(comms);
         this.location = startingLocation;// loc.getPosition();
         robotUtils = new RobotUtils(location, name);
 
@@ -87,6 +89,14 @@ public class Robot implements Runnable{
     public void run() {
         logger.info("Robot " + ID + " " + name + "was successfully connected");
         Rate r = new Rate(RATE);
+        status = "Localising";
+        
+//        try {
+//            this.location = loc.getPosition();
+//        } catch (NoIdeaException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
         status = "Traveling";
         while (running) {
@@ -137,13 +147,11 @@ public class Robot implements Runnable{
             } else if (dropOffCheck){
                 cancel = false;
                 planToDropOff(false);
-                if (route.peek() == 8 ) {
+                if (route.isEmpty()) {
                  // Only needs the button to be pressed once
-                    if (dropOffCheck) {
-                        status = "Dropping Off";
-                        comms.sendLoadingRequest(0);
-                        dropOff();
-                    }
+                    status = "Dropping Off";
+                    comms.sendLoadingRequest(0);
+                    dropOff();
                 }
             } else {
                 cancel = false;
@@ -215,7 +223,7 @@ public class Robot implements Runnable{
      *
      * @return -
      */
-    public boolean dropOff() {
+    private boolean dropOff() {
         logger.debug(name + ": " + "Starting DropOff");
         logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
         if (!dropOffCheck) {
