@@ -170,10 +170,10 @@ public class Robot implements Runnable{
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
-
+        updateTask();
         // When in pick up mode
-        plan(true);
-        nextItemWeightCheck();
+        //plan(true);
+        nextItemWeightCheck(false);
     }
 
     /**
@@ -205,7 +205,7 @@ public class Robot implements Runnable{
             logger.info(name + ": " + "Picked up " + numberOfItems + " Item(s), continuing with tasks");
             logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
 
-            nextItemWeightCheck();
+            nextItemWeightCheck(true);
 
             
             return true;
@@ -241,16 +241,19 @@ public class Robot implements Runnable{
 
     }
 
-    private void nextItemWeightCheck() {
+    private void nextItemWeightCheck(boolean nextItem) {
         if (tasks.size() == 0) {
             plan(false);
             return;
         }
-        float weightForNextItem = currentWeightOfCargo + (tasks.peek().getItem().getWeight() * tasks.peek().getCount());
+        Task taskToCheck = (nextItem) ? tasks.peek() : currentTask;
+        float weightForNextItem = currentWeightOfCargo + (taskToCheck.getItem().getWeight() * taskToCheck.getCount());
 
         if (weightForNextItem > WEIGHTLIMIT) {
             logger.info(name + ": " + "Will not be able to fit the next item, going to drop off");
             planToDropOff(false);
+        } else if(cancel) {
+            
         } else {
             logger.info(name + ": Picked up. All good");
             plan(true);
@@ -265,12 +268,13 @@ public class Robot implements Runnable{
             System.exit(0);
         }
 
-        while (cancelledJobs.containsKey(tasks.peek().getJobID())) {
+        while (cancelledJobs.containsKey(currentTask.getJobID())) {
             logger.debug(name + ": Cancelling Job " + currentTask.getJobID() + " for item " + currentItem.toString());
             this.currentTask = tasks.poll();
+            this.currentItem = currentTask.getItem();
         }
-        this.currentTask = tasks.poll();
-        this.currentItem = currentTask.getItem();
+           
+        
     }
 
     private void planToDropOff(boolean getNextItem) {
