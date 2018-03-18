@@ -7,14 +7,11 @@ import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.junit.Assert;
 
 public class RobotTest {
     public Robot robot ;
@@ -31,9 +28,19 @@ public class RobotTest {
     }
     
     @Test
-    public void locationTest() {
+    public void idTest() {
         setup();
         Assertions.assertEquals(robot.getID(),"0016531AFBE1");
+        
+    }
+    
+    @Test
+    public void routeTest() {
+        
+    }
+    
+    @Test
+    public void nameTest() {
         
     }
 
