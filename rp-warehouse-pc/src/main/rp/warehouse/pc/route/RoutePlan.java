@@ -1,5 +1,8 @@
 package rp.warehouse.pc.route;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
@@ -23,18 +26,18 @@ public class RoutePlan {
 	private Location goalLocation;
 	private static final Logger logger = Logger.getLogger(RoutePlan.class);
 	private static List<Robot> robotsList = new ArrayList<Robot>();
-	private HashSet<Location> blocked = new HashSet<>(Warehouse.getBlockedLocations());
+	private static ArrayList<Location> blocked = Warehouse.getBlockedLocations();
+	private static Queue<Integer> steps = new LinkedList<Integer>();
 	
 	int currentX;
 	int currentY;
 	int currentDirection;
 	
 	ArrayList<RoutePlanLocation> toVisitList = new ArrayList<RoutePlanLocation>();
-	ArrayList<Location> visitedList = new ArrayList<Location>();
+	static ArrayList<Location> visitedList = new ArrayList<Location>();
 	boolean goalNotFound = true;
 	static Queue<Integer> plan = new LinkedList<Integer>();
 	final Location originalLocation;
-	private HashSet<Location> tempBlocked;
 	
 	/**
 	 * The overloaded constructor for the RoutePlan class
@@ -53,6 +56,15 @@ public class RoutePlan {
 		run();
 	}
 	
+	public static void main (String[] args) {
+		Robot rob = new Robot(11, 7);
+		Location goalLocation = new Location(5, 3);
+		System.out.println(plan(rob, goalLocation));
+		
+		//RoutePlanLocation loc = new RoutePlanLocation(7, 3);	
+		//System.out.println(blocked.contains(loc));
+	}
+	
 	/**
 	 * A static method returning a queue of integers, representing commands for route execution to understand
 	 * @param robot the robot is passed so that we can pass it the overloaded constructor to access its current coordinates to plan its route
@@ -62,20 +74,90 @@ public class RoutePlan {
 	public static Queue<Integer> plan(Robot robot, Location goalLocation) {
 		logger.debug("Called static plan method.");
 		logger.debug("Now creating a RoutePlan object.");
+		
+		
+		//Location currentLocation = robot.getLocation();
+		//plan(currentLocation, goalLocation);
+		//return steps;
+		
 		RoutePlan routePlan = new RoutePlan(robot, goalLocation);
-		LinkedList<Integer> plan = new LinkedList<>(RoutePlan.plan);
+		Queue<Integer> plan = RoutePlan.plan;
 		
 		//reset the route plan for the next route
 		RoutePlan.plan = new LinkedList<Integer>();
-		List<Integer> cutoff;
-		if (plan.size() > 4) {
-			cutoff = plan.subList(0, 4);
-		} else {
-			cutoff = plan;
-		}
+		
 		//return the route plan
-		return new LinkedList<>(cutoff);
+		return plan;
 	}
+	
+	/*public static int plan(Location currentLocation, Location goalLocation) {
+		
+		if (currentLocation.getX() == goalLocation.getX() && currentLocation.getY() == goalLocation.getY()) {
+			return 0;
+		}
+		
+		int currentX = currentLocation.getX();
+		int currentY = currentLocation.getY();
+		int north = 100000000;
+		int east = 100000000;
+		int south = 100000000;
+		int west = 100000000;
+		
+		RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
+		RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
+		RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
+		RoutePlanLocation westLocation = new RoutePlanLocation(currentX - 1, currentY);
+		
+		if (!isValid(northLocation) && !isValid(eastLocation) && !isValid(southLocation) && !isValid(westLocation)) {
+			return 100000000;
+		}
+		
+		if (isValid(northLocation)) {
+			north = 1 + plan(northLocation, goalLocation);
+		}
+		
+		if (isValid(eastLocation)) {
+			east = 1 + plan(eastLocation, goalLocation);
+		}
+		
+		if (isValid(southLocation)) {
+			south = 1 + plan(southLocation, goalLocation);
+		}
+		
+		if (isValid(westLocation)) {
+			west = 1 + plan(westLocation, goalLocation);
+		}
+		
+		if (north <= east && north <=south && north <= west) {
+			//north is the cheapest
+			//add north to steps
+			steps.offer(Protocol.NORTH);
+			return 1 + plan(northLocation, goalLocation);
+		}
+		
+		else if (east <= south && east <=west && east <= north) {
+			//east is the cheapest
+			//add east to steps
+			steps.offer(Protocol.EAST);
+			return 1 + plan(eastLocation, goalLocation);
+		}
+		
+		else if (south <= west && south <=north && south <= east) {
+			//south is the cheapest
+			//add south to steps
+			steps.offer(Protocol.SOUTH);
+			return 1 + plan(southLocation, goalLocation);
+		}
+		
+		else if (west <= north && west <= east && west <= south) {
+			//west is the cheapest
+			//add west to steps
+			steps.offer(Protocol.WEST);
+			return 1 + plan(westLocation, goalLocation);
+		}
+		
+		return 100000000;
+	}*/
 	
 	/**
 	 * A method to return a queue of integers (commands) on how to reach the next drop off point.
@@ -118,17 +200,16 @@ public class RoutePlan {
 		}
 		
 		else {
-			int tick = 0;
 			while (goalNotFound) {
-
-				List<Robot> others = new ArrayList<>(robotsList);
-				others.remove(robot);
-				tempBlocked = getTempBlockedLocations(others, tick);
-
-				RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);	
-				RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
-				RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
+				
 				RoutePlanLocation westLocation = new RoutePlanLocation(currentX - 1, currentY);	
+				RoutePlanLocation southLocation = new RoutePlanLocation(currentX, currentY - 1);
+				
+					
+				RoutePlanLocation eastLocation = new RoutePlanLocation(currentX + 1, currentY);
+				RoutePlanLocation northLocation = new RoutePlanLocation(currentX, currentY + 1);
+				
+				
 				
 				//now, only the VALID locations will be added to 'toVisitList'
 				addToList(northLocation);
@@ -137,9 +218,7 @@ public class RoutePlan {
 				addToList(westLocation);
 				
 				//now, we visit the cheapest-path-cost location; we store it in 'visitedList'
-				visitCheapestLocationBasedOnPathCost(currentX, currentY);
-
-				tick++;
+				visitCheapestLocationBasedOnPathCost(currentX, currentY);			
 			}
 		}
 		
@@ -189,7 +268,7 @@ public class RoutePlan {
 	 * @param location The location being tested on its validity.
 	 * @return We return true if the location is valid, and false otherwise.
 	 */
-	public boolean isValid(RoutePlanLocation location) {
+	public static boolean isValid(RoutePlanLocation location) {
 		
 		int x = location.getX();
 		int y = location.getY();
@@ -197,18 +276,18 @@ public class RoutePlan {
 		final int MAX_X = 11;
 		final int MAX_Y = 7;
 		
-		boolean locationIsBlocked = blocked.contains(location) || tempBlocked.contains(location);
+		boolean locationIsBlocked = false;
 
 		
 		//PLEASE DO NOT DELETE THIS
-		/*for (int i = 0; i < blocked.size(); i ++) {
+		for (int i = 0; i < blocked.size(); i ++) {
 			if ((blocked.get(i).getX() == x && blocked.get(i).getY() == y)) {
 				locationIsBlocked = true;
 			}
 		}
 		
-		for (int i = 0; i < visitedList.size(); i++) {
-			startingLocation
+		/*for (int i = 0; i < visitedList.size(); i++) {
+			
 			if (visitedList.get(i).getX() == x && visitedList.get(i).getY() == y) {
 				locationIsBlocked = true;
 			}
@@ -216,12 +295,18 @@ public class RoutePlan {
 		}*/
 		
 		
-		return x >= 0
-				&& y >= 0
-				&& x <= MAX_X
-				&& y <= MAX_Y
-				&& !visitedList.contains(location)
-				&& !locationIsBlocked;
+		if (x >= 0
+			&& y >= 0
+			&& x <= MAX_X
+			&& y <= MAX_Y
+			&& visitedList.contains(location) == false
+			&& locationIsBlocked == false)
+			{	
+				//might need Bluetooth to check for robots in the path when doing multi-route planning
+				return true;
+			}
+		
+		else return false;	
 	}
 	
 	/**
@@ -290,44 +375,6 @@ public class RoutePlan {
 		
 		//reset the array list
 		toVisitList = new ArrayList<RoutePlanLocation>();
-	}
-
-	private static HashSet<Location> getTempBlockedLocations(List<Robot> robots, int tick) {
-		HashSet<Location> blocked = new HashSet<>();
-		int prevTick = tick - 1;
-		int nextTick = tick + 1;
-
-		for (Robot robot : robots) {
-			logger.debug("New robot blocked locations");
-			LinkedList<Integer> directions = (LinkedList) robot.getRoute();
-
-			int currX = robot.getLocation().getX();
-			int currY = robot.getLocation().getY();
-
-			for (int i=0; i<=nextTick; i++) {
-				try {
-					if (directions.get(i) == Protocol.NORTH) {
-						currY += 1;
-					} else if (directions.get(i) == Protocol.EAST) {
-						currX += 1;
-					} else if (directions.get(i) == Protocol.SOUTH) {
-						currY -= 1;
-					} else if (directions.get(i) == Protocol.WEST) {
-						currX -= 1;
-					}
-
-					if (i == tick || i == prevTick || i == nextTick) {
-						blocked.add(new Location(currX, currY));
-					}
-				} catch (IndexOutOfBoundsException e) {
-					logger.debug("ignoring blocked location");
-				}
-				if (i == tick || i == prevTick || i == nextTick) {
-					blocked.add(new Location(currX, currY));
-				}
-			}
-		}
-		return blocked;
 	}
 	
 }

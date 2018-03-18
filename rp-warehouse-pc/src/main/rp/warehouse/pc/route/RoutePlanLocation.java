@@ -1,6 +1,9 @@
 package rp.warehouse.pc.route;
 
+import java.util.HashSet;
+
 import rp.warehouse.pc.data.Location;
+import rp.warehouse.pc.data.Warehouse;
 
 /**
  * Used to create a RoutePlanLocation, which extends a generic Location from rp.warehouse.pc.data.Location
@@ -26,12 +29,27 @@ public class RoutePlanLocation extends Location{
 	
 	private int pathCost;
 	//private boolean hasBeenVisited = false;
+	private HashSet<Location> blocked = new HashSet<Location>(Warehouse.getBlockedLocations());
 	
 	/**
 	 * A method to set the path cost for this RoutePlanLocation, based on the estimated number of steps we assume it requires to reach the goal if we go to this location.
 	 * @param goalLocation the goal location that we want to plan a route to/
 	 */
 	public void setPathCost(Location goalLocation) {
+		
+		int goalX = goalLocation.getX();
+		int goalY = goalLocation.getY();
+		
+		/*for (int i = getX(); i < goalX; i++) {
+			//check if any of the xCoordinates are blocked
+			RoutePlanLocation loc = new RoutePlanLocation(i, getY());
+			
+			if (blocked.contains(loc)) {
+				
+			}
+		}*/
+		
+		
 		int xDiff = Math.abs(goalLocation.getX() - getX());
 		int yDiff = Math.abs(goalLocation.getY() - getY());
 		
