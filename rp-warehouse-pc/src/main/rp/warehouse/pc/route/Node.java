@@ -1,16 +1,16 @@
 package rp.warehouse.pc.route;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
+import org.apache.log4j.Logger;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Warehouse;
+import rp.warehouse.pc.data.robot.Robot;
 
 public class Node {
+	private static final Logger logger = Logger.getLogger(Node.class);
+	private static List<Robot> robotList;
 	private int x;
 	private int y;
 	private int h_cost;
@@ -18,7 +18,10 @@ public class Node {
 	private int f_cost;
 	private Node parent;
 	
-	
+	static void setRobots(List<Robot> robots) {
+		robotList = robots;
+	}
+
 	Node (int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -27,7 +30,7 @@ public class Node {
 		
 	}
 	
-	public String printCoordinates(Node node) {
+	private String printCoordinates(Node node) {
 		if (node.getParent() == null) {
 			return node.toString();
 		}
@@ -52,7 +55,7 @@ public class Node {
 	 * @param node
 	 * @return
 	 */
-	public ArrayList<Node> returnNodes(Node node) {
+	private ArrayList<Node> returnNodes(Node node) {
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		
 		nodes = returnNodesBackwards(node, nodes);
@@ -68,7 +71,7 @@ public class Node {
 	 * @param nodes
 	 * @return
 	 */
-	public ArrayList<Node> returnNodesBackwards(Node node, ArrayList<Node> nodes) {
+	private ArrayList<Node> returnNodesBackwards(Node node, ArrayList<Node> nodes) {
 		
 		if (node.getParent() == null) {
 			nodes.add(node);
@@ -80,7 +83,7 @@ public class Node {
 		return returnNodesBackwards(node.getParent(), nodes);
 	}
 	
-	public Node navigate(Node currentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
+	private Node navigate(Node currentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
 		
 		openList.remove(currentNode);
 		closedList.add(currentNode);
@@ -101,20 +104,20 @@ public class Node {
 		
 		int lowestF_Value = 10000000;
 		Node lowestF_ValueNode = null;
-		
-		for (int i = 0; i < openList.size(); i ++) {
-			if (openList.get(i).getF_Cost() < lowestF_Value) {
-				lowestF_ValueNode = openList.get(i);
-				lowestF_Value = openList.get(i).getF_Cost();
+
+		for (Node openNode : openList) {
+			if (openNode.getF_Cost() < lowestF_Value) {
+				lowestF_ValueNode = openNode;
+				lowestF_Value = openNode.getF_Cost();
 			}
 		}
 		
 		//in case more than one node shares the same f value, we want to visit the one with the lowest heuristic (h) value
 		List<Node> nodesWithSameLowestF_Value = new ArrayList<Node>();
-		
-		for (int i = 0; i < openList.size(); i ++) {
-			if (openList.get(i).getF_Cost() == lowestF_Value) {
-				nodesWithSameLowestF_Value.add(openList.get(i));
+
+		for (Node openNode : openList) {
+			if (openNode.getF_Cost() == lowestF_Value) {
+				nodesWithSameLowestF_Value.add(openNode);
 			}
 		}
 		
@@ -123,11 +126,11 @@ public class Node {
 			
 			int lowestHueristic = 10000000;
 			Node lowestHueristicNode = null;
-			
-			for (int i = 0; i < nodesWithSameLowestF_Value.size(); i++) {
-				if (nodesWithSameLowestF_Value.get(i).getH_cost() < lowestHueristic) {
-					lowestHueristicNode = nodesWithSameLowestF_Value.get(i);
-					lowestHueristic = nodesWithSameLowestF_Value.get(i).getH_cost();
+
+			for (Node node : nodesWithSameLowestF_Value) {
+				if (node.getH_cost() < lowestHueristic) {
+					lowestHueristicNode = node;
+					lowestHueristic = node.getH_cost();
 				}
 			}
 			lowestF_ValueNode = lowestHueristicNode;	
@@ -138,53 +141,79 @@ public class Node {
 		
 	}
 	
-	public void addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
+	private void addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
+		node.setG_cost(parentNode.getG_cost() + 1);
 		if (isValid(node, openList, closedList)) {
 			node.setParent(parentNode);
-			node.setG_cost(parentNode.getG_cost() + 1);
 			node.setH_cost(Math.abs(goalNode.getX() - node.getX()) + Math.abs(goalNode.getY() - node.getY()));
 			node.computeF_Cost();
 			openList.add(node);
 		}
 	}
 	
-	public boolean isValid(Node node, List<Node> openList, List<Node> closedList) {
+	private boolean isValid(Node node, List<Node> openList, List<Node> closedList) {
 		
 		List<Location> blockedNodes = Warehouse.getBlockedLocations();
-		
+
+		HashSet<Location> tempBlocked = getTempBlockedLocations(robotList, node.g_cost);
+
 		boolean nodeNotBlocked = true;
-		
-		for (int i = 0; i < blockedNodes.size(); i++) {
-			if (node.getX() == blockedNodes.get(i).getX() && node.getY() == blockedNodes.get(i).getY()) {
+
+		for (Location blockedNode : blockedNodes) {
+			if (node.getX() == blockedNode.getX() && node.getY() == blockedNode.getY()) {
 				nodeNotBlocked = false;
 			}
 		}
 		
 		boolean nodeUnopened = true;
-		for (int i = 0; i < openList.size(); i++) {
-			if (node.getX() == openList.get(i).getX() && node.getY() == openList.get(i).getY()) {
+		for (Node openNode : openList) {
+			if (node.getX() == openNode.getX() && node.getY() == openNode.getY()) {
 				nodeUnopened = false;
 			}
 		}
 		
 		boolean nodeNotClosed = true;
-		for (int i = 0; i < closedList.size(); i++) {
-			if (node.getX() == closedList.get(i).getX() && node.getY() == closedList.get(i).getY()) {
+		for (Node closedNode : closedList) {
+			if (node.getX() == closedNode.getX() && node.getY() == closedNode.getY()) {
 				nodeNotClosed = false;
 			}
 		}
 
-		if (nodeNotBlocked && nodeUnopened && nodeNotClosed
-				&& node.getX() <= 11 && node.getX() >= 0 && node.getY() <= 7 && node.getY() >= 0) {
-			return true;
-		}
-		
-		else {
-			return false;
-		}
+		return nodeNotBlocked && nodeUnopened && nodeNotClosed
+				&& node.getX() <= 11 && node.getX() >= 0 && node.getY() <= 7 && node.getY() >= 0
+				&& !tempBlocked.contains(new Location(node.x, node.y));
 		
 	}
-	
+
+	private static HashSet<Location> getTempBlockedLocations(List<Robot> robots, int tick) {
+		HashSet<Location> blocked = new HashSet<>();
+
+		for (Robot robot : robots) {
+			logger.debug("New robot blocked locations");
+			Route directions = robot.getRoute();
+
+			try {
+				blocked.add(directions.getLocation(tick - 1));
+			} catch (IndexOutOfBoundsException e) {
+				logger.debug("Ignoring robot blocked location");
+			}
+
+			try {
+				blocked.add(directions.getLocation(tick));
+			} catch (IndexOutOfBoundsException e) {
+				logger.debug("Ignoring robot blocked location");
+			}
+
+			try {
+				blocked.add(directions.getLocation(tick + 1));
+			} catch (IndexOutOfBoundsException e) {
+				logger.debug("Ignoring robot blocked location");
+			}
+		}
+		return blocked;
+	}
+
+
 	public int getX() {
 		return x;
 	}
@@ -193,35 +222,35 @@ public class Node {
 		return y;
 	}
 
-	public int getH_cost() {
+	private int getH_cost() {
 		return h_cost;
 	}
 
-	public void setH_cost(int h_cost) {
+	private void setH_cost(int h_cost) {
 		this.h_cost = h_cost;
 	}
 
-	public int getG_cost() {
+	private int getG_cost() {
 		return g_cost;
 	}
 
-	public void setG_cost(int g_cost) {
+	private void setG_cost(int g_cost) {
 		this.g_cost = g_cost;
 	}
 
-	public void computeF_Cost() {
+	private void computeF_Cost() {
 		f_cost = g_cost + h_cost;
 	}
 	
-	public int getF_Cost() {
+	private int getF_Cost() {
 		return f_cost;
 	}
 
-	public Node getParent() {
+	private Node getParent() {
 		return parent;
 	}
 
-	public void setParent(Node parent) {
+	private void setParent(Node parent) {
 		this.parent = parent;
 	}
 

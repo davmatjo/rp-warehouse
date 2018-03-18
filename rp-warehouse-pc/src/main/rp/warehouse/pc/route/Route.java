@@ -19,11 +19,11 @@ public class Route {
 
     Route(List<Node> nodes) {
         locations = new LinkedList<>();
-        nodes.forEach((n) -> locations.add(n.toLocation()));
+        nodes.stream().limit(4).forEach((n) -> locations.add(n.toLocation()));
 
         route = new LinkedList<>();
 
-        for (int i = 1; i < nodes.size(); i ++) {
+        for (int i = 1; i < nodes.size() && i < 4; i ++) {
 
             if (nodes.get(i-1).getX() == nodes.get(i).getX() - 1) {
                 route.add(Protocol.EAST);
@@ -44,7 +44,7 @@ public class Route {
         }
     }
 
-    public int poll() {
+    public int poll() throws NullPointerException {
         locations.poll();
         return route.poll();
     }

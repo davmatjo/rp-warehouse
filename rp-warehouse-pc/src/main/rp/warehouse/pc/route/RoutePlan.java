@@ -57,7 +57,7 @@ public class RoutePlan {
 	 * @param robots the list of robots to be added
 	 */
 	public static void setRobots(List<Robot> robots) {
-		robotsList = robots;
+		Node.setRobots(robots);
 	}
 	
 }
