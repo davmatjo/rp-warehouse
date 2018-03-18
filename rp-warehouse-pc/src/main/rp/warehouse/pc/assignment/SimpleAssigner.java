@@ -3,14 +3,9 @@ package rp.warehouse.pc.assignment;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import org.apache.log4j.Logger;
-
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.route.RobotsControl;
 
 /**
@@ -40,7 +35,7 @@ public class SimpleAssigner {
 
 			Job job = jobs.get(0);
 			jobs.remove(0);
-			logger.trace("Next job");
+			logger.debug("Next job");
 
 			ArrayList<Task> unassignedItems = job.getItems();
 
@@ -60,7 +55,7 @@ public class SimpleAssigner {
 			logger.trace("All items from job assigned");
 
 		}
-		logger.trace("All jobs assigned");
+		logger.debug("All jobs assigned");
 		RobotsControl.addRobots(assignedItems);
 
 	}
