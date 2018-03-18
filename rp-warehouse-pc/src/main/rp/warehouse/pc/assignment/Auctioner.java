@@ -6,7 +6,6 @@ import java.util.Queue;
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Job;
 import rp.warehouse.pc.data.Location;
-import rp.warehouse.pc.data.RobotLocation;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.route.RobotsControl;
 
@@ -22,7 +21,8 @@ public class Auctioner {
 
 	private ArrayList<Job> jobs;
 	private ArrayList<Location> robots;
-
+	
+	private static final TSP tsp = new TSP(); 
 	private static final Logger logger = Logger.getLogger(Auctioner.class);
 
 	/**
@@ -37,11 +37,18 @@ public class Auctioner {
 	}
 
 	/**
+	 * Assigns all items
+	 */
+	public void assign() {
+		RobotsControl.addRobots(auction());
+	}
+	
+	/**
 	 * Will Auction off the items in a job. Each robot bids on the item closest to
 	 * their location. Winner is the bid with the lowest cost, winner is assigned
 	 * their chosen item. Repeat until all the items in the job are assigned
 	 */
-	public void assign() {
+	ArrayList<Queue<Task>> auction() {
 		ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
 		for (int i = 0; i < robots.size(); i++) {
 			assignedItems.add(new LinkedList<Task>());
@@ -97,8 +104,7 @@ public class Auctioner {
 		}
 		logger.debug("All jobs assigned");
 		
-		RobotsControl.addRobots(assignedItems);
-
+		return assignedItems;
 	}
 
 	/**
@@ -118,7 +124,7 @@ public class Auctioner {
 		ItemOrder bidOrder = null;
 
 		for (Task task : job.getItems()) {
-			ItemOrder newOrder = getLowestCost(task, currentItems, robots.get(robot));
+			ItemOrder newOrder = tsp.insertMinimumEdge(task, currentItems, robots.get(robot));
 			int newCost = newOrder.getPathCost();
 			if (newCost < bidVal) {
 				bidItem = task;
@@ -129,73 +135,6 @@ public class Auctioner {
 		return new Bid(bidItem, robot, bidOrder);
 	}
 
-	/**
-	 * Gets the item order which gives the lowest cost
-	 * 
-	 * @param item
-	 *            The item being considered
-	 * @param currentPicks
-	 *            The items the robot has won
-	 * @param robotLocation
-	 *            The robot's current location
-	 * @return The lowest cost order with considered item
-	 */
-	private ItemOrder getLowestCost(Task item, Queue<Task> currentPicks, Location robotLocation) {
-		final LinkedList<Task> current = new LinkedList<Task>(currentPicks);
-		
-		if (current.isEmpty()) {
-			LinkedList<Task> order = new LinkedList<Task>();
-			order.add(item);
-			return new ItemOrder(getTotalDistance(robotLocation, order), order);
-		}
-
-		int lowest = Integer.MAX_VALUE;
-		LinkedList<Task> lowestOrder = current;
-		for (int i = 0; i < currentPicks.size(); i++) {
-			LinkedList<Task> newOrder = current;
-			newOrder.add(i, item);
-			int cost = getTotalDistance(robotLocation, newOrder);
-			if (cost < lowest) {
-				lowest = cost;
-				lowestOrder = newOrder;
-			}
-		}
-		return new ItemOrder(lowest, lowestOrder);
-	}
-
-	/**
-	 * Calculates the total path cost given an order of items
-	 * 
-	 * @param start
-	 *            The start location
-	 * @param items
-	 *            The items (in order of visiting)
-	 * @return The total path cost
-	 */
-	private int getTotalDistance(Location start, LinkedList<Task> items) {
-		LinkedList<Location> locations = new LinkedList<Location>();
-		locations.add(start);
-		for (Task item : items) {
-			locations.add(item.getItem().getLocation());
-		}
-
-		int cost = 0;
-		for (int i = 0; i < (locations.size() - 1); i++) {
-			cost += getDistance(locations.get(i), locations.get(i + 1));
-		}
-		return cost;
-	}
 	
-	// no
-	/**
-	 * Calculates manhattan distance between two locations
-	 * 
-	 * @param from
-	 * @param to
-	 * @return Distance between two locations
-	 */
-	private int getDistance(Location from, Location to) {
-		return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
-	}
 
 }
