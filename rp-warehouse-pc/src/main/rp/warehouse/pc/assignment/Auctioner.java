@@ -73,7 +73,7 @@ public class Auctioner {
 					}
 				}
 
-				assigning.get(winner.getOwner()).add(winner.getItem());
+				assigning.set(winner.getOwner(), winner.getItemOrder().getOrder());
 				unassignedItems.remove(winner.getItem());
 				logger.trace("Item assigned to robot " + robots.get(winner.getOwner()));
 			}
