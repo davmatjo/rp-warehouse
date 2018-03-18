@@ -21,4 +21,13 @@ public class Task {
     public int getCount() {
         return count;
     }
-} 
+
+    public String getJobID() {
+        return jobID;
+    }
+
+    @Override
+    public String toString() {
+        return count + " of item " + item.toString();
+    }
+}

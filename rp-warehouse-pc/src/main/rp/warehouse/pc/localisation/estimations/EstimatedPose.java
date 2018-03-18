@@ -1,4 +1,4 @@
-package rp.warehouse.pc.localisation;
+package rp.warehouse.pc.localisation.estimations;
 
 import lejos.geom.Point;
 import lejos.robotics.navigation.Pose;

@@ -21,6 +21,7 @@ public class JobInput {
     //create the objects that will hold the items/jobs/etc
     Items items = new Items();
     Jobs jobs = new Jobs();
+    CancelledJobs cancelledJobs = new CancelledJobs();
 
     //will be passed the location of the files as strings and recieve the files?
     public JobInput() throws FileNotFoundException {
@@ -175,11 +176,16 @@ public class JobInput {
             ArrayList<String> arrayList = new ArrayList<>(list.size());
             arrayList.addAll(list);
 
-            //first item = job, second item = cancelled
-            //get the job from the jobs list
-//            jobs.getJob(arrayList.get(1));
+            for (int i = 0; i<arrayList.size();i++) {
+                //first item = job, second item = cancelled
+                if (arrayList.get(1).equals("1")) {
+                    //get the job
+                    Job job = jobs.getJob(arrayList.get(0));
+                    //add it to cancelled jobs
+                    cancelledJobs.addJob(job);
+                }
+            }
 
-            //add to cancellations
 
         }
 

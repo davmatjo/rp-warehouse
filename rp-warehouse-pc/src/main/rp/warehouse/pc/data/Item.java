@@ -31,4 +31,9 @@ public class Item {
     public Location getLocation() {
         return location;
     }
+
+    @Override
+    public String toString() {
+        return "at " + location + " of weight " + weight + " with reward " + reward;
+    }
 }

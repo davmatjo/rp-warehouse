@@ -21,7 +21,7 @@ public class Ranges {
 	public final static RangeConverter virtualConverter = new VirtualRangeConverter();
 	public final static RangeConverter physicalConverter = new PhysicalRangeConverter();
 	private final static byte[] opposite = new byte[] { 2, 3, 0, 1 };
-	private byte[] ranges = new byte[4];
+	private boolean[] ranges = new boolean[4];
 
 	/**
 	 * Create an instance of Ranges given the up, right, down and left ranges to be
@@ -52,7 +52,7 @@ public class Ranges {
 	 * @param down
 	 * @param left
 	 */
-	public Ranges(final byte up, final byte right, final byte down, final byte left) {
+	public Ranges(final boolean up, final boolean right, final boolean down, final boolean left) {
 		this.ranges[0] = up;
 		this.ranges[1] = right;
 		this.ranges[2] = down;
@@ -66,7 +66,7 @@ public class Ranges {
 	 *            The direction of which to return the range.
 	 * @return The range in the given direction.
 	 */
-	public byte get(final byte direction) {
+	public boolean get(final byte direction) {
 		assert direction <= LEFT && direction >= UP : direction;
 		return ranges[direction];
 	}
@@ -78,13 +78,13 @@ public class Ranges {
 	 */
 	public List<Byte> getAvailableDirections() {
 		List<Byte> dirs = new ArrayList<Byte>();
-		if (ranges[0] > 0)
+		if (ranges[0])
 			dirs.add(UP);
-		if (ranges[1] > 0)
+		if (ranges[1])
 			dirs.add(RIGHT);
-		if (ranges[2] > 0)
+		if (ranges[2])
 			dirs.add(DOWN);
-		if (ranges[3] > 0)
+		if (ranges[3])
 			dirs.add(LEFT);
 		return dirs;
 	}
@@ -104,7 +104,7 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot >= 0 && rot <= 3 : rot;
-		final byte[] store = new byte[4];
+		final boolean[] store = new boolean[4];
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
@@ -113,35 +113,40 @@ public class Ranges {
 	}
 
 	/**
-	 * Method to convert a range reading to grid point distance - how many grid
-	 * points are within the range.
-	 * 
-	 * @param range
-	 *            The range reading from the sensor.
-	 * @return The amount of grid points within that range.
-	 */
-	private static byte toGrid(final float range) {
-		final byte gridRange = (byte) Math.floor((range - 0.1f) / 0.3d);
-		return gridRange < 0 ? 0 : gridRange;
-	}
-
-	/**
+	 * Get the opposite direction from the given one.
 	 * 
 	 * @param direction
-	 * @return
+	 *            the opposite direction to retrieve.
+	 * @return the opposite direction from the one given.
 	 */
 	public static byte getOpposite(final byte direction) {
-		assert direction >= 0 && direction <= 4 : direction;
+		assert direction >= 0 && direction <= 3 : direction;
 		return opposite[direction];
 	}
 
+	/**
+	 * Create a Ranges object from an array of ranges and a range converter.
+	 * 
+	 * @param array
+	 *            the values to use.
+	 * @param converter
+	 *            the converter to use.
+	 * @return the Ranges object made from the values.
+	 */
 	public static Ranges fromArray(final float[] array, RangeConverter converter) {
 		System.out.println(array[0] + ", " + array[1] + ", " + array[2] + ", " + array[3]);
 		return new Ranges(converter.toGrid(array[0]), converter.toGrid(array[1]), converter.toGrid(array[2]),
 				converter.toGrid(array[3]));
 	}
 
-	public static Ranges fromArray(final byte[] array) {
+	/**
+	 * Create a Ranges object from an array of pre-converted values.
+	 * 
+	 * @param array
+	 *            the pre-converted values
+	 * @return the Ranges object made from these values.
+	 */
+	public static Ranges fromArray(final boolean[] array) {
 		return new Ranges(array[0], array[1], array[2], array[3]);
 	}
 

@@ -3,6 +3,7 @@ package rp.warehouse.pc;
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.*;
+import rp.warehouse.pc.management.LoadingFrame;
 import rp.warehouse.pc.route.RobotsControl;
 
 import java.io.FileNotFoundException;
@@ -36,7 +37,7 @@ public class Main {
 //        myL.add(myQ3);
 //
 //        RobotsControl.addRobots(myL);
-
+        new LoadingFrame();
         new JobInput();
         logger.debug("Main thread ending");
     }

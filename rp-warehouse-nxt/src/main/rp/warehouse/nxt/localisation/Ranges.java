@@ -6,25 +6,26 @@ import lejos.util.Delay;
 import rp.warehouse.nxt.motion.MotionController;
 
 public class Ranges {
-    private final MotionController motion;
-    private final UltrasonicSensor sensor;
+	private final MotionController motion;
+	private final UltrasonicSensor sensor;
 
-    public Ranges(MotionController motion) {
-        this.motion = motion;
-        this.sensor = new UltrasonicSensor(SensorPort.S3);
-    }
+	public Ranges(MotionController motion) {
+		this.motion = motion;
+		this.sensor = new UltrasonicSensor(SensorPort.S3);
+	}
 
-    public float[] getRanges() {
-        float[] ranges = new float[4];
-        for (int i=0; i<4 ; i++) {
-            float totalRange = 0f;
-            for (int j=0; j < 10; j++) {
-                Delay.msDelay(20);
-                totalRange += sensor.getRange();
-            }
-            ranges[i] = totalRange / 10f;
-            motion.rotate();
-        }
-        return ranges;
-    }
+	public float[] getRanges() {
+		float[] ranges = new float[4];
+		for (int i = 0; i < 4; i++) {
+			float totalRanges = 0;
+			for (int j = 0; j < 5; j++) {
+				Delay.msDelay(20);
+				totalRanges += sensor.getRange();
+			}
+			ranges[i] = totalRanges / 5;
+			motion.rotate();
+		}
+		return ranges;
+	}
+
 }
