@@ -36,15 +36,6 @@ public class JobInput {
         new JobSelector(jobs.getJobs(), 0, false, 0);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-
-        JobInput jobInput = new JobInput();
-
-        System.out.println("");
-
-    }
-
-
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
