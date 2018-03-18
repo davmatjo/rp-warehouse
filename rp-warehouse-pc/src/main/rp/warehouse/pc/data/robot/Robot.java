@@ -67,7 +67,7 @@ public class Robot implements Runnable{
         this.name = name;
         this.tasks = newTasks;
         cancelledJobs = new HashMap<String, Boolean>();
-        updateTask();
+        updateTask(true);
         logger.debug(name + " : Has " + tasks.size() + " tasks");
 
         // Communications set up
@@ -142,9 +142,7 @@ public class Robot implements Runnable{
                 logger.debug(name + ": " + "Item update completed");
                 status ="Traveling";
                 pickUpDone = false;
-                cancel = false;
             } else if (dropOffCheck){
-                cancel = false;
                 planToDropOff(false);
                 if (route.isEmpty()) {
                  // Only needs the button to be pressed once
@@ -153,9 +151,10 @@ public class Robot implements Runnable{
                     dropOff();
                 }
             } else {
-                cancel = false;
                 plan(false);
             }
+            
+            cancel = false;
         }
 
     }
@@ -168,7 +167,7 @@ public class Robot implements Runnable{
         logger.debug(name + ": " + "Starting Job cancellation");
         // Adds Job ID to the map of cancelled jobs
         cancelledJobs.put(currentTask.getJobID(), true);
-        updateTask();
+        updateTask(false);
         // When in pick up mode
         //plan(true);
         nextItemWeightCheck(false);
@@ -260,12 +259,12 @@ public class Robot implements Runnable{
         return;
     }
 
-    private void updateTask() {
+    private void updateTask(boolean getNextItem) {
         if (tasks.isEmpty()) {
             logger.info(name + ": I am done");
             System.exit(0);
         }
-        if(currentTask == null) {
+        if(currentTask == null || getNextItem) {
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
         } 
@@ -280,7 +279,7 @@ public class Robot implements Runnable{
     }
 
     private void planToDropOff(boolean getNextItem) {
-        if (getNextItem)updateTask();
+        if (getNextItem)updateTask(true);
 
         route = RoutePlan.planDropOff(this);
         dropOffCheck = true;
@@ -288,13 +287,13 @@ public class Robot implements Runnable{
 
     private void plan(boolean getNextItem) {
         logger.info(name + ": " + "Starting plan");
-        if (getNextItem) updateTask();
+        if (getNextItem) updateTask(true);
 
         if (currentItem != null) {
             route =  RoutePlan.plan(this, currentItem.getLocation());
         } else {
             logger.error(name + ": " + "No current Item, I thing I am done");
-            updateTask();
+            updateTask(true);
             plan(true);
 
         }

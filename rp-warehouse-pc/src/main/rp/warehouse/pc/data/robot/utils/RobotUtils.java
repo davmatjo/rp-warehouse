@@ -1,6 +1,5 @@
 package rp.warehouse.pc.data.robot.utils;
 
-import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
