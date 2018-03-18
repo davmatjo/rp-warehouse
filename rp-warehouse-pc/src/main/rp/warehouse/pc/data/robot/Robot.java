@@ -8,8 +8,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
-import com.sun.javafx.util.Logging;
-
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
