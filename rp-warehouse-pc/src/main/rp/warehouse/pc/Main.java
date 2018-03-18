@@ -1,13 +1,10 @@
 package rp.warehouse.pc;
 
 import org.apache.log4j.Logger;
-import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.data.*;
+import rp.warehouse.pc.input.JobInput;
 import rp.warehouse.pc.management.LoadingFrame;
-import rp.warehouse.pc.route.RobotsControl;
 
 import java.io.FileNotFoundException;
-import java.util.*;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);

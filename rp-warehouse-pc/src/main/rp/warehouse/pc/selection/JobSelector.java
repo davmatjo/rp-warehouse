@@ -1,11 +1,12 @@
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.selection;
 
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import java.util.Collections;
 
 import rp.warehouse.pc.assignment.SimpleAssigner;
-import rp.warehouse.pc.route.*;
+import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.input.Job;
 
 public class JobSelector {
 

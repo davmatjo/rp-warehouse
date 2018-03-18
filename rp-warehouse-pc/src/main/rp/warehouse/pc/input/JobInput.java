@@ -1,6 +1,7 @@
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.input;
 
-import rp.warehouse.pc.assignment.SimpleAssigner;
+import rp.warehouse.pc.data.*;
+import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,7 +48,7 @@ public class JobInput {
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
-        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/items.csv"));
+        Scanner scanner = new Scanner(new File("./items.csv"));
 
         //for every line
         while(scanner.hasNext()){
@@ -74,7 +75,7 @@ public class JobInput {
     public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
-        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/locations.csv"));
+        Scanner scanner = new Scanner(new File("./locations.csv"));
 
         //for every line
         while(scanner.hasNext()){
@@ -106,7 +107,7 @@ public class JobInput {
     public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
-        Scanner scanner = new Scanner(new File("./rp-warehouse-pc/src/main/rp/warehouse/pc/data/jobs.csv"));
+        Scanner scanner = new Scanner(new File("./jobs.csv"));
 //        scanner.useDelimiter(",");
 
         //for every line
@@ -164,7 +165,7 @@ public class JobInput {
     public void readCancellations() throws FileNotFoundException {
 
         //read in cancellations
-        Scanner scanner = new Scanner(new File(home + "/Documents/rp-warehouse/rp-warehouse-pc/src/main/rp/warehouse/pc/data/cancellations.csv"));
+        Scanner scanner = new Scanner(new File("./cancellations.csv"));
 
         //for every line
         while(scanner.hasNext()) {

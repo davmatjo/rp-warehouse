@@ -1,4 +1,6 @@
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.input;
+
+import rp.warehouse.pc.data.Task;
 
 import java.util.ArrayList;
 

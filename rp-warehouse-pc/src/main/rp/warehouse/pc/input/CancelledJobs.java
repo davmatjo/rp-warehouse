@@ -1,6 +1,8 @@
 //arraylist to hold all the cancelled jobs
 
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.input;
+
+import rp.warehouse.pc.input.Job;
 
 import java.util.ArrayList;
 

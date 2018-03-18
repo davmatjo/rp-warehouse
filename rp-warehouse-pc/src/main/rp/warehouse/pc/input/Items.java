@@ -1,6 +1,8 @@
 //has a hashmap that holds all the items
 
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.input;
+
+import rp.warehouse.pc.data.Item;
 
 import java.util.HashMap;
 

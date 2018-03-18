@@ -1,6 +1,6 @@
 //has an arratList which holds all the jobs
 
-package rp.warehouse.pc.data;
+package rp.warehouse.pc.input;
 
 import java.util.ArrayList;
 
