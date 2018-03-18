@@ -104,11 +104,14 @@ public class Ranges {
 	 */
 	public static Ranges rotate(final Ranges ranges, final byte rot) {
 		assert rot > -1 : rot;
+		// Create a temporary store of the ranges so that they can be copied into here.
 		final boolean[] store = new boolean[4];
+		// Rotate and store each value.
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
 		store[(DOWN + rot) % 4] = ranges.get(DOWN);
 		store[(LEFT + rot) % 4] = ranges.get(LEFT);
+		// Create a new ranges object from the rotated values.
 		return new Ranges(store[0], store[1], store[2], store[3]);
 	}
 
@@ -155,14 +158,23 @@ public class Ranges {
 		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
 	}
 
+	/**
+	 * Determine whether this Range object is equal to another range object based on
+	 * the values of the ranges within them.
+	 */
 	@Override
 	public boolean equals(Object obj) {
+		// Default case.
 		if (obj == this)
 			return true;
+		// Case when the other object is not a Ranges object.
 		else if (!(obj instanceof Ranges))
 			return false;
+		// Otherwise, we know it's a Ranges object
 		else {
 			Ranges other = (Ranges) obj;
+			// Go through all of the ranges and compare them against these ranges, return
+			// false if there's one difference.
 			for (byte i = 0; i < 4; i++)
 				if (get(i) != other.get(i))
 					return false;
@@ -170,8 +182,16 @@ public class Ranges {
 		}
 	}
 
+	/**
+	 * Generate a hash code of this ranges object, considers the values of the
+	 * ranges themselves rather than the object as a whole.
+	 */
 	@Override
 	public int hashCode() {
+		// Generate a hash code considering all of the ranges, required so that the
+		// default hashCode method isn't used, as otherwise, two identically constructed
+		// ranges would have different hash codes, making the WarehouseMap class
+		// function incorrectly.
 		return Objects.hash(ranges[0], ranges[1], ranges[2], ranges[3]);
 	}
 
