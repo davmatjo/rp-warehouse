@@ -102,8 +102,8 @@ public class Ranges {
 	 *            3 = 270
 	 * @return The rotated version of the ranges.
 	 */
-	public static Ranges rotate(final Ranges ranges, final int rot) {
-		assert rot >= 0 && rot <= 3 : rot;
+	public static Ranges rotate(final Ranges ranges, final byte rot) {
+		assert rot > -1 : rot;
 		final boolean[] store = new boolean[4];
 		store[(UP + rot) % 4] = ranges.get(UP);
 		store[(RIGHT + rot) % 4] = ranges.get(RIGHT);
@@ -157,16 +157,15 @@ public class Ranges {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this) {
+		if (obj == this)
 			return true;
-		} else if (!(obj instanceof Ranges)) {
+		else if (!(obj instanceof Ranges))
 			return false;
-		} else {
+		else {
 			Ranges other = (Ranges) obj;
-			for (byte i = 0; i < 4; i++) {
+			for (byte i = 0; i < 4; i++)
 				if (get(i) != other.get(i))
 					return false;
-			}
 			return true;
 		}
 	}
