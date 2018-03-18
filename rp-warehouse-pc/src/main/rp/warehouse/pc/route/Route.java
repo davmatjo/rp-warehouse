@@ -1,7 +1,9 @@
 package rp.warehouse.pc.route;
 
+import org.apache.log4j.Logger;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
+import rp.warehouse.pc.data.robot.Robot;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Queue;
 
 public class Route {
+    private static final Logger logger = Logger.getLogger(Route.class);
     private final LinkedList<Location> locations;
     private final Queue<Integer> route;
 
@@ -49,6 +52,15 @@ public class Route {
                 route.add(pickup ? Protocol.PICKUP : Protocol.DROPOFF);
             }
         }
+
+        StringBuilder routeString = new StringBuilder();
+        routeString.append("[ ");
+        for (int i : route) {
+            routeString.append(Robot.getDirectionString(i)).append(", ");
+        }
+        routeString.append("]");
+        logger.debug(routeString.toString());
+        logger.debug(locations.toString());
     }
 
     public int poll() throws NullPointerException {

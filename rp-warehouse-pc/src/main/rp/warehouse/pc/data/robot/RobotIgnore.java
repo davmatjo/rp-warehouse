@@ -1,3 +1,4 @@
+/*
 package rp.warehouse.pc.data.robot;
 
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class RobotIgnore implements Runnable{
 
     private static final Logger logger = Logger.getLogger(Robot.class);
 
-    /**
+    */
+/**
      * For: Job Assignment (Created here)
      *
      * @param ID
@@ -59,7 +61,8 @@ public class RobotIgnore implements Runnable{
      *            - Robot name
      * @param newTasks
      *            - The queue of task Robot has to complete
-     */
+     *//*
+
     public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation)
             throws IOException {
         //super( ID, name, newTasks, pool, startingLocation);
@@ -116,9 +119,11 @@ public class RobotIgnore implements Runnable{
 
 
 
-    /**
+    */
+/**
      * Used to update the current item
-     */
+     *//*
+
     private void updateCurrentItem() {
         //updateLocation();
         robotUtils.updateLocation(lastInstruction);
@@ -158,9 +163,11 @@ public class RobotIgnore implements Runnable{
 
     }
 
-    /**
+    */
+/**
      * For: Communication Cancels Job of the current item
-     */
+     *//*
+
     public void cancelJob() {
         cancel = true;
         logger.debug(name + ": " + "Starting Job cancellation");
@@ -172,12 +179,14 @@ public class RobotIgnore implements Runnable{
         nextItemWeightCheck(false);
     }
 
-    /**
+    */
+/**
      * For: Communication specify amount loaded for the current item
      *
      * @return - True, there is still space for more cargo or the cargo is full.
      *         False, too many items being picked up
-     */
+     *//*
+
     private boolean pickUp(int numberOfItems) {
         logger.trace(name + ": " + "Starting pickUp");
 
@@ -215,11 +224,13 @@ public class RobotIgnore implements Runnable{
         return route.isEmpty() && !dropOffCheck && numberOfItems == currentTask.getCount() && !cancel;
     }
 
-    /**
+    */
+/**
      * For Communication when performing drop of at the station
      *
      * @return -
-     */
+     *//*
+
     private boolean dropOff() {
         logger.debug(name + ": " + "Starting DropOff");
         logger.info(name + ": " + "current weight of cargo " + currentWeightOfCargo);
@@ -306,11 +317,13 @@ public class RobotIgnore implements Runnable{
         return lastInstruction;
     }
 
-    /**
+    */
+/**
      * For Warehouse MI
      * 
      * @return Queue<Integer> of directions
-     */
+     *//*
+
     public Route getRoute() {
         return new Route(route);
     }
@@ -347,4 +360,4 @@ public class RobotIgnore implements Runnable{
 }
 
 // Music to listen to while coding
-// https://www.youtube.com/watch?v=L5gVFYmDWCk
+// https://www.youtube.com/watch?v=L5gVFYmDWCk*/

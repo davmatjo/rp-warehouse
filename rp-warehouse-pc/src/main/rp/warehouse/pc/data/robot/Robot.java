@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
+import rp.util.Rate;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
@@ -40,10 +41,6 @@ public class Robot implements Runnable {
     private int RATE = 20;
     private String robotStatus = "No Job";
     private int status = Status.NOTHING;
-    
-    private boolean nextItem = false;
-    private boolean needPickUpPlan = false;
-    private boolean pickUpDone = false;
 
     RobotUtils robotUtils;
     public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) throws IOException {
@@ -67,22 +64,22 @@ public class Robot implements Runnable {
     @Override
     public void run() {
         // localisation happens here
+        Rate r = new Rate(RATE);
 
         while(true) {
          
-            // check for cancellations
-            // route = null;
+            updateTasks();
             
-            if(route == null) {
+            if(route == null || route.isEmpty()) {
                 switch (status) {
                 case Status.PICKING_UP:
-                    needPickUpPlan = true;
+                    planning(true);
                     break;
                 case Status.DROPPING_OFF:
-                    needPickUpPlan = false ;
+                    planning(false);
                     break;
                 case Status.NOTHING:
-                    needPickUpPlan = true;
+                    planning(true);
                     break;
 
                 default:
@@ -90,63 +87,62 @@ public class Robot implements Runnable {
                 }
                 
             } else if(route.peek() == Protocol.PICKUP) {
-                while(!pickUpDone) {
-                    pickUp(comms.sendLoadingRequest(currentTask.getCount()));
+                while(!pickUp(comms.sendLoadingRequest(currentTask.getCount()))) {
+                    r.sleep();
                 }
-            } else if(route.peek() == 10) {
+            } else if(route.peek() == Protocol.DROPOFF) {
+                route.poll();
                 comms.sendLoadingRequest(0);
-               dropOff();
+                dropOff();
                 
             } else if (route.peek() == Protocol.WAITING) {
-                //rate.sleep();
-                
+                route.poll();
+                r.sleep();
             } else {
-                robotUtils.updateLocation(lastInstruction);
                 lastInstruction = route.poll();
+                robotUtils.updateLocation(lastInstruction);
                 comms.sendMovement(lastInstruction);
                 
             }
-            
-            
-            updateTasks();
-            
-            // Planning
-            planning();
 
         }
 
     }
     
-    private void pickUp(int numberOfItems){
+    private boolean pickUp(int numberOfItems){
         if (numberOfItems == currentTask.getCount()) {
             // check if cancelled
             float newWeight = currentWeightOfCargo + currentItem.getWeight() * currentTask.getCount();
             if (newWeight > WEIGHTLIMIT) {
                 //drop off
-                needPickUpPlan = false;
+                status = Status.DROPPING_OFF;
                 //come back
-                nextItem = false;
             } else if (newWeight == WEIGHTLIMIT) {
                 currentWeightOfCargo = newWeight;
                 //drop off
-                needPickUpPlan = false;
-                // don't come back
-                nextItem = true;
+                status = Status.DROPPING_OFF;
+
+                // Get next item
+                currentTask = tasks.poll();
+                currentItem = currentTask.getItem();
             } else if ((!tasks.isEmpty()) && WEIGHTLIMIT < currentWeightOfCargo
                     + (tasks.peek().getCount() * tasks.peek().getItem().getWeight())) {
                 currentWeightOfCargo = newWeight;
                 // drop off
-                needPickUpPlan = false;
+                status = Status.DROPPING_OFF;
                 // come back
-                nextItem = false;
             } else {
                 currentWeightOfCargo = newWeight;
-                // plan next item
-                needPickUpPlan = true;
-                nextItem = true;
+                // Plan next item
+                status = Status.PICKING_UP;
+
+                // Get next item
+                currentTask = tasks.poll();
+                currentItem = currentTask.getItem();
             } 
-            pickUpDone = true;
+            return true;
         }
+        return false;
         
         
     }
@@ -154,34 +150,28 @@ public class Robot implements Runnable {
     private void dropOff() {
         // empty cargo
         currentWeightOfCargo = 0;
-        
+
         // plan
-        needPickUpPlan = true;
-        nextItem = false;
+        status = Status.PICKING_UP;
     }
     
-    public void cancell() {
+    public void cancelJob() {
         cancelledJobs.put(currentTask.getJobID(), true);
     }
+
     private void updateTasks() {
         if (tasks.isEmpty()) {
             System.exit(0);
         }
         
-        if(nextItem && status != Status.DROPPING_OFF) {
-            currentTask = tasks.poll();
-            currentItem = currentTask.getItem();
-        }
-        
         while (cancelledJobs.containsKey(currentTask.getJobID())) {
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
+            route = null;
         }
-        
     }
-    private void planning() {
-        
-        if (needPickUpPlan) {
+    private void planning(boolean pickUp) {
+        if (pickUp) {
             // plan for pick up of current item
             route = RoutePlan.plan(this, currentItem.getLocation());
         }else {
@@ -211,7 +201,7 @@ public class Robot implements Runnable {
         return new RobotLocation(location);
     }
 
-    private String getDirectionString(int direction) {
+    public static String getDirectionString(int direction) {
         // Works out the String representation of the command
         return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
     }

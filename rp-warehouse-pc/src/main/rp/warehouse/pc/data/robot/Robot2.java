@@ -1,3 +1,4 @@
+/*
 package rp.warehouse.pc.data.robot;
 
 import java.util.HashMap;
@@ -188,3 +189,4 @@ public class Robot2 implements Runnable {
     }
 
 }
+*/
