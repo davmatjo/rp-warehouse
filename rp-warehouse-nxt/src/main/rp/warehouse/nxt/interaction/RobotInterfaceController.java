@@ -146,6 +146,7 @@ public class RobotInterfaceController {
 			waiting = true;
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
+			
 		}
 	}
 
