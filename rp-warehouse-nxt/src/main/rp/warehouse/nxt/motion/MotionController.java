@@ -25,9 +25,6 @@ public class MotionController implements Movement {
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
 		calibrateSensors();
-		leftLineLimit = leftSensor.getLightValue() - 15;
-		rightLineLimit = rightSensor.getLightValue() - 15;
-
 	}
 
 	@Override
@@ -130,7 +127,6 @@ public class MotionController implements Movement {
 				pilot.steer(42);
 			} else if (rightValue < rightLineLimit) {
 				pilot.steer(-42);
-				;
 			} else {
 				pilot.steer(0);
 			}
@@ -144,12 +140,18 @@ public class MotionController implements Movement {
 
 	// calibrates the sensors on startup.
 	private void calibrateSensors() {
-
-		System.out.println("Put both sensors on a black line and press a button.");
-		Delay.msDelay(300);
 		leftSensor.calibrateHigh();
 		rightSensor.calibrateHigh();
-
+		
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Put both sensors on a black line and press a button.");
+			Button.waitForAnyPress();
+			rightLineLimit += rightSensor.getLightValue();
+			leftLineLimit += leftSensor.getLightValue();
+			Delay.msDelay(100);
+		}
+		rightLineLimit = rightLineLimit/3;
+		leftLineLimit = leftLineLimit/3;
 		System.out.println("Sensors have been calibrated!");
 	}
 
