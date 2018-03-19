@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import rp.warehouse.pc.data.robot.utils;
 
 public class JobInput {
 
@@ -153,6 +154,8 @@ public class JobInput {
 
         }
         scanner.close();
+
+        RewardCounter.setJobs(jobs);
 
     }
 
