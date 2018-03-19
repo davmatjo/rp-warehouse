@@ -1,6 +1,7 @@
 package rp.warehouse.pc.localisation;
 
 /**
+ * Exception that occurs when the robot can't figure out where it is.
  * 
  * @author Kieran
  *
