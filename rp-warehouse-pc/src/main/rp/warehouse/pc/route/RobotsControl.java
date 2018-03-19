@@ -32,8 +32,8 @@ public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
-    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Jarvis"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "00165312C16A"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     private static ArrayList<Queue<Task>> listOfItems;
