@@ -26,4 +26,9 @@ public class RewardCounter {
     public static void addReward(float reward) {
         pointsEarned += reward;
     }
+    
+    @Override
+    public String toString() {
+        return "";
+    }
 }
