@@ -6,7 +6,7 @@ import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.management.providers.RobotPoseProvider;
 import rp.warehouse.pc.route.Route;
 

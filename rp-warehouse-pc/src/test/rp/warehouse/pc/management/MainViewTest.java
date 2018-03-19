@@ -5,7 +5,7 @@ import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 
