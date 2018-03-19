@@ -146,4 +146,12 @@ public class RobotInterfaceController {
 			waiting = true;
 		}
 	}
+<<<<<<< HEAD
+=======
+	//add dropoff on middle button
+	//add value display
+	//display when picking up etc
+
+
+>>>>>>> branch 'RobotInterface' of git@git.cs.bham.ac.uk:dxj786/rp-warehouse.git
 }
