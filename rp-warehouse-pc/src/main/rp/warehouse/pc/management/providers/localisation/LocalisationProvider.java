@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.providers;
+package rp.warehouse.pc.management.providers.localisation;
 
 import rp.warehouse.pc.localisation.implementation.Localiser;
 

@@ -4,10 +4,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class LoadingFrame extends JFrame {
-    private static LoadingFrame loadingFrame;
+public class LoadingView extends JFrame {
+    private static LoadingView loadingView;
 
-    public LoadingFrame() {
+    public LoadingView() {
         super("Warehouse MI");
 
         JPanel loadingBar = new JPanel();
@@ -35,10 +35,10 @@ public class LoadingFrame extends JFrame {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        loadingFrame = this;
+        loadingView = this;
     }
 
     public static void finishedLoading() {
-        loadingFrame.setVisible(false);
+        loadingView.setVisible(false);
     }
 }

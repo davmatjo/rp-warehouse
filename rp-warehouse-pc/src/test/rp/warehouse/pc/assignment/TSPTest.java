@@ -21,10 +21,10 @@ public class TSPTest {
 	public void setup() {
 		start = new Location(0, 0);
 		testItems = new LinkedList<Task>();
-		testItems.add(new Task(new Item(0f, 0f) {{setLocation(new Location(2, 2));}}, 0, ""));
-		testItems.add(new Task(new Item(0f, 0f) {{setLocation(new Location(0, 3));}}, 0, ""));
-		testItems.add(new Task(new Item(0f, 0f) {{setLocation(new Location(1, 0));}}, 0, ""));
-		testItems.add(new Task(new Item(0f, 0f) {{setLocation(new Location(4, 4));}}, 0, ""));
+		testItems.add(new Task(new Item("", 0f, 0f) {{setLocation(new Location(2, 2));}}, 0, ""));
+		testItems.add(new Task(new Item("", 0f, 0f) {{setLocation(new Location(0, 3));}}, 0, ""));
+		testItems.add(new Task(new Item("", 0f, 0f) {{setLocation(new Location(1, 0));}}, 0, ""));
+		testItems.add(new Task(new Item("", 0f, 0f) {{setLocation(new Location(4, 4));}}, 0, ""));
 	}
 
 	@Test

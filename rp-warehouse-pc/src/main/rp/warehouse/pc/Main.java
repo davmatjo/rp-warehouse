@@ -5,7 +5,7 @@ import rp.warehouse.pc.assignment.Auctioner;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.input.JobInput;
 import rp.warehouse.pc.input.Jobs;
-import rp.warehouse.pc.management.LoadingFrame;
+import rp.warehouse.pc.management.LoadingView;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class Main {
             logger.info("|-----------------------------[Application Closed]----------------------------------|");
         }));
 
-        new LoadingFrame();
+        new LoadingView();
         Jobs jobs = new JobInput().getJobs();
         new Auctioner(jobs.getJobs(), new ArrayList<>(Arrays.asList(new RobotLocation(5, 5, 1),
                                                                     new RobotLocation(5, 5, 1),

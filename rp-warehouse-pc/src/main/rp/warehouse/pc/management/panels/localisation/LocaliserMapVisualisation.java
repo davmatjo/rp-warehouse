@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.panels;
+package rp.warehouse.pc.management.panels.localisation;
 
 import lejos.geom.Line;
 import lejos.robotics.navigation.Pose;
@@ -27,6 +27,10 @@ public class LocaliserMapVisualisation extends GridMapVisualisation {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        renderPossiblePoints(g2);
+    }
+
+    private void renderPossiblePoints(Graphics2D g2) {
         int i = 0;
 
         g2.setPaint(Color.RED);
@@ -42,7 +46,6 @@ public class LocaliserMapVisualisation extends GridMapVisualisation {
 
             i++;
         }
-
     }
 
     /**

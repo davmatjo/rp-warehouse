@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.panels;
+package rp.warehouse.pc.management.panels.main;
 
 import org.apache.log4j.Logger;
 import rp.robotics.mapping.IGridMap;
@@ -7,7 +7,7 @@ import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
-import rp.warehouse.pc.management.providers.RobotPoseProvider;
+import rp.warehouse.pc.management.providers.main.RobotPoseProvider;
 import rp.warehouse.pc.route.Route;
 
 import java.awt.*;

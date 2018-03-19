@@ -8,13 +8,12 @@ import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
-import rp.warehouse.pc.management.LoadingFrame;
+import rp.warehouse.pc.management.LoadingView;
 import rp.warehouse.pc.management.LocalisationView;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,6 +40,7 @@ public class RobotsControl {
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     private static ArrayList<Queue<Task>> listOfItems;
+    private static final Object waitForGui = new Object();
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -73,14 +73,20 @@ public class RobotsControl {
                 Communication comms = new Communication(robotIDs[i], robotNames[i]);
                 pool.execute(comms);
 
-                LoadingFrame.finishedLoading();
-                Localiser localiser = new Localiser(comms);
+                LoadingView.finishedLoading();
+                final Localiser localiser = new Localiser(comms);
 
-                new LocalisationView(localiser);
+                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i], waitForGui);
                 RobotLocation location = localiser.getPosition();
 
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
                 robots.add(newRobot);
+
+                localisationView.finishedLocalising();
+
+                synchronized (waitForGui) {
+                    waitForGui.wait();
+                }
 
                 logger.debug("Robot " + robotNames[i] + " created");
 
@@ -88,6 +94,8 @@ public class RobotsControl {
                 logger.error("Could not connect to " + robotNames[i]);
             } catch (NoIdeaException e) {
                 logger.error("Could not localise " + robotNames[i]);
+            } catch (InterruptedException e) {
+                logger.fatal("Interrupted somehow while waiting for gui");
             }
 
             i++;
@@ -101,7 +109,7 @@ public class RobotsControl {
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
-        LoadingFrame.finishedLoading();
+        LoadingView.finishedLoading();
         new MainView(robots);
 
         // Shut down the pool to prevent new threads being created, and allow the program to end

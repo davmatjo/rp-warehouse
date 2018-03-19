@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.providers;
+package rp.warehouse.pc.management.providers.main;
 
 import org.apache.log4j.Logger;
 import rp.util.Rate;

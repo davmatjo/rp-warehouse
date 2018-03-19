@@ -1,8 +1,8 @@
 package rp.warehouse.pc.management;
 
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.management.panels.InfoPanel;
-import rp.warehouse.pc.management.panels.WarehouseMapPanel;
+import rp.warehouse.pc.management.panels.main.InfoPanel;
+import rp.warehouse.pc.management.panels.main.WarehouseMapPanel;
 
 import javax.swing.*;
 import java.awt.*;
