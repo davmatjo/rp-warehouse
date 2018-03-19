@@ -5,7 +5,7 @@ import lejos.robotics.navigation.Pose;
 import rp.util.Rate;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 
 public class RobotPoseProvider implements PoseProvider, Runnable {

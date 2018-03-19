@@ -12,6 +12,7 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.RobotLocation;
 import rp.warehouse.pc.localisation.LocalisationCollection;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.interfaces.Localisation;

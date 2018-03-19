@@ -2,6 +2,13 @@
 //
 //import static org.mockito.Mockito.*;
 //
+//import org.junit.Rule;
+//import org.junit.Test;
+//import org.mockito.Mock;
+//import org.mockito.junit.MockitoJUnit;
+//import org.mockito.junit.MockitoRule;
+//import org.junit.jupiter.api.Assertions;
+//
 //public class MockCommunication  {
 //
 //    @Mock
@@ -13,7 +20,7 @@
 //    public void testQuery()  {
 //        ClassToTest t  = new ClassToTest(databaseMock); 
 //        boolean check = t.query("* from t"); 
-//        assertTrue(check); 
+//        Assertions.assertTrue(check); 
 //        verify(databaseMock).query("* from t"); 
 //    }
 //}

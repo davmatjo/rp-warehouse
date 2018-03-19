@@ -4,8 +4,11 @@ package rp.warehouse.pc.data.robot.utils;
 import org.apache.log4j.Logger;
 
 import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.data.robot.RobotLocation;
-
+/**
+ * Used to update location 
+ * @author roman
+ *
+ */
 public class RobotUtils{
     private RobotLocation location;
     private String name;
