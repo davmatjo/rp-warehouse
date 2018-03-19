@@ -20,7 +20,7 @@ public class CommunicationTestSingle {
 
     @BeforeClass
     public static void setup() throws Exception {
-        communication = new Communication(robotIDs[0], robotNames[0], mock(Robot.class));
+        communication = new Communication(robotIDs[0], robotNames[0]);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(communication);
     }

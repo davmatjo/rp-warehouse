@@ -42,7 +42,7 @@ class MainViewTest {
 //        when(robot1.getRoute()).thenReturn(route2);
 //        when(robot1.getRoute()).thenReturn(route3);
 
-        Item item = new Item(1f, 1f);
+        Item item = new Item("", 1f, 1f);
         item.setLocation(new Location(0, 5));
         when(robot1.getTask()).thenReturn(new Task(item, 1, "a"));
 //        when(robot2.getTask()).thenReturn(new Task(item, 1, "a"));

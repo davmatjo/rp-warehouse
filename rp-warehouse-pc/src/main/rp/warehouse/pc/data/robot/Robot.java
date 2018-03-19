@@ -61,7 +61,7 @@ public class Robot implements Runnable {
     
     private static final Logger logger = Logger.getLogger(Robot.class);
     
-    public Robot(String ID, String name, Queue<Task> newTasks, ExecutorService pool, RobotLocation startingLocation) throws IOException {
+    public Robot(String ID, String name, Queue<Task> newTasks, Communication comms, RobotLocation startingLocation) throws IOException {
         //  Initialisation
         this.ID = ID;
         this.name = name;
@@ -70,28 +70,12 @@ public class Robot implements Runnable {
         this.currentItem = currentTask.getItem();
 
         // Communications set up
-        //this.comms = new Communication(ID, name, this);
-        this.pool = pool;
-        
+        this.comms = comms;
+
         this.location = startingLocation;
         robotUtils = new RobotUtils(location, name);
         
         logger.info(name + ": Created");
-    }
-    
-    public void setComminications(Communication comms) {
-        this.comms = comms;
-
-        pool.execute(comms);
-    }
-    
-    public void localiseRobot() {
-        loc = new Localiser(comms);
-        try {
-            this.location = loc.getPosition();
-        } catch (NoIdeaException e) {
-            e.printStackTrace();
-        }
     }
     
     @Override

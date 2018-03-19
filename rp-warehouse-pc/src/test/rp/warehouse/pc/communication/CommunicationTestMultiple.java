@@ -19,7 +19,7 @@ public class CommunicationTestMultiple {
     @BeforeClass
     public static void setup() throws Exception {
         for (int i=0; i < 3; i++) {
-            communications[i] = new Communication(robotIDs[i], robotNames[i], mock(Robot.class));
+            communications[i] = new Communication(robotIDs[i], robotNames[i]);
             executorService.execute(communications[i]);
         }
     }

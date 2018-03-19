@@ -6,6 +6,8 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
+import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingFrame;
 import rp.warehouse.pc.management.MainView;
 
@@ -66,17 +68,24 @@ public class RobotsControl {
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
-            Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, robotLocations[i]);
+                Communication comms = new Communication(robotIDs[i], robotNames[i]);
+                pool.execute(comms);
+                Localiser localiser = new Localiser(comms);
+
+                RobotLocation location = localiser.getPosition();
+
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
                 robots.add(newRobot);
-                Communication comms = new Communication(robotIDs[i], robotNames[i], newRobot);
-                newRobot.setComminications(comms);
+
                 logger.debug("Robot " + robotNames[i] + " created");
+
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Could not connect to " + robotNames[i]);
+            } catch (NoIdeaException e) {
+                logger.error("Could not localise " + robotNames[i]);
             }
-            
+
             i++;
         }
         
