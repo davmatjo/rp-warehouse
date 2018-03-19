@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,16 +34,19 @@ public class RobotTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        robot.setComminications(mockedCommunications);
         
     }
     
     @Test
     public void idTest() {
+        ExecutorService pool = Executors.newFixedThreadPool(1 * 2);
         Communication mockedCommunications = mock(Communication.class);
         
         
         ExecutorService mockedPool = mock(ExecutorService.class);
         //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
+        pool.execute(robot);
         setup();
         Assertions.assertEquals(robot.getID(),"0016531AFBE1");
         
