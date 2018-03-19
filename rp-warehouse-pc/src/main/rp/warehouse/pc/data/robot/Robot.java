@@ -35,6 +35,7 @@ public class Robot implements Runnable {
     private final String ID;                            // Communication ID
     private final String name;                          // Communication name
     private Communication comms;                        // Communication used to connect each robot to the a nxt brick
+    private ExecutorService pool;
 
     // Route information
     private Route route;                                // Queue of directions for the current task
@@ -69,24 +70,30 @@ public class Robot implements Runnable {
         this.currentItem = currentTask.getItem();
 
         // Communications set up
-        this.comms = new Communication(ID, name, this);
-        pool.execute(comms);
+        //this.comms = new Communication(ID, name, this);
+        this.pool = pool;
+        
+        this.location = startingLocation;
+        robotUtils = new RobotUtils(location, name);
+        
+        logger.info(name + ": Created");
+    }
+    
+    public void setComminications(Communication comms) {
+        this.comms = comms;
 
-        // Localisation
+        pool.execute(comms);
+    }
+    
+    public void localiseRobot() {
         loc = new Localiser(comms);
         try {
             this.location = loc.getPosition();
         } catch (NoIdeaException e) {
             e.printStackTrace();
         }
-        robotUtils = new RobotUtils(location, name);
-        
-        logger.info(name + ": Created");
     }
     
-    public void setComminications(String ID, String name, Communication comms, ExecutorService pool) {
-        
-    }
     @Override
     public void run() {
         logger.info(name + ": Started running");

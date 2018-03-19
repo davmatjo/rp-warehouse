@@ -2,6 +2,7 @@ package rp.warehouse.pc.route;
 
 import org.apache.log4j.Logger;
 
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
@@ -69,6 +70,8 @@ public class RobotsControl {
             try {
                 newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, robotLocations[i]);
                 robots.add(newRobot);
+                Communication comms = new Communication(robotIDs[i], robotNames[i], newRobot);
+                newRobot.setComminications(comms);
                 logger.debug("Robot " + robotNames[i] + " created");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -80,6 +83,7 @@ public class RobotsControl {
         
         // Runs Robot threads
         for (Robot robot : robots) {
+            //robot.localiseRobot();
             pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
