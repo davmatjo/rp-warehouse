@@ -49,12 +49,30 @@ public class RobotTest {
     
     @Test
     public void routeTest() {
+        Communication mockedCommunications = mock(Communication.class);
         
+        ExecutorService mockedPool = mock(ExecutorService.class);
+        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
+        setup();
+        
+        robot.cancelJob();
+        robot.getLocation();
+        robot.getTask();
+        robot.toString();
+        robot.run();
+        
+        Assertions.assertEquals(robot.getRoute(),null);
+
     }
     
     @Test
     public void nameTest() {
+        Communication mockedCommunications = mock(Communication.class);
         
+        ExecutorService mockedPool = mock(ExecutorService.class);
+        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
+        setup();
+        Assertions.assertEquals(robot.getName(),"ExpressBoi");   
     }
 
 }
