@@ -1,8 +1,6 @@
 package rp.warehouse.nxt.motion;
 
-import lejos.nxt.Button;
-import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
+import lejos.nxt.*;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.Delay;
 import rp.config.WheeledRobotConfiguration;
@@ -12,8 +10,8 @@ import rp.util.Rate;
 public class MotionController implements Movement {
 
 	// temporary values until calibration is added
-	private int leftLineLimit;
-	private int rightLineLimit;
+	private double leftLineLimit = 0;
+	private double rightLineLimit= 0;
 	private DifferentialPilot pilot;
 	private LightSensor leftSensor;
 	private LightSensor rightSensor;
@@ -25,9 +23,6 @@ public class MotionController implements Movement {
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
 		calibrateSensors();
-		leftLineLimit = leftSensor.getLightValue() - 15;
-		rightLineLimit = rightSensor.getLightValue() - 15;
-
 	}
 
 	@Override
@@ -113,12 +108,11 @@ public class MotionController implements Movement {
 		pilot.setTravelSpeed(0.12);
 		pilot.forward();
 
-		Rate r = new Rate(20);
 
 		while (!junction) {
 
-			int leftValue = leftSensor.getLightValue();
-			int rightValue = rightSensor.getLightValue();
+			double leftValue = leftSensor.getLightValue();
+			double rightValue = rightSensor.getLightValue();
 
 			// checks if a junction has been reached
 			if (leftValue < leftLineLimit && rightValue < rightLineLimit) {
@@ -130,12 +124,10 @@ public class MotionController implements Movement {
 				pilot.steer(42);
 			} else if (rightValue < rightLineLimit) {
 				pilot.steer(-42);
-				;
 			} else {
 				pilot.steer(0);
 			}
 
-			r.sleep();
 		}
 		// returns true once it has reached a junction
 		pilot.travel(0.08);
@@ -144,13 +136,37 @@ public class MotionController implements Movement {
 
 	// calibrates the sensors on startup.
 	private void calibrateSensors() {
+//		while (temp) {
+//			LCD.drawString("l " + leftSensor.getLightValue() + " r " + rightSensor.getLightValue(), 0, 0);
+//		}
 
-		System.out.println("Put both sensors on a black line and press a button.");
-		Delay.msDelay(300);
-		leftSensor.calibrateHigh();
-		rightSensor.calibrateHigh();
+		int rightDark = 0;
+		int leftDark = 0;
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Put both sensors on a black line and press a button.");
+			Button.waitForAnyPress();
+			rightDark += rightSensor.getLightValue();
+			leftDark += leftSensor.getLightValue();
+		}
+		rightDark = rightDark/3;
+		leftDark = leftDark/3;
+		System.out.println("Dark value finshed");
+		
+		int rightLight= 0;
+		int leftLight = 0;
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Put both sensors in the light and press a button.");
+			Button.waitForAnyPress();
+			rightLight += rightSensor.getLightValue();
+			leftLight += leftSensor.getLightValue();
+		}
+		rightLight = rightLight/3;
+		leftLight = leftLight/3;
+		System.out.println("Light value finshed");
 
-		System.out.println("Sensors have been calibrated!");
+		rightLineLimit = (rightDark + rightLight)*0.5;
+		leftLineLimit = (leftDark + leftLight)*0.5;
+		LCD.drawString("l " + leftLineLimit + " r " + rightLineLimit, 0, 0);
 	}
 
 	public void rotate() {

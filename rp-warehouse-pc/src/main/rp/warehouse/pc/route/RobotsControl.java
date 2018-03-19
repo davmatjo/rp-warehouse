@@ -2,9 +2,12 @@ package rp.warehouse.pc.route;
 
 import org.apache.log4j.Logger;
 
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
+import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingFrame;
 import rp.warehouse.pc.management.MainView;
 
@@ -32,10 +35,11 @@ public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
-    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Jarvis"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "00165312C16A"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
+    private static ArrayList<Queue<Task>> listOfItems;
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -51,7 +55,8 @@ public class RobotsControl {
      * the size of the array should be 1
      * 
      */
-    public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
+    public static void addRobots(ArrayList<Queue<Task>> _listOfItems) {
+        listOfItems=_listOfItems;
         logger.debug("Starting Robot Creation");
 
         ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
@@ -59,22 +64,35 @@ public class RobotsControl {
 
         RoutePlan.setRobots(robots);
         
+        // Create robots
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
-            Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, robotLocations[i]);
+                Communication comms = new Communication(robotIDs[i], robotNames[i]);
+                pool.execute(comms);
+                Localiser localiser = new Localiser(comms);
+
+                RobotLocation location = localiser.getPosition();
+
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
                 robots.add(newRobot);
+
                 logger.debug("Robot " + robotNames[i] + " created");
+
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Could not connect to " + robotNames[i]);
+            } catch (NoIdeaException e) {
+                logger.error("Could not localise " + robotNames[i]);
             }
-            
+
             i++;
         }
         
+        
+        // Runs Robot threads
         for (Robot robot : robots) {
+            //robot.localiseRobot();
             pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
@@ -86,13 +104,12 @@ public class RobotsControl {
         pool.shutdown();
     }
 
-    /**
-     * For: Route Planning and Warehouse to get robot classes in the for of array
-     *
-     * @return ArrayList of Robots
-     */
-    public static ArrayList<Robot> getRobots() {
-        return robots;
+    public static void setRobotData(String[] _robotNames, String [] _robotIDs, RobotLocation[] _robotLocations) {
+//        robotNames =_robotNames;
+//        robotIDs = _robotIDs;
+//        robotLocations = _robotLocations;
     }
-
 }
+//
+//  `\_('_')_/`
+//

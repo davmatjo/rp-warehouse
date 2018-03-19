@@ -25,9 +25,7 @@ public class Communication extends Thread {
     public Communication(MotionController movement) {
         fillMap();
 
-        System.out.println("Waiting on bluetooth");
         BTConnection connection = Bluetooth.waitForConnection();
-        System.out.println("Connected");
 
         fromPC = connection.openDataInputStream();
         toPC = connection.openDataOutputStream();
@@ -54,7 +52,6 @@ public class Communication extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("New Thread");
             receiveCommand();
             fromPC.close();
             toPC.close();

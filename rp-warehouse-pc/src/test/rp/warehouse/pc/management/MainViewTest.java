@@ -5,7 +5,7 @@ import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 
@@ -42,7 +42,7 @@ class MainViewTest {
 //        when(robot1.getRoute()).thenReturn(route2);
 //        when(robot1.getRoute()).thenReturn(route3);
 
-        Item item = new Item(1f, 1f);
+        Item item = new Item("", 1f, 1f);
         item.setLocation(new Location(0, 5));
         when(robot1.getTask()).thenReturn(new Task(item, 1, "a"));
 //        when(robot2.getTask()).thenReturn(new Task(item, 1, "a"));

@@ -1,4 +1,4 @@
-package rp.warehouse.pc.data.robot;
+package rp.warehouse.pc.data.robot.utils;
 
 import lejos.geom.Point;
 import lejos.robotics.navigation.Pose;
@@ -51,6 +51,10 @@ public class RobotLocation extends Location {
     @Override
     public Pose toPose() {
         return Warehouse.build().toPose(new GridPose(getX(), getY(), toHeading()));
+    }
+
+    public Point toGridPoint() {
+        return Warehouse.build().toPose(new GridPose(getX(), getY(), toHeading())).getLocation();
     }
 
     @Override

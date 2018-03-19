@@ -1,6 +1,7 @@
 package rp.warehouse.pc.input;
 
 import rp.warehouse.pc.data.*;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.File;
@@ -56,7 +57,7 @@ public class JobInput {
 
             //create a new item where:
             //1st string = name, 2nd string = reward, 3rd string = weight
-            Item item = new Item(Float.parseFloat(arrayList.get(1)), Float.parseFloat(arrayList.get(2)));
+            Item item = new Item(arrayList.get(0), Float.parseFloat(arrayList.get(1)), Float.parseFloat(arrayList.get(2)));
 
             //add the item to the items table
             items.add(arrayList.get(0), item);
@@ -153,6 +154,8 @@ public class JobInput {
 
         }
         scanner.close();
+
+        RewardCounter.setJobs(jobs);
 
     }
 

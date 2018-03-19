@@ -2,7 +2,7 @@ package rp.warehouse.pc.data;
 
 import org.junit.Test;
 
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
 import org.junit.Assert;
 

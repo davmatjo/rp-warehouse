@@ -6,7 +6,7 @@ import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.management.providers.RobotPoseProvider;
 import rp.warehouse.pc.route.Route;
 
@@ -30,35 +30,50 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         renderPaths(g2);
     }
 
+    /**
+     * Renders all planned routes for all robots
+     * @param g2 Graphics2D
+     */
     private void renderPaths(Graphics2D g2) {
         g2.setPaint(Color.RED);
         g2.setStroke(new BasicStroke(3));
 
-        for (Map.Entry<Robot, RobotPoseProvider> robot : robotsPoses) {
-            try {
-                Route route = robot.getKey().getRoute();
+        for (Map.Entry<Robot, RobotPoseProvider> robotPose : robotsPoses) {
+            Route route = robotPose.getKey().getRoute();
 
-                RobotLocation currentLocation = robot.getKey().getLocation();
+            RobotLocation currentLocation = robotPose.getKey().getLocation();
 
-                renderLine(robot.getValue().getPose().getLocation(), currentLocation.toPose().getLocation(), g2);
+            // Draw from pose to current location
+            renderLine(robotPose.getValue().getPose().getLocation()
+                    , currentLocation.toPose().getLocation()
+                    , g2);
 
+            if (route == null || route.isEmpty()) {
+                logger.trace("Ignoring empty route");
+            } else {
+
+                // Draw future routes, if any
                 for (int i : route) {
                     RobotLocation nextLocation = new RobotLocation(currentLocation);
                     changeLocation(nextLocation, i);
 
-                    renderLine(robot.getKey().getLocation().toPose().getLocation()
-                            ,  nextLocation.toPose().getLocation()
+                    renderLine(currentLocation.toGridPoint()
+                            ,  nextLocation.toGridPoint()
                             ,  g2);
 
                     currentLocation = new RobotLocation(nextLocation);
                 }
-            } catch (IndexOutOfBoundsException e) {
-                logger.debug("Ignoring non existent path");
             }
+
         }
 
     }
 
+    /**
+     * Takes a location and changes it based on a direction
+     * @param location Location to edit
+     * @param direction Direction to move location by
+     */
     private void changeLocation(RobotLocation location, int direction) {
         switch (direction) {
             case Protocol.NORTH:

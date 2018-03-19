@@ -4,11 +4,13 @@ import rp.warehouse.pc.data.Location;
 
 public class Item {
 
+    private String name;
     private Float reward;
     private float weight;
     private Location location;
 
-    public Item(Float reward, Float weight) {
+    public Item(String name, Float reward, Float weight) {
+        this.name = name;
         this.reward = reward;
         this.weight = weight;
     }

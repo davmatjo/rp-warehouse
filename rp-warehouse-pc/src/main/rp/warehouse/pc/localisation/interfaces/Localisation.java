@@ -1,6 +1,6 @@
 package rp.warehouse.pc.localisation.interfaces;
 
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.NoIdeaException;
 
 /**
