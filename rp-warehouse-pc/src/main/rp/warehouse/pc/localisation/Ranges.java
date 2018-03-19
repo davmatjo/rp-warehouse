@@ -102,7 +102,7 @@ public class Ranges {
 	 *            3 = 270
 	 * @return The rotated version of the ranges.
 	 */
-	public static Ranges rotate(final Ranges ranges, final byte rot) {
+	public static Ranges rotate(final Ranges ranges, final int rot) {
 		assert rot > -1 : rot;
 		// Create a temporary store of the ranges so that they can be copied into here.
 		final boolean[] store = new boolean[4];
