@@ -1,9 +1,6 @@
 package rp.warehouse.pc.localisation.implementation;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
@@ -69,27 +66,26 @@ public class Localiser implements Localisation {
 		while (needsToRun(northAssumption, eastAssumption, southAssumption, westAssumption)
 				&& runCounter++ < MAX_RUNS) {
 			List<Byte> directions = ranges.getAvailableDirections();
-			if (runCounter > 1) {
-				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
-			}
 			// Filter if it can go somewhere
 			if (directions.size() > 0) {
 				List<Byte> tempDirections = new ArrayList<>(directions);
 				// Remove all directions that would lead to visiting the same point again.
-				tempDirections.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[d])));
+				tempDirections.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
 				if (tempDirections.size() > 0) {
 					directions = tempDirections;
 				}
 			}
 			logger.info("Available directions: " + directions);
+			// Choose forwards
 			// Choose a random direction from the list of available directions.
-			final byte direction = directions.get(random.nextInt(directions.size()));
-			previousDirection = direction;
+			final byte direction = directions.contains((byte) 0) ? 0 : directions.get(random.nextInt(directions.size()));
+			logger.info("Chosen direction: " + direction);
+			previousDirection = (byte) ((previousDirection + direction) % 4);
 			final Point move = directionPoint[direction];
 			logger.info("Chosen move: " + move);
 
 			// Move the robot
-			comms.sendMovement(directionProtocol[direction]);
+			comms.sendMovement(directionProtocol[previousDirection]);
 
 			// Update relative position
 			relativePoint = relativePoint.add(move);
@@ -99,9 +95,6 @@ public class Localiser implements Localisation {
 			// Update ranges
 			ranges = comms.getRanges();
 			logger.info("Received ranges: " + ranges);
-			// Rotate ranges
-			ranges = Ranges.rotate(ranges, direction);
-			logger.info("Rotated ranges: " + ranges);
 
 			northAssumption.update(direction, ranges);
 			eastAssumption.update(direction, ranges);
@@ -110,9 +103,11 @@ public class Localiser implements Localisation {
 		}
 
 		// One of the assumptions is complete, return the completed position
-		return Stream.of(northAssumption, eastAssumption, southAssumption, westAssumption)
+		final RobotLocation location = Stream.of(northAssumption, eastAssumption, southAssumption, westAssumption)
 				.filter(LocalisationCollection::isComplete)
 				.map(l -> new RobotLocation(l.getPoint(), directionProtocol[l.getHeading()])).findFirst().get();
+		logger.debug("Found location: " + location);
+		return location;
 	}
 
 	/**
@@ -120,9 +115,8 @@ public class Localiser implements Localisation {
 	 * 
 	 * @return a stream of all of the locations.
 	 */
-	public Stream<RobotLocation> getCurrentLocations() {
-		return Stream.concat(Stream.concat(northAssumption.stream(), eastAssumption.stream()),
-				Stream.concat(southAssumption.stream(), westAssumption.stream()));
+	public List<Stream<RobotLocation>> getCurrentLocations() {
+		return Arrays.asList(northAssumption.stream(), eastAssumption.stream(), southAssumption.stream(), westAssumption.stream());
 	}
 
 	/**

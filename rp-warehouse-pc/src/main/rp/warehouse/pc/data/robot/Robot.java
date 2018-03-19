@@ -20,6 +20,7 @@ import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.data.robot.utils.Status;
+import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
@@ -73,7 +74,11 @@ public class Robot implements Runnable {
 
         // Localisation
         loc = new Localiser(comms);
-        this.location = startingLocation;// loc.getPosition();
+        try {
+            this.location = loc.getPosition();
+        } catch (NoIdeaException e) {
+            e.printStackTrace();
+        }
         robotUtils = new RobotUtils(location, name);
         
         logger.info(name + ": Created");

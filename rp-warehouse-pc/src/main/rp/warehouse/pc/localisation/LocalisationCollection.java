@@ -23,7 +23,9 @@ public class LocalisationCollection {
 			new Point(-1, 0) };
 	private final static WarehouseMap map = new WarehouseMap();
 	private final static List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
-	private static final Logger logger = Logger.getLogger(Localiser.class);
+	private static final Logger logger = Logger.getLogger(LocalisationCollection.class);
+
+	private final static String[] headings = new String[] {"North", "East", "South", "West"};
 
 	private final byte startingDirection;
 	private List<Point> possibleLocations = new ArrayList<Point>();
@@ -72,6 +74,7 @@ public class LocalisationCollection {
 		if (possibleLocations.size() > 0) {
 			// Update the current heading using modulo.
 			heading = (byte) ((heading + direction) % 4);
+			logger.info("(" + startingDirection + ") Facing: " + headings[heading]);
 			// Get the respective change in direction, relative to the initial assumption
 			// and the heading.
 			final Point move = directionPoint[heading];
