@@ -20,7 +20,6 @@ import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.data.robot.utils.Status;
-import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
@@ -46,7 +45,7 @@ public class Robot implements Runnable {
     private final Queue<Task> tasks;                    // The queue of Tasks which need to be done
     private Item currentItem;                           // Current Item
     private Task currentTask;                           // Current Task which contains one Item
-    private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
+    //private final static Map<String, Boolean> cancelledJobs = new HashMap<String, Boolean>();  // Stores ID's of cancelled Jobs
 
     // Robot Information
     private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
@@ -85,14 +84,6 @@ public class Robot implements Runnable {
     }
     @Override
     public void run() {
-        // localisation happens here
-//        try {
-//            this.location = loc.getPosition();
-//        } catch (NoIdeaException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-        
         logger.info(name + ": Started running");
         Rate r = new Rate(RATE);
 
@@ -170,7 +161,7 @@ public class Robot implements Runnable {
      * @return - return true if successfully picked up and false otherwise
      */
     private boolean pickUp(int numberOfItems){
-        if (cancelledJobs.containsKey(currentTask.jobID)) {
+        if (RewardCounter.checkIfCancelled(currentTask)) {
             // If the Job was cancelled
             logger.debug(name + ": Canceled Job");
             status = Status.PICKING_UP;
@@ -219,17 +210,6 @@ public class Robot implements Runnable {
         logger.info(name + ": Pick up rejected, try other numbers");
         return false;
         
-//        else if ((!tasks.isEmpty()) && WEIGHTLIMIT < currentWeightOfCargo
-//                + (tasks.peek().getCount() * tasks.peek().getItem().getWeight())) {
-//            // If can't pick up the next item
-//            logger.debug(name + ": Picked up, won't fit next item");
-//            currentWeightOfCargo = newWeight;
-//            // drop off come back for the item
-//            status = Status.DROPPING_OFF;
-//            
-//        } 
-        
-        
     }
     
     /**
@@ -241,7 +221,8 @@ public class Robot implements Runnable {
         // empty cargo
         currentWeightOfCargo = 0;
         for (Task task : tasksInTheCargo) {
-            RewardCounter.addReward(task.getItem().getReward());
+            RewardCounter.addCompletedJob(task);
+            //RewardCounter.addReward(task.getItem().getReward());
         }
         tasksInTheCargo.clear();
 
@@ -254,7 +235,8 @@ public class Robot implements Runnable {
      */
     public void cancelJob() {
         // Adds Job to the list of cancelledJobs
-        cancelledJobs.put(currentTask.getJobID(), true);
+        RewardCounter.addCancelledJob(currentTask);
+        //cancelledJobs.put(currentTask.getJobID(), true);
         logger.debug(name + ": Cancelled current Job");
     }
 
@@ -268,7 +250,7 @@ public class Robot implements Runnable {
             System.exit(0);
         }
         
-        while (cancelledJobs.containsKey(currentTask.getJobID())) {
+        while (RewardCounter.checkIfCancelled(currentTask)) {
             logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getClass() + " was canceled"); 
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
