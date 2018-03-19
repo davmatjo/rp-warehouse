@@ -53,6 +53,10 @@ public class RobotLocation extends Location {
         return Warehouse.build().toPose(new GridPose(getX(), getY(), toHeading()));
     }
 
+    public Point toGridPoint() {
+        return Warehouse.build().toPose(new GridPose(getX(), getY(), toHeading())).getLocation();
+    }
+
     @Override
     public String toString() {
         return super.toString() + ", D: " + this.direction;

@@ -23,6 +23,10 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
         t.start();
     }
 
+    /**
+     * Provides the current pose of the robot, interpolated based on time between readings
+     * @return Pose of the robot, normalised for the grid
+     */
     @Override
     public Pose getPose() {
         synchronized (lock) {
@@ -45,32 +49,24 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                 Route route = robot.getRoute();
                 boolean interpolate;
 
+                // Check to see if the robot is being told to wait, dropoff or pickup
                 try {
                     interpolate = !(route.peek() == Protocol.WAITING
                             || route.peek() == Protocol.DROPOFF
                             || route.peek() == Protocol.PICKUP);
 
                 } catch (NullPointerException e) {
+                    // We always interpolate if the robot has no route - this is necessary because the route is
+                    // sometimes null.
                     interpolate = true;
                 }
 
+                // If the location reading has changed since the last tick, change the robot heading and pose
                 if (!robot.getLocation().equals(previous)) {
                     previous = robot.getLocation();
 
                     RobotLocation currentLocation = robot.getLocation();
-                    switch (currentLocation.getDirection()) {
-                        case Protocol.NORTH:
-                            currentLocation.setY(currentLocation.getY() - 1);
-                            break;
-                        case Protocol.EAST:
-                            currentLocation.setX(currentLocation.getX() - 1);
-                            break;
-                        case Protocol.SOUTH:
-                            currentLocation.setY(currentLocation.getY() + 1);
-                            break;
-                        case Protocol.WEST:
-                            currentLocation.setX(currentLocation.getX() + 1);
-                    }
+                    changeLocationReversed(currentLocation, currentLocation.getDirection());
 
                     currentPose = currentLocation.toPose();
 
@@ -101,10 +97,15 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
         }
     }
 
+    /**
+     * Moves the pose by a given amount depending on the heading
+     */
     private void interpolate() {
         switch ((int) currentPose.getHeading()) {
             case 90:
-                currentPose = new Pose(currentPose.getX() + INTERPOLATION, currentPose.getY(), currentPose.getHeading());
+                if (currentPose.getX() < 85) {
+                    currentPose = new Pose(currentPose.getX() + INTERPOLATION, currentPose.getY(), currentPose.getHeading());
+                }
                 break;
             case -90:
                 currentPose = new Pose(currentPose.getX() - INTERPOLATION, currentPose.getY(), currentPose.getHeading());
@@ -115,6 +116,27 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
             case 0:
                 currentPose = new Pose(currentPose.getX(), currentPose.getY() + INTERPOLATION, currentPose.getHeading());
                 break;
+        }
+    }
+
+    /**
+     * Changes a location based on a direction, but goes back in time
+     * @param location location to change
+     * @param direction opposite of direction to travel
+     */
+    private void changeLocationReversed(RobotLocation location, int direction) {
+        switch (direction) {
+            case Protocol.NORTH:
+                location.setY(location.getY() - 1);
+                break;
+            case Protocol.EAST:
+                location.setX(location.getX() - 1);
+                break;
+            case Protocol.SOUTH:
+                location.setY(location.getY() + 1);
+                break;
+            case Protocol.WEST:
+                location.setX(location.getX() + 1);
         }
     }
 }
