@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import rp.warehouse.pc.data.robot.utils;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
 
 public class JobInput {
 
