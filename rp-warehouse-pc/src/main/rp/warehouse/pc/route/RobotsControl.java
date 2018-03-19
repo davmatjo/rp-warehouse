@@ -88,6 +88,8 @@ public class RobotsControl {
                     waitForGui.wait();
                 }
 
+                localisationView.setVisible(false);
+
                 logger.debug("Robot " + robotNames[i] + " created");
 
             } catch (IOException e) {

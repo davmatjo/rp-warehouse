@@ -33,10 +33,6 @@ public class LocaliserMapVisualisation extends GridMapVisualisation {
     private void renderPossiblePoints(Graphics2D g2) {
         int i = 0;
 
-        g2.setPaint(Color.RED);
-        g2.setStroke(new BasicStroke(3));
-        drawQuadrilateral(0.1f, 0.1f, new RobotLocation(0, 1, 3).toPose(), g2);
-
         for (Stream<RobotLocation> points : localiser.getCurrentLocations()) {
 
             g2.setPaint(directionColours[i]);

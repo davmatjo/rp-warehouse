@@ -211,6 +211,11 @@ public class Communication implements Runnable {
         }
     }
 
+    public void setDirection(int direction) {
+        sendData(Protocol.SETDIR);
+        sendData(direction);
+    }
+
     /**
      * Close the connection and clean up
      */

@@ -71,6 +71,7 @@ public class Robot implements Runnable {
 
         // Communications set up
         this.comms = comms;
+        comms.setDirection(startingLocation.getDirection());
 
         this.location = startingLocation;
         robotUtils = new RobotUtils(location, name);

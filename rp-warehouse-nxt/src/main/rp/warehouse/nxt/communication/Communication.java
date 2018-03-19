@@ -80,6 +80,8 @@ public class Communication extends Thread {
                     System.out.println(range);
                     sendFloat(range);
                 }
+            } else if (command == Protocol.SETDIR) {
+                robotMovement.setDirection(fromPC.readInt());
             }
         }
     }

@@ -6,6 +6,7 @@ import lejos.util.Delay;
 import rp.config.WheeledRobotConfiguration;
 import rp.systems.WheeledRobotSystem;
 import rp.util.Rate;
+import rp.warehouse.nxt.communication.Protocol;
 
 public class MotionController implements Movement {
 
@@ -23,6 +24,23 @@ public class MotionController implements Movement {
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
 		calibrateSensors();
+	}
+
+	public void setDirection(int direction) {
+		switch (direction) {
+			case Protocol.NORTH:
+				previousDirection = Direction.NORTH;
+				break;
+			case Protocol.EAST:
+				previousDirection = Direction.EAST;
+				break;
+			case Protocol.SOUTH:
+				previousDirection = Direction.SOUTH;
+				break;
+			case Protocol.WEST:
+				previousDirection = Direction.WEST;
+				break;
+		}
 	}
 
 	@Override
