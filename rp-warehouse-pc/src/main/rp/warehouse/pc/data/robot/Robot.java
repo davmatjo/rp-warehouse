@@ -262,7 +262,8 @@ public class Robot implements Runnable {
      * Checks for cancellation, empty tasks and if can fit current task 
      */
     private void updateTasks() {
-        if (tasks.isEmpty()) {
+        // Only shuts down when dropped off all the items
+        if (tasks.isEmpty() && currentWeightOfCargo == 0) {
             logger.info(name + ": I am Done");
             System.exit(0);
         }
