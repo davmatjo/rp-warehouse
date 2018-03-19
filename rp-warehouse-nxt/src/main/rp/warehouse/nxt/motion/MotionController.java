@@ -2,6 +2,7 @@ package rp.warehouse.nxt.motion;
 
 import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
+import lejos.nxt.SensorConstants;
 import lejos.nxt.SensorPort;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.Delay;
@@ -12,8 +13,8 @@ import rp.util.Rate;
 public class MotionController implements Movement {
 
 	// temporary values until calibration is added
-	private int leftLineLimit = 0;
-	private int rightLineLimit= 0;
+	private double leftLineLimit = 0;
+	private double rightLineLimit= 0;
 	private DifferentialPilot pilot;
 	private LightSensor leftSensor;
 	private LightSensor rightSensor;
@@ -114,8 +115,8 @@ public class MotionController implements Movement {
 
 		while (!junction) {
 
-			int leftValue = leftSensor.getLightValue();
-			int rightValue = rightSensor.getLightValue();
+			double leftValue = leftSensor.getLightValue();
+			double rightValue = rightSensor.getLightValue();
 
 			// checks if a junction has been reached
 			if (leftValue < leftLineLimit && rightValue < rightLineLimit) {
@@ -140,18 +141,32 @@ public class MotionController implements Movement {
 
 	// calibrates the sensors on startup.
 	private void calibrateSensors() {
-		leftSensor.calibrateHigh();
-		rightSensor.calibrateHigh();
-		
+		int rightDark = 0;
+		int leftDark = 0;
 		for (int i = 0; i < 3; i++) {
 			System.out.println("Put both sensors on a black line and press a button.");
 			Button.waitForAnyPress();
-			rightLineLimit += rightSensor.getLightValue();
-			leftLineLimit += leftSensor.getLightValue();
-			Delay.msDelay(100);
+			rightDark += rightSensor.getLightValue();
+			leftDark += leftSensor.getLightValue();
 		}
-		rightLineLimit = rightLineLimit/3;
-		leftLineLimit = leftLineLimit/3;
+		rightDark = rightDark/3;
+		leftDark = leftDark/3;
+		System.out.println("Dark value finshed");
+		
+		int rightLight= 0;
+		int leftLight = 0;
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Put both sensors in the light and press a button.");
+			Button.waitForAnyPress();
+			rightLight += rightSensor.getLightValue();
+			leftLight += leftSensor.getLightValue();
+		}
+		rightLight = rightLight/3;
+		leftLight = leftLight/3;
+		System.out.println("Light value finshed");
+
+		rightLineLimit = (rightDark + rightLight)*0.44;
+		leftLineLimit = (leftDark + leftLight)*0.44;
 		System.out.println("Sensors have been calibrated!");
 	}
 
