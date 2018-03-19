@@ -3,6 +3,7 @@ package rp.warehouse.pc.management.panels;
 import rp.config.MobileRobotConfiguration;
 import rp.robotics.MobileRobot;
 import rp.robotics.visualisation.GridMapVisualisation;
+import rp.util.AbstractMap;
 import rp.warehouse.pc.data.Warehouse;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.management.providers.ItemPoseProvider;
@@ -10,13 +11,20 @@ import rp.warehouse.pc.management.providers.RobotPoseProvider;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WarehouseMapPanel extends JPanel {
 
 
     public WarehouseMapPanel(List<Robot> robots) {
-        WarehouseMapVisualisation mapVisualisation = new WarehouseMapVisualisation(Warehouse.build(), Warehouse.build(), 200f, robots);
+        List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses = new ArrayList<>();
+        for (Robot robot : robots) {
+            robotsPoses.add(new AbstractMap.SimpleEntry<>(robot, new RobotPoseProvider(robot)));
+        }
+
+        WarehouseMapVisualisation mapVisualisation = new WarehouseMapVisualisation(Warehouse.build(), Warehouse.build(), 200f, robotsPoses);
 
         this.add(mapVisualisation);
         mapVisualisation.setPreferredSize(new Dimension(800, 580));

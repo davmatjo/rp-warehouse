@@ -7,18 +7,20 @@ import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.management.providers.RobotPoseProvider;
 import rp.warehouse.pc.route.Route;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 
 public class WarehouseMapVisualisation extends GridMapVisualisation {
     private static final Logger logger = Logger.getLogger(WarehouseMapVisualisation.class);
-    private final List<Robot> robots;
+    private final List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses;
 
-    public WarehouseMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, List<Robot> robots) {
+    public WarehouseMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, List<Map.Entry<Robot, RobotPoseProvider>> robots) {
         super(_gridMap, _lineMap, _scaleFactor);
-        this.robots = robots;
+        this.robotsPoses = robots;
     }
 
     @Override
@@ -32,16 +34,19 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         g2.setPaint(Color.RED);
         g2.setStroke(new BasicStroke(3));
 
-        for (Robot robot : robots) {
+        for (Map.Entry<Robot, RobotPoseProvider> robot : robotsPoses) {
             try {
-                Route route = robot.getRoute();
-                RobotLocation currentLocation = robot.getLocation();
+                Route route = robot.getKey().getRoute();
+
+                RobotLocation currentLocation = robot.getKey().getLocation();
+
+                renderLine(robot.getValue().getPose().getLocation(), currentLocation.toPose().getLocation(), g2);
 
                 for (int i : route) {
                     RobotLocation nextLocation = new RobotLocation(currentLocation);
                     changeLocation(nextLocation, i);
 
-                    renderLine(robot.getLocation().toPose().getLocation()
+                    renderLine(robot.getKey().getLocation().toPose().getLocation()
                             ,  nextLocation.toPose().getLocation()
                             ,  g2);
 
