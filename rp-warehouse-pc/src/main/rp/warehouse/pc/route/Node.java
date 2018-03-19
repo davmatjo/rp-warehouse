@@ -204,10 +204,10 @@ public class Node {
 				try {
 					blocked.add(directions.getLocation(tick));
 				} catch (IndexOutOfBoundsException e) {
-					logger.debug("Ignoring robot blocked location");
+					logger.trace("Robot has no plan this far");
 					blocked.add(robot.getLocation());
 				} catch (NullPointerException e) {
-				    logger.debug("Robot has no route");
+				    logger.trace("Robot has no route");
                 }
 			}
 			return blocked;

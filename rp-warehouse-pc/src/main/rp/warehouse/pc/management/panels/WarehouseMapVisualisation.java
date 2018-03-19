@@ -53,7 +53,7 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
                     RobotLocation nextLocation = new RobotLocation(currentLocation);
                     changeLocation(nextLocation, i);
 
-                    renderLine(robotPose.getKey().getLocation().toPose().getLocation()
+                    renderLine(currentLocation.toPose().getLocation()
                             ,  nextLocation.toPose().getLocation()
                             ,  g2);
 
