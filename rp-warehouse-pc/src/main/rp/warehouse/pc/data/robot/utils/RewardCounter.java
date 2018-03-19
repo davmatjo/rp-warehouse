@@ -20,8 +20,6 @@ public class RewardCounter {
     private static final Map<String, Boolean> completedJobReference = new HashMap<>();
 
     private static float pointsEarned = 0.0f;
-    private static int numberOfJobsDone = 0;
-    private static int numberOfJobsCancelled = 0;
     
     public void setJobs(ArrayList<Job> jobList) {
         for (Job job : jobList) {
@@ -53,8 +51,12 @@ public class RewardCounter {
         String jobId= task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
             if(uncompletedJobReference.containsKey(jobId)) {
-//                if(jobReference.get(jobId)) {
-//                    
+//                if(jobReference.get(jobId).getNumber > uncompletedJobReference.get(jobId)) {
+//                    uncompletedJobReference increment Integer
+//                } 
+//                if (jobReference.get(jobId).getNumber == uncompletedJobReference.get(jobId)) {
+//                    uncompletedJobReference.remove(jobId);
+//                    completedJobReference.put(jobId, true);
 //                }
             }else {
                 uncompletedJobReference.put(jobId, 1);
