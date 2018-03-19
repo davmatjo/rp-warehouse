@@ -6,6 +6,7 @@ import java.util.Map;
 
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
+import rp.warehouse.pc.input.Jobs;
 
 /**
  * Used to keep record of the points earned
@@ -21,7 +22,8 @@ public class RewardCounter {
 
     private static float pointsEarned = 0.0f;
     
-    public void setJobs(ArrayList<Job> jobList) {
+    public static void setJobs(Jobs jobs) {
+        ArrayList<Job> jobList =jobs.getJobs();
         for (Job job : jobList) {
            jobReference.put(job.getName(), job);
         }
