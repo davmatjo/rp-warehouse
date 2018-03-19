@@ -2,7 +2,7 @@ package rp.warehouse.pc;
 
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.assignment.Auctioner;
-import rp.warehouse.pc.data.robot.RobotLocation;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.input.JobInput;
 import rp.warehouse.pc.input.Jobs;
 import rp.warehouse.pc.management.LoadingFrame;
