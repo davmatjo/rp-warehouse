@@ -20,6 +20,7 @@ import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
 import rp.warehouse.pc.data.robot.utils.Status;
+import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
@@ -34,6 +35,7 @@ public class Robot implements Runnable {
     private final String ID;                            // Communication ID
     private final String name;                          // Communication name
     private Communication comms;                        // Communication used to connect each robot to the a nxt brick
+    private ExecutorService pool;
 
     // Route information
     private Route route;                                // Queue of directions for the current task
@@ -68,20 +70,30 @@ public class Robot implements Runnable {
         this.currentItem = currentTask.getItem();
 
         // Communications set up
-        this.comms = new Communication(ID, name, this);
-        pool.execute(comms);
-
-        // Localisation
-        loc = new Localiser(comms);
-        this.location = startingLocation;// loc.getPosition();
+        //this.comms = new Communication(ID, name, this);
+        this.pool = pool;
+        
+        this.location = startingLocation;
         robotUtils = new RobotUtils(location, name);
         
         logger.info(name + ": Created");
     }
     
-    public void setComminications(String ID, String name, Communication comms, ExecutorService pool) {
-        
+    public void setComminications(Communication comms) {
+        this.comms = comms;
+
+        pool.execute(comms);
     }
+    
+    public void localiseRobot() {
+        loc = new Localiser(comms);
+        try {
+            this.location = loc.getPosition();
+        } catch (NoIdeaException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void run() {
         logger.info(name + ": Started running");

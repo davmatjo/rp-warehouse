@@ -32,12 +32,15 @@ public class RewardCounter {
     public static int getJobsDone() {
         return completedJobReference.size();
     }
+    
     public static int getnumberJobsCancelled() {
         return cancelledJobReference.size();
     }
+    
     public static float getPointsEarned() {
         return pointsEarned;
     }
+    
     public synchronized static void addCancelledJob(Task task) {
         cancelledJobReference.put(task.getJobID(), true);
     }

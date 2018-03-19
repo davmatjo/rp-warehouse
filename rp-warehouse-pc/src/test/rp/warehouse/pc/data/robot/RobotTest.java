@@ -22,7 +22,7 @@ public class RobotTest {
     
     @Before
     public void setup() {
-        Queue<Task> items= new LinkedList<Task>(Arrays.asList(new Task(new Item(2.0f,3.0f), 2, "d2")));
+        Queue<Task> items= new LinkedList<Task>(Arrays.asList(new Task(new Item("thing", 2.0f,3.0f), 2, "d2")));
         //ExecutorService pool = Executors.newFixedThreadPool(1 * 2);
         Communication mockedCommunications = mock(Communication.class);
         ExecutorService mockedPool = mock(ExecutorService.class);
@@ -50,6 +50,7 @@ public class RobotTest {
     @Test
     public void routeTest() {
         Communication mockedCommunications = mock(Communication.class);
+        when(mockedCommunications.sendLoadingRequest(0)).thenReturn(0);
         
         ExecutorService mockedPool = mock(ExecutorService.class);
         //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
