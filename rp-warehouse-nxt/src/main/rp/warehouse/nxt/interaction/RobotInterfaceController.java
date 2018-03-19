@@ -154,24 +154,20 @@ public class RobotInterfaceController {
 			waiting = true;
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, TEXT_WIDTH, TEXT_HEIGHT);
+			//A timer is created which a task is then added to
 			Timer timer = new Timer();
 			timer.schedule(new TimerTask()	{
 				@Override
+				//timeout will be set to false if the button listener is triggered
 				public void run() {
 					if (timeout = true)	{
 						communicator.sendCommand(Protocol.CANCEL);
 					}
 				}
+				//there is a 30 second delay currently before the timeout is sent but this can be changed
 			}, 30000);
 			
 
 		}
 	}
-
-	//add dropoff on middle button
-	//add value display
-	//display when picking up etc
-
-
-
 }
