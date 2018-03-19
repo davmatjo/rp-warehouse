@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -84,5 +85,36 @@ public class RobotTest {
         Assertions.assertEquals(robot.getID(),"0016531AFBE1");
      // Shut down the pool to prevent new threads being created, and allow the program to end
     }
+//    
+//    @Test
+//    public void routeTest() {
+//        System.out.println("Test 2");
+//        Communication mockedCommunications = mock(Communication.class);
+//        when(mockedCommunications.sendLoadingRequest(0)).thenReturn(0);
+//        
+//        ExecutorService mockedPool = mock(ExecutorService.class);
+//        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
+//        //setup();
+//        
+////        robot.cancelJob();
+////        robot.getLocation();
+////        robot.getTask();
+////        robot.toString();
+////        robot.run();
+//        
+//        Assertions.assertEquals(robot.getRoute(),null);
+//
+//    }
+//    
+//    @Test
+//    public void nameTest() {
+//        System.out.println("Test 3");
+//        Communication mockedCommunications = mock(Communication.class);
+//        
+//        ExecutorService mockedPool = mock(ExecutorService.class);
+//        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
+//        //setup();
+//        Assertions.assertEquals(robot.getName(),"ExpressBoi");   
+//    }
 
 }
