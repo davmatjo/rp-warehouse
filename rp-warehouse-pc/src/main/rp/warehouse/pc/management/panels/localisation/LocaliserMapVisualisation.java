@@ -8,13 +8,17 @@ import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.implementation.Localiser;
+import rp.warehouse.pc.management.providers.localisation.LocalisationListener;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
-public class LocaliserMapVisualisation extends GridMapVisualisation {
+public class LocaliserMapVisualisation extends GridMapVisualisation implements LocalisationListener {
     private Localiser localiser;
     private Color[] directionColours = new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA};
+    private List<Stream<RobotLocation>> possiblePoints = new ArrayList<>();
 
     public LocaliserMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, Localiser localiser) {
         super(_gridMap, _lineMap, _scaleFactor);
@@ -85,5 +89,10 @@ public class LocaliserMapVisualisation extends GridMapVisualisation {
                     (int) scale(flipY(l.y2)) + X_MARGIN);
         }
 
+    }
+
+    @Override
+    public void newPoints(List<Stream<RobotLocation>> points) {
+        this.possiblePoints = points;
     }
 }

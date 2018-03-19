@@ -14,6 +14,8 @@ public class LocaliserMapPanel extends JPanel {
         this.add(mapVisualisation);
         mapVisualisation.setPreferredSize(new Dimension(800, 580));
 
+        localiser.addListener(mapVisualisation);
+
         this.setBackground(Color.WHITE);
     }
 }

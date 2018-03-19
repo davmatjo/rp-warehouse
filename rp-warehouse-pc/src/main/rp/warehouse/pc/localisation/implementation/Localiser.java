@@ -13,6 +13,7 @@ import rp.warehouse.pc.localisation.LocalisationCollection;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
+import rp.warehouse.pc.management.providers.localisation.LocalisationListener;
 
 /**
  * An implementation of the localisation interface. Used to actually calculate
@@ -38,6 +39,7 @@ public class Localiser implements Localisation {
 	private final Communication comms;
 	private Point relativePoint = new Point(0, 0);
 	private final HashSet<Point> relativeVisitedPoints = new HashSet<Point>();
+	private final List<LocalisationListener> listeners = new ArrayList<>();
 
 	/**
 	 * An implementation of the Localisation interface.
@@ -100,6 +102,10 @@ public class Localiser implements Localisation {
 			eastAssumption.update(direction, ranges);
 			southAssumption.update(direction, ranges);
 			westAssumption.update(direction, ranges);
+
+			for (LocalisationListener listener : listeners) {
+				listener.newPoints(getCurrentLocations());
+			}
 		}
 
 		// One of the assumptions is complete, return the completed position
@@ -128,6 +134,10 @@ public class Localiser implements Localisation {
 	 */
 	private boolean needsToRun(LocalisationCollection... assumptions) {
 		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
+	}
+
+	public void addListener(LocalisationListener listener) {
+		listeners.add(listener);
 	}
 
 }
