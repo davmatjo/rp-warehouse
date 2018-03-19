@@ -12,8 +12,8 @@ import rp.util.Rate;
 public class MotionController implements Movement {
 
 	// temporary values until calibration is added
-	private int leftLineLimit;
-	private int rightLineLimit;
+	private int leftLineLimit = 0;
+	private int rightLineLimit= 0;
 	private DifferentialPilot pilot;
 	private LightSensor leftSensor;
 	private LightSensor rightSensor;
