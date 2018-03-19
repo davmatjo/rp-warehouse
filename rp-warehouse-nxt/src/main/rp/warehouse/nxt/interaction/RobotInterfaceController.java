@@ -16,9 +16,12 @@ public class RobotInterfaceController {
 	
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
+	private final static int MIDDLE_SCREEN_WIDTH = 48;
+	private final static int MIDDLE_SCREEN_HEIGHT = 32;
 	private int jobAmount;
 	private int toPickup;
 	private boolean waiting;
+	
 	
 	
 	/*A communicator is created so that commands can be sent*/
@@ -82,7 +85,7 @@ public class RobotInterfaceController {
 		LCD.refresh();
 		switch (buttonInput)	{
 			case Protocol.OK:
-				LCD.drawString("Amount confirmed", 0, 0);
+				LCD.drawString("Amount confirmed", MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 				/* The number of jobs is sent*/
 				if(waiting)	{
 					communicator.sendCommand(Protocol.PICKUP);
@@ -91,19 +94,19 @@ public class RobotInterfaceController {
 					jobAmount = 0;
 				}
 				else	{
-					LCD.drawString("Error: Robot not waiting for command", 0, 0);
+					LCD.drawString("Error: Robot not waiting for command", MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 				}
 				break;
 			case LEFT:
 				if (jobAmount > 0)	{
-					LCD.drawString("Amount: " + (--jobAmount), 0, 0);
+					LCD.drawString("Amount: " + (--jobAmount), MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 				}
 				else	{
-					LCD.drawString("Error: Items cannot go below zero", 0, 0);
+					LCD.drawString("Error: Items cannot go below zero", MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 				}
 				break;
 			case RIGHT:
-				LCD.drawString("Amount: " + (++jobAmount), 0, 0);
+				LCD.drawString("Amount: " + (++jobAmount), MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 				break;
 		}
 	}
@@ -135,14 +138,22 @@ public class RobotInterfaceController {
 	public void pickup(int amount) {
 		toPickup = amount;
 		if (toPickup < 0) {
-			LCD.drawString("Confirm dropoff", 0 ,0);
+			LCD.drawString("Confirm dropoff", MIDDLE_SCREEN_WIDTH,MIDDLE_SCREEN_HEIGHT);
 			Button.waitForAnyPress();
 			communicator.sendCommand(Protocol.PICKUP);
 			communicator.sendCommand(0);
 		} else {
 			waiting = true;
+			LCD.clearDisplay();
+			LCD.drawString("Pickup amount: " + toPickup, MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
+			
 		}
 	}
+
+	//add dropoff on middle button
+	//add value display
+	//display when picking up etc
+
 
 
 }
