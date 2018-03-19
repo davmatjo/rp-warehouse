@@ -25,6 +25,10 @@ public class Job {
         return tasks;
     }
 
+    public int numOfTasks()
+        return tasks.size();
+    }
+
 
 
 }
