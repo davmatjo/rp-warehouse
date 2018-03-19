@@ -92,12 +92,12 @@ public class LocalisationCollection {
 	}
 
 	/**
-	 * Method to determine whether this assumption still needs to run.
+	 * Method to get the number of points of which the robot could possibly be in.
 	 * 
-	 * @return whether this assumption still needs to run.
+	 * @return the number of points that the robot could be in.
 	 */
-	public boolean notComplete() {
-		return !isComplete();
+	public int getNumberOfPoints() {
+		return possibleLocations.size();
 	}
 
 	/**
