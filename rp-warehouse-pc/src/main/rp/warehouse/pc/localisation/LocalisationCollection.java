@@ -138,6 +138,7 @@ public class LocalisationCollection {
 		// Filter the next list by removing all points that couldn't exist given the
 		// previous points and the change in position.
 		next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contains(p));
+		logger.info("(" + startingDirection + ") Filtered ranges: " + next);
 		return next;
 	}
 
