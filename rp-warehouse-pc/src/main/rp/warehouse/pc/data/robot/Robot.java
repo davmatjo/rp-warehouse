@@ -84,14 +84,6 @@ public class Robot implements Runnable {
     }
     @Override
     public void run() {
-        // localisation happens here
-//        try {
-//            this.location = loc.getPosition();
-//        } catch (NoIdeaException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-        
         logger.info(name + ": Started running");
         Rate r = new Rate(RATE);
 
@@ -217,17 +209,6 @@ public class Robot implements Runnable {
         }
         logger.info(name + ": Pick up rejected, try other numbers");
         return false;
-        
-//        else if ((!tasks.isEmpty()) && WEIGHTLIMIT < currentWeightOfCargo
-//                + (tasks.peek().getCount() * tasks.peek().getItem().getWeight())) {
-//            // If can't pick up the next item
-//            logger.debug(name + ": Picked up, won't fit next item");
-//            currentWeightOfCargo = newWeight;
-//            // drop off come back for the item
-//            status = Status.DROPPING_OFF;
-//            
-//        } 
-        
         
     }
     

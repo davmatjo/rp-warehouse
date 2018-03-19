@@ -15,8 +15,9 @@ import rp.warehouse.pc.input.Job;
 public class RewardCounter {
     
     private static final Map<String, Job> jobReference = new HashMap<>();
-    private static final Map<String, Job> completedJobReference = new HashMap<>();
+    private static final Map<String, Integer> uncompletedJobReference = new HashMap<>();
     private static final Map<String, Boolean> cancelledJobReference = new HashMap<>();
+    private static final Map<String, Boolean> completedJobReference = new HashMap<>();
 
     private static float pointsEarned = 0.0f;
     private static int numberOfJobsDone = 0;
@@ -29,15 +30,15 @@ public class RewardCounter {
     }
     
     public static int getJobsDone() {
-        return numberOfJobsDone;
+        return completedJobReference.size();
     }
     public static int getnumberJobsCancelled() {
-        return numberOfJobsCancelled;
+        return cancelledJobReference.size();
     }
     public static float getPointsEarned() {
         return pointsEarned;
     }
-    public static void addCancelledJob(Task task) {
+    public synchronized static void addCancelledJob(Task task) {
         cancelledJobReference.put(task.getJobID(), true);
     }
     
@@ -45,10 +46,23 @@ public class RewardCounter {
         
         return cancelledJobReference.containsKey(task.getJobID());
     }
-    public static void addReward(float reward) {
+    public synchronized static void addReward(float reward) {
         pointsEarned += reward;
     }
-    public static void addCompletedJob(Task task) {
+    public synchronized static void addCompletedJob(Task task) {
+        String jobId= task.getJobID();
+        if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
+            if(uncompletedJobReference.containsKey(jobId)) {
+//                if(jobReference.get(jobId)) {
+//                    
+//                }
+            }else {
+                uncompletedJobReference.put(jobId, 1);
+            }
+            
+        }else {
+            return;
+        }
         
         
     }
