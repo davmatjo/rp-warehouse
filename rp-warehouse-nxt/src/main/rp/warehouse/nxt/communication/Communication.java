@@ -70,12 +70,9 @@ public class Communication extends Thread {
      */
     private void receiveCommand() throws IOException {
         while (open) {
-            System.out.println("Waiting to receive");
             Integer command = fromPC.readInt();
-            System.out.println("RECEIVE: " + command);
             if (command >= Protocol.NORTH && command <= Protocol.WEST) {
                 robotMovement.move(commandTranslate.get(command));
-                System.out.println("SEND: " + 1);
                 sendCommand(1);
             } else if (command == Protocol.PICKUP) {
                 robotInterface.pickup(fromPC.readInt());
