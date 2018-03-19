@@ -1,5 +1,8 @@
 package rp.warehouse.pc.management.panels;
 
+import lejos.geom.Line;
+import lejos.robotics.navigation.Pose;
+import rp.geom.GeometryUtils;
 import rp.robotics.mapping.IGridMap;
 import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
@@ -28,18 +31,59 @@ public class LocaliserMapVisualisation extends GridMapVisualisation {
 
         g2.setPaint(Color.RED);
         g2.setStroke(new BasicStroke(3));
-        renderLine(new RobotLocation(0, 1, 3).toGridPoint(), new RobotLocation(0, 1, 3).toGridPoint(), g2);
+        drawQuadrilateral(0.1f, 0.1f, new RobotLocation(0, 1, 3).toPose(), g2);
 
         for (Stream<RobotLocation> points : localiser.getCurrentLocations()) {
 
             g2.setPaint(directionColours[i]);
             g2.setStroke(new BasicStroke(3));
-            points.forEach((a) ->  {
-                renderLine(a.toGridPoint(), a.toGridPoint(), g2);
-                System.out.println(a);
-            });
+
+            points.forEach((location) -> drawQuadrilateral(0.1f, 0.1f, location.toPose(), g2));
 
             i++;
+        }
+
+    }
+
+    /**
+     * **adapted from rp-pc** gets a quadrilateral using a width and height then draws it
+     * @param width width of quad
+     * @param height height of quad
+     * @param pose position of centre of quad
+     * @param g2 graphics2D
+     */
+    private void drawQuadrilateral(float width, float height, Pose pose, Graphics2D g2) {
+
+        width = width / 2f;
+        height = height / 2f;
+
+        renderRelative(new Line[] {
+                // front
+                new Line(width, height, width, -height),
+                // back
+                new Line(-width, height, -width, -height),
+                // top
+                new Line(-width, height, width, height),
+                // bottom
+                new Line(-width, -height, width, -height),
+
+        }, pose, g2);
+    }
+
+    /**
+     * **From rp-pc** renders a line array around a pose
+     * @param _lines Lines to draw
+     * @param _pose Centre position
+     * @param _g2 Graphics2D
+     */
+    private void renderRelative(Line[] _lines, Pose _pose, Graphics2D _g2) {
+
+        for (Line l : _lines) {
+
+            l = GeometryUtils.transform(_pose, l);
+            _g2.drawLine((int) scale(l.x1) + X_MARGIN, (int) scale(flipY(l.y1))
+                            + X_MARGIN, (int) scale(l.x2) + X_MARGIN,
+                    (int) scale(flipY(l.y2)) + X_MARGIN);
         }
 
     }

@@ -9,6 +9,7 @@ import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingFrame;
+import rp.warehouse.pc.management.LocalisationView;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
@@ -71,8 +72,11 @@ public class RobotsControl {
             try {
                 Communication comms = new Communication(robotIDs[i], robotNames[i]);
                 pool.execute(comms);
+
+                LoadingFrame.finishedLoading();
                 Localiser localiser = new Localiser(comms);
 
+                new LocalisationView(localiser);
                 RobotLocation location = localiser.getPosition();
 
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
