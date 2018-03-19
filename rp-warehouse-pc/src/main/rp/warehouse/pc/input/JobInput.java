@@ -51,13 +51,13 @@ public class JobInput {
             String line = scanner.next();
             //split the above string into an array of strings:
             List<String> list = Arrays.asList(line.split(","));
-            //convert that list to an arraylist to make it easier to work with
+            //convert that list to an arraylist emsto make it easier to work with
             ArrayList<String> arrayList = new ArrayList<>(list.size());
             arrayList.addAll(list);
 
             //create a new item where:
             //1st string = name, 2nd string = reward, 3rd string = weight
-            Item item = new Item(Float.parseFloat(arrayList.get(1)), Float.parseFloat(arrayList.get(2)));
+            Item item = new Item(arrayList.get(0), Float.parseFloat(arrayList.get(1)), Float.parseFloat(arrayList.get(2)));
 
             //add the item to the items table
             items.add(arrayList.get(0), item);
