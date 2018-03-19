@@ -53,13 +53,18 @@ public class RewardCounter {
         String jobId= task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
             if(uncompletedJobReference.containsKey(jobId)) {
-//                if(jobReference.get(jobId).getNumber > uncompletedJobReference.get(jobId)) {
-//                    uncompletedJobReference increment Integer
-//                } 
-//                if (jobReference.get(jobId).getNumber == uncompletedJobReference.get(jobId)) {
-//                    uncompletedJobReference.remove(jobId);
-//                    completedJobReference.put(jobId, true);
-//                }
+                if(jobReference.get(jobId).numOfTasks() > uncompletedJobReference.get(jobId)) {
+                    uncompletedJobReference.put(jobId, uncompletedJobReference.get(jobId)+1);
+                } 
+                if (jobReference.get(jobId).numOfTasks() == uncompletedJobReference.get(jobId)) {
+                    uncompletedJobReference.remove(jobId);
+                    completedJobReference.put(jobId, true);
+                    Job rewardToClaim = jobReference.get(jobId);
+                    ArrayList<Task> tasks = rewardToClaim.getItems();
+                    for (Task taskElement: tasks) {
+                        addReward(taskElement.getItem().getReward());
+                    }
+                }
             }else {
                 uncompletedJobReference.put(jobId, 1);
             }
