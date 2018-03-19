@@ -68,19 +68,22 @@ public class LocalisationCollection {
 	 *            the ranges discovered after moving.
 	 */
 	public void update(final byte direction, final Ranges ranges) {
-		// Update the current heading using modulo.
-		heading = (byte) ((heading + direction) % 4);
-		// Get the respective change in direction, relative to the initial assumption
-		// and the heading.
-		final Point move = directionPoint[heading];
-		try {
-			// Get the possible points of which the robot could be in given the current
-			// ranges, rotated by the current heading to use north-based ranges.
-			List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
-			// Then filter these positions.
-			possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
-		} catch (NoIdeaException e) {
-			logger.info("(" + startingDirection + "): No more directions");
+		// Only update if there are locations to process
+		if (possibleLocations.size() > 0) {
+			// Update the current heading using modulo.
+			heading = (byte) ((heading + direction) % 4);
+			// Get the respective change in direction, relative to the initial assumption
+			// and the heading.
+			final Point move = directionPoint[heading];
+			try {
+				// Get the possible points of which the robot could be in given the current
+				// ranges, rotated by the current heading to use north-based ranges.
+				List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
+				// Then filter these positions.
+				possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
+			} catch (NoIdeaException e) {
+				logger.info("(" + startingDirection + "): No more directions");
+			}
 		}
 	}
 
