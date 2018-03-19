@@ -144,14 +144,15 @@ public class RobotInterfaceController {
 			communicator.sendCommand(0);
 		} else {
 			waiting = true;
+			LCD.clearDisplay();
+			LCD.drawString("Pickup amount: " + toPickup, MIDDLE_SCREEN_WIDTH, MIDDLE_SCREEN_HEIGHT);
 		}
 	}
-<<<<<<< HEAD
-=======
+
 	//add dropoff on middle button
 	//add value display
 	//display when picking up etc
 
 
->>>>>>> branch 'RobotInterface' of git@git.cs.bham.ac.uk:dxj786/rp-warehouse.git
+
 }
