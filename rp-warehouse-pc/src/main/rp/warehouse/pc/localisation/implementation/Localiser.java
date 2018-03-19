@@ -28,7 +28,7 @@ public class Localiser implements Localisation {
 	private static final Logger logger = Logger.getLogger(Localiser.class);
 	private static final byte FORWARD = Protocol.NORTH, RIGHT = Protocol.EAST, BACKWARD = Protocol.SOUTH,
 			LEFT = Protocol.WEST;
-	private static final byte[] directionProtocol = new byte[] { FORWARD, RIGHT, BACKWARD, LEFT };
+	public static final byte[] directionProtocol = new byte[] { FORWARD, RIGHT, BACKWARD, LEFT };
 	private final LocalisationCollection northAssumption = new LocalisationCollection(Ranges.UP),
 			eastAssumption = new LocalisationCollection(Ranges.RIGHT),
 			southAssumption = new LocalisationCollection(Ranges.DOWN),
@@ -116,6 +116,16 @@ public class Localiser implements Localisation {
 	}
 
 	/**
+	 * Method to get a stream of all of the current Robot Locations.
+	 * 
+	 * @return a stream of all of the locations.
+	 */
+	public Stream<RobotLocation> getCurrentLocations() {
+		return Stream.concat(Stream.concat(northAssumption.stream(), eastAssumption.stream()),
+				Stream.concat(southAssumption.stream(), westAssumption.stream()));
+	}
+
+	/**
 	 * Method to determine whether the loop still needs to run.
 	 * 
 	 * @param assumptions
@@ -123,7 +133,7 @@ public class Localiser implements Localisation {
 	 * @return whether the loop needs to run.
 	 */
 	private boolean needsToRun(LocalisationCollection... assumptions) {
-		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() == 1;
+		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
 	}
 
 }
