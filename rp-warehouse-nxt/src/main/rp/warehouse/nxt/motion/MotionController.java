@@ -1,9 +1,6 @@
 package rp.warehouse.nxt.motion;
 
-import lejos.nxt.Button;
-import lejos.nxt.LightSensor;
-import lejos.nxt.SensorConstants;
-import lejos.nxt.SensorPort;
+import lejos.nxt.*;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.Delay;
 import rp.config.WheeledRobotConfiguration;
@@ -111,7 +108,6 @@ public class MotionController implements Movement {
 		pilot.setTravelSpeed(0.12);
 		pilot.forward();
 
-		Rate r = new Rate(20);
 
 		while (!junction) {
 
@@ -132,7 +128,6 @@ public class MotionController implements Movement {
 				pilot.steer(0);
 			}
 
-			r.sleep();
 		}
 		// returns true once it has reached a junction
 		pilot.travel(0.08);
@@ -141,6 +136,10 @@ public class MotionController implements Movement {
 
 	// calibrates the sensors on startup.
 	private void calibrateSensors() {
+//		while (temp) {
+//			LCD.drawString("l " + leftSensor.getLightValue() + " r " + rightSensor.getLightValue(), 0, 0);
+//		}
+
 		int rightDark = 0;
 		int leftDark = 0;
 		for (int i = 0; i < 3; i++) {
@@ -165,9 +164,9 @@ public class MotionController implements Movement {
 		leftLight = leftLight/3;
 		System.out.println("Light value finshed");
 
-		rightLineLimit = (rightDark + rightLight)*0.44;
-		leftLineLimit = (leftDark + leftLight)*0.44;
-		System.out.println("Sensors have been calibrated!");
+		rightLineLimit = (rightDark + rightLight)*0.5;
+		leftLineLimit = (leftDark + leftLight)*0.5;
+		LCD.drawString("l " + leftLineLimit + " r " + rightLineLimit, 0, 0);
 	}
 
 	public void rotate() {
