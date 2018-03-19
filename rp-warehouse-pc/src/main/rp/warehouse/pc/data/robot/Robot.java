@@ -79,6 +79,10 @@ public class Robot implements Runnable {
         
         logger.info(name + ": Created");
     }
+    
+    public void setComminications(String ID, String name, Communication comms, ExecutorService pool) {
+        
+    }
     @Override
     public void run() {
         // localisation happens here

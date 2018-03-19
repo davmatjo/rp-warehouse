@@ -36,6 +36,7 @@ public class RobotsControl {
     private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
+    private static ArrayList<Queue<Task>> listOfItems;
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -51,7 +52,8 @@ public class RobotsControl {
      * the size of the array should be 1
      * 
      */
-    public static void addRobots(ArrayList<Queue<Task>> listOfItems) {
+    public static void addRobots(ArrayList<Queue<Task>> _listOfItems) {
+        listOfItems=_listOfItems;
         logger.debug("Starting Robot Creation");
 
         ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
@@ -59,6 +61,7 @@ public class RobotsControl {
 
         RoutePlan.setRobots(robots);
         
+        // Create robots
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
@@ -74,6 +77,8 @@ public class RobotsControl {
             i++;
         }
         
+        
+        // Runs Robot threads
         for (Robot robot : robots) {
             pool.execute(robot);
         }
@@ -86,16 +91,12 @@ public class RobotsControl {
         pool.shutdown();
     }
 
-    /**
-     * For: Route Planning and Warehouse to get robot classes in the for of array
-     *
-     * @return ArrayList of Robots
-     */
-    public static ArrayList<Robot> getRobots() {
-        return robots;
+    public static void setRobotData(String[] _robotNames, String [] _robotIDs, RobotLocation[] _robotLocations) {
+//        robotNames =_robotNames;
+//        robotIDs = _robotIDs;
+//        robotLocations = _robotLocations;
     }
-
 }
 //
-//  \_('_')_/`
+//  `\_('_')_/`
 //
