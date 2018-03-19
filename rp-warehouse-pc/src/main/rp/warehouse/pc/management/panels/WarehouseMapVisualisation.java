@@ -30,6 +30,10 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         renderPaths(g2);
     }
 
+    /**
+     * Renders all planned routes for all robots
+     * @param g2 Graphics2D
+     */
     private void renderPaths(Graphics2D g2) {
         g2.setPaint(Color.RED);
         g2.setStroke(new BasicStroke(3));
@@ -65,6 +69,11 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
 
     }
 
+    /**
+     * Takes a location and changes it based on a direction
+     * @param location Location to edit
+     * @param direction Direction to move location by
+     */
     private void changeLocation(RobotLocation location, int direction) {
         switch (direction) {
             case Protocol.NORTH:
