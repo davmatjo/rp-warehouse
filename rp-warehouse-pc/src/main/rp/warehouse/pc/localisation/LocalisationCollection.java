@@ -2,10 +2,12 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
 import lejos.geom.Point;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 
 /**
@@ -117,6 +119,10 @@ public class LocalisationCollection {
 	 */
 	public byte getHeading() {
 		return heading;
+	}
+
+	public Stream<RobotLocation> stream() {
+		return possibleLocations.stream().map(l -> new RobotLocation(l, Localiser.directionProtocol[heading]));
 	}
 
 	/**
