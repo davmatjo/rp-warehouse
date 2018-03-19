@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
@@ -65,8 +66,8 @@ public class Localiser implements Localisation {
 		westAssumption.start(ranges);
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
-		while (northAssumption.notComplete() && eastAssumption.notComplete() && southAssumption.notComplete()
-				&& westAssumption.notComplete() && runCounter++ < MAX_RUNS) {
+		while (needsToRun(northAssumption, eastAssumption, southAssumption, westAssumption)
+				&& runCounter++ < MAX_RUNS) {
 			List<Byte> directions = ranges.getAvailableDirections();
 			if (runCounter > 1) {
 				directions.remove(directions.indexOf(Ranges.getOpposite(previousDirection)));
@@ -109,15 +110,20 @@ public class Localiser implements Localisation {
 		}
 
 		// One of the assumptions is complete, return the completed position
-		if (northAssumption.isComplete()) {
-			return new RobotLocation(northAssumption.getPoint(), directionProtocol[northAssumption.getHeading()]);
-		} else if (eastAssumption.isComplete()) {
-			return new RobotLocation(eastAssumption.getPoint(), directionProtocol[eastAssumption.getHeading()]);
-		} else if (southAssumption.isComplete()) {
-			return new RobotLocation(southAssumption.getPoint(), directionProtocol[southAssumption.getHeading()]);
-		} else {
-			return new RobotLocation(westAssumption.getPoint(), directionProtocol[westAssumption.getHeading()]);
-		}
+		return Stream.of(northAssumption, eastAssumption, southAssumption, westAssumption)
+				.filter(LocalisationCollection::isComplete)
+				.map(l -> new RobotLocation(l.getPoint(), directionProtocol[l.getHeading()])).findFirst().get();
+	}
+
+	/**
+	 * Method to determine whether the loop still needs to run.
+	 * 
+	 * @param assumptions
+	 *            the different direction assumptions.
+	 * @return whether the loop needs to run.
+	 */
+	private boolean needsToRun(LocalisationCollection... assumptions) {
+		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() == 1;
 	}
 
 }
