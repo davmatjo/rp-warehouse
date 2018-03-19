@@ -34,27 +34,33 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         g2.setPaint(Color.RED);
         g2.setStroke(new BasicStroke(3));
 
-        for (Map.Entry<Robot, RobotPoseProvider> robot : robotsPoses) {
-            try {
-                Route route = robot.getKey().getRoute();
+        for (Map.Entry<Robot, RobotPoseProvider> robotPose : robotsPoses) {
+            Route route = robotPose.getKey().getRoute();
 
-                RobotLocation currentLocation = robot.getKey().getLocation();
+            RobotLocation currentLocation = robotPose.getKey().getLocation();
 
-                renderLine(robot.getValue().getPose().getLocation(), currentLocation.toPose().getLocation(), g2);
+            // Draw from pose to current location
+            renderLine(robotPose.getValue().getPose().getLocation()
+                    , currentLocation.toPose().getLocation()
+                    , g2);
 
+            if (route == null || route.isEmpty()) {
+                logger.trace("Ignoring empty route");
+            } else {
+
+                // Draw future routes, if any
                 for (int i : route) {
                     RobotLocation nextLocation = new RobotLocation(currentLocation);
                     changeLocation(nextLocation, i);
 
-                    renderLine(robot.getKey().getLocation().toPose().getLocation()
+                    renderLine(robotPose.getKey().getLocation().toPose().getLocation()
                             ,  nextLocation.toPose().getLocation()
                             ,  g2);
 
                     currentLocation = new RobotLocation(nextLocation);
                 }
-            } catch (IndexOutOfBoundsException e) {
-                logger.debug("Ignoring non existent path");
             }
+
         }
 
     }

@@ -25,7 +25,9 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
 
     @Override
     public Pose getPose() {
-        return currentPose;
+        synchronized (lock) {
+            return currentPose == null ? new Pose() : currentPose;
+        }
     }
 
     @Override
@@ -38,60 +40,64 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
         RobotLocation previous = robot.getLocation();
         int heading;
         while (true) {
-            Route route = robot.getRoute();
-            boolean interpolate;
 
-            try {
-                interpolate = !(route.peek() == Protocol.WAITING
-                        || route.peek() == Protocol.DROPOFF
-                        || route.peek() == Protocol.PICKUP);
+            synchronized (lock) {
+                Route route = robot.getRoute();
+                boolean interpolate;
 
-            } catch (NullPointerException e) {
-                interpolate = true;
-            }
+                try {
+                    interpolate = !(route.peek() == Protocol.WAITING
+                            || route.peek() == Protocol.DROPOFF
+                            || route.peek() == Protocol.PICKUP);
 
-            if (!robot.getLocation().equals(previous)) {
-                previous = robot.getLocation();
-
-                RobotLocation currentLocation = robot.getLocation();
-                switch (currentLocation.getDirection()) {
-                    case Protocol.NORTH:
-                        currentLocation.setY(currentLocation.getY() - 1);
-                        break;
-                    case Protocol.EAST:
-                        currentLocation.setX(currentLocation.getX() - 1);
-                        break;
-                    case Protocol.SOUTH:
-                        currentLocation.setY(currentLocation.getY() + 1);
-                        break;
-                    case Protocol.WEST:
-                        currentLocation.setX(currentLocation.getX() + 1);
+                } catch (NullPointerException e) {
+                    interpolate = true;
                 }
 
-                currentPose = currentLocation.toPose();
+                if (!robot.getLocation().equals(previous)) {
+                    previous = robot.getLocation();
 
-                heading = currentLocation.getDirection();
+                    RobotLocation currentLocation = robot.getLocation();
+                    switch (currentLocation.getDirection()) {
+                        case Protocol.NORTH:
+                            currentLocation.setY(currentLocation.getY() - 1);
+                            break;
+                        case Protocol.EAST:
+                            currentLocation.setX(currentLocation.getX() - 1);
+                            break;
+                        case Protocol.SOUTH:
+                            currentLocation.setY(currentLocation.getY() + 1);
+                            break;
+                        case Protocol.WEST:
+                            currentLocation.setX(currentLocation.getX() + 1);
+                    }
 
-                switch (heading) {
-                    case Protocol.NORTH:
-                        currentPose.setHeading(0);
-                        break;
-                    case Protocol.EAST:
-                        currentPose.setHeading(90);
-                        break;
-                    case Protocol.SOUTH:
-                        currentPose.setHeading(180);
-                        break;
-                    case Protocol.WEST:
-                        currentPose.setHeading(-90);
+                    currentPose = currentLocation.toPose();
+
+                    heading = currentLocation.getDirection();
+
+                    switch (heading) {
+                        case Protocol.NORTH:
+                            currentPose.setHeading(0);
+                            break;
+                        case Protocol.EAST:
+                            currentPose.setHeading(90);
+                            break;
+                        case Protocol.SOUTH:
+                            currentPose.setHeading(180);
+                            break;
+                        case Protocol.WEST:
+                            currentPose.setHeading(-90);
+                    }
+
                 }
-
+                if (interpolate) {
+                    interpolate();
+                } else {
+                    currentPose = robot.getLocation().toPose();
+                }
             }
-            if (interpolate) {
-                interpolate();
-            } else {
-                currentPose = robot.getLocation().toPose();
-            }
+            r.sleep();
         }
     }
 
@@ -110,6 +116,5 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                 currentPose = new Pose(currentPose.getX(), currentPose.getY() + INTERPOLATION, currentPose.getHeading());
                 break;
         }
-        r.sleep();
     }
 }
