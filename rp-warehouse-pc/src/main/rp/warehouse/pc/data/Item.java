@@ -38,4 +38,8 @@ public class Item {
     public String toString() {
         return "at " + location + " of weight " + weight + " with reward " + reward;
     }
+
+    public String getName() {
+        return name;
+    }
 }
