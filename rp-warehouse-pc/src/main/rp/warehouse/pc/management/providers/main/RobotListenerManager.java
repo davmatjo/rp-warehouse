@@ -27,7 +27,6 @@ public class RobotListenerManager implements Runnable {
     @Override
     public void run() {
         Rate r = new Rate(2);
-        Task previousTask = robot.getTask();
         while (true) {
             textArea.setText(robot.toString());
             listModel.set(ID, robot.getName() + ": " + robot.getTask().toString());

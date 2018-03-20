@@ -3,6 +3,7 @@ package rp.warehouse.pc.route;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Warehouse;
 import rp.warehouse.pc.data.robot.Robot;
@@ -202,12 +203,14 @@ public class Node {
 				logger.debug("New robot blocked locations");
 				Route directions = robot.getRoute();
 
-				if (tick == 0) {
+				if (tick == 0 && robot.isInTransit()) {
 					RobotLocation current = robot.getLocation();
-					int direction = current.getDirection();
+					current.backward();
+					blocked.add(current);
 				}
 
 				try {
+					blocked.add(directions.getLocation(tick - 1));
 					blocked.add(directions.getLocation(tick));
 				} catch (IndexOutOfBoundsException e) {
 					logger.trace("Robot has no plan this far");
