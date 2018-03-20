@@ -3,7 +3,6 @@ package rp.warehouse.pc.data.robot.utils;
 
 import org.apache.log4j.Logger;
 
-import rp.warehouse.pc.communication.Protocol;
 /**
  * Used to update location 
  * @author roman
