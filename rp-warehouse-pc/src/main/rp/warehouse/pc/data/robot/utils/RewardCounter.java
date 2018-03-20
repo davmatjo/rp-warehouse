@@ -14,7 +14,7 @@ import rp.warehouse.pc.input.Jobs;
 import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
 
 /**
- * Used to keep record of the points earned
+ * Used to keep record of the points earned and Jobs
  * @author roman
  *
  */
@@ -30,6 +30,9 @@ public class RewardCounter {
 
     private static float pointsEarned = 0.0f;
     
+    /**
+     * Erases all the data fro this class
+     */
     public static void resetJobs() {
         jobReference.clear();
         uncompletedJobReference.clear();
@@ -37,6 +40,10 @@ public class RewardCounter {
         completedJobReference.clear();
     }
     
+    /**
+     * Sets the initial set of Jobs for reference
+     * @param jobs
+     */
     public static void setJobs(Jobs jobs) {
         ArrayList<Job> jobList =jobs.getJobs();
         for (Job job : jobList) {
@@ -44,23 +51,38 @@ public class RewardCounter {
         }
     }
     
+    /**
+     * @return - returns the number of Jobs Completed
+     */
     public static int getJobsDone() {
         return completedJobReference.size();
     }
     
+    /**
+     * @return - returns the number of Jobs Cancelled
+     */
     public static int getNumberJobsCancelled() {
         return cancelledJobReference.size();
     }
     
+    /**
+     * @return - returns the number of points earned for completed jobs
+     */
     public static float getPointsEarned() {
         return pointsEarned;
     }
     
+    /**
+     * @return - returns the number of jobs which are currently undone
+     */
     public static float getNumberUncompletedJobs() {
         System.out.println("hgfd");
         return uncompletedJobReference.size();
     }
     
+    /**
+     * @param task - adds the job to be cancelled
+     */
     public synchronized static void addCancelledJob(Task task) {
         cancelledJobReference.put(task.getJobID(), true);
         for (WarehouseInfoListener listener : listeners) {
@@ -68,6 +90,10 @@ public class RewardCounter {
         }
     }
     
+    /**
+     * @param task - Task which is checked if it is cancelled
+     * @return
+     */
     public static boolean checkIfCancelled(Task task) {
         
         return cancelledJobReference.containsKey(task.getJobID());
@@ -80,6 +106,9 @@ public class RewardCounter {
         }
     }
 
+    /**
+     * @param task - adds Task which was competed
+     */
     public synchronized static void addCompletedJob(Task task) {
         String jobId= task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {

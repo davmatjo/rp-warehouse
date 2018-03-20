@@ -22,6 +22,11 @@ import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 
 /**
+ *Runnable class of Robot which runs as a thread.
+ *This class contains all the logic of Execution:
+ *  - Planning for Pick Up or Drop Off
+ *  - Weight check 
+ *  - Sending Instructions to Communications
  *
  * @author roman
  *
@@ -29,38 +34,39 @@ import rp.warehouse.pc.route.RoutePlan;
 public class Robot implements Runnable {
 
     // Communications
-    private final String ID; // Communication ID
-    private final String name; // Communication name
-    private Communication comms; // Communication used to connect each robot to the a nxt brick
+    private final String ID;            // Communication ID
+    private final String name;          // Communication name
+    private Communication comms;        // Communication used to connect each robot to the a nxt brick
 
     // Route information
-    private Route route; // Queue of directions for the current task
-    private int lastInstruction = -1; // The current Instruction being done by robot (For WMI)
-    private RobotLocation location; // Current location of the robot
+    private Route route;                // Queue of directions for the current task
+    private int lastInstruction = -1;   // The current Instruction being done by robot (For WMI)
+    private RobotLocation location;     // Current location of the robot
     Localiser loc;
 
     // Job information
-    private final Queue<Task> tasks; // The queue of Tasks which need to be done
-    private Item currentItem; // Current Item
-    private Task currentTask; // Current Task which contains one Item
+    private final Queue<Task> tasks;    // The queue of Tasks which need to be done
+    private Item currentItem;           // Current Item
+    private Task currentTask;           // Current Task which contains one Item
+    
     // private final static Map<String, Boolean> cancelledJobs = new HashMap<String,
     // Boolean>(); // Stores ID's of cancelled Jobs
 
-    // Robot Information
-    private final static float WEIGHTLIMIT = 50.0f; // The maximum load robot can carry
+    // Robot Configuration
+    private final static float WEIGHTLIMIT = 50.0f;     // The maximum load robot can carry
     private float currentWeightOfCargo = 0.0f;
-    private final int RATE = 20; // Rate of sleep
-    private int status = Status.NOTHING; // Current Status of the robot
+    private final int RATE = 20;                        // Rate of sleep
+    private int status = Status.NOTHING;                // Current Status of the robot
     private final List<Task> tasksInTheCargo = new ArrayList<>(); // List of Tasks currently picked up
-    private boolean getNextItem = false;
+    private boolean getNextItem = false;                // Tells if needs to pick up the next item
 
     // Utilities
-    RobotUtils robotUtils; // Used to perform updates of location
-
+    private static RobotUtils robotUtils;                              // Used to perform updates of location
     private static final Logger logger = Logger.getLogger(Robot.class);
 
     public Robot(String ID, String name, Queue<Task> newTasks, Communication comms, RobotLocation startingLocation)
             throws IOException {
+        
         // Initialisation
         this.ID = ID;
         this.name = name;
@@ -114,7 +120,7 @@ public class Robot implements Runnable {
                 status = Status.WAITING_FOR_PICKUP;
                 logger.debug(name + ": Waiting for Pick Up");
 
-                // Loops until right number of items was entered
+                // Loops until right number of items was entered or Job cancelled
                 while (!pickUp(comms.sendLoadingRequest(currentTask.getCount()))) {
                     r.sleep();
                     Delay.msDelay(200);
@@ -161,7 +167,7 @@ public class Robot implements Runnable {
     private boolean pickUp(int numberOfItems) {
         if (RewardCounter.checkIfCancelled(currentTask)) {
             // If the Job was cancelled
-            logger.debug(name + ": Canceled Job");
+            logger.debug(name + ": Cancelled Job");
             status = Status.PICKING_UP;
             return true;
 
@@ -171,7 +177,7 @@ public class Robot implements Runnable {
             float newWeight = currentWeightOfCargo + currentItem.getWeight() * currentTask.getCount();
 
             if (newWeight > WEIGHTLIMIT) {
-                logger.warn(name + ": Not enough spacem going to drop off. Should not happen");
+                logger.warn(name + ": Not enough space going to drop off. Should not happen");
                 // drop off come back for the item
                 status = Status.DROPPING_OFF;
 
@@ -181,7 +187,7 @@ public class Robot implements Runnable {
                 // drop off
                 status = Status.DROPPING_OFF;
 
-                // Place task to the cargo
+                // Add task to the cargo
                 tasksInTheCargo.add(currentTask);
 
                 // Get next item
@@ -193,7 +199,7 @@ public class Robot implements Runnable {
                 // Plan next item
                 status = Status.PICKING_UP;
 
-                // Place task to the cargo
+                // Add task to the cargo
                 tasksInTheCargo.add(currentTask);
 
                 // Get next item
@@ -212,16 +218,15 @@ public class Robot implements Runnable {
     }
 
     /**
-     * When called clears the cargo
+     * When called clears the cargo and gets rewards
      */
     private void dropOff() {
         logger.debug(name + ": Dropped off");
 
-        // empty cargo
+        // empty cargo and get Reward
         currentWeightOfCargo = 0;
         for (Task task : tasksInTheCargo) {
             RewardCounter.addCompletedJob(task);
-            // RewardCounter.addReward(task.getItem().getReward());
         }
         tasksInTheCargo.clear();
 
@@ -243,22 +248,28 @@ public class Robot implements Runnable {
      * Checks for cancellation, empty tasks and if can fit current task
      */
     private void updateTasks() {
-        // Only shuts down when dropped off all the items
+        
         if (tasks.isEmpty() && currentWeightOfCargo == 0) {
+            // Only shuts down when dropped off all the items
             logger.info(name + ": I am Done");
             Thread.currentThread().interrupt();
             System.exit(0);
         } else if (getNextItem && !tasks.isEmpty()) {
+            // Prevents NullPointer when going the last task
             currentTask = tasks.poll();
             currentItem = currentTask.getItem();
             getNextItem = false;
         }
+        
+        // Misses all the cancelled jobs
         while (RewardCounter.checkIfCancelled(currentTask)) {
             logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getClass() + " was canceled");
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
             route = null;
         }
+        
+        // Checks if can pick up the current task
         float newWeight = currentWeightOfCargo + currentItem.getWeight() * currentTask.getCount();
         if (newWeight > WEIGHTLIMIT && status == Status.PICKING_UP) {
             logger.debug(name + ": Not enough space for next item going to drop off.");
@@ -267,6 +278,10 @@ public class Robot implements Runnable {
         }
     }
 
+    /**
+     * Plans to the current Task depending of the value passed on 
+     * @param pickUp - true plan for item, false plan for drop off
+     */
     private void planning(boolean pickUp) {
         if (pickUp) {
             logger.debug(name + ": Planning for Pick up. For Point: " + currentItem.getLocation());
@@ -299,12 +314,20 @@ public class Robot implements Runnable {
     public String getName() {
         return name;
     }
-
+    
+    /**
+     * 
+     * @return - returns copy of the current Task
+     */
     public Task getTask() {
         Task copy = currentTask;
         return copy;
     }
 
+    /**
+     * 
+     * @return - returns copy of the RobotLocation
+     */
     public RobotLocation getLocation() {
         return new RobotLocation(location);
     }
