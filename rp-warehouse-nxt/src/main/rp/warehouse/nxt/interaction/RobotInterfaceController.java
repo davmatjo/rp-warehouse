@@ -128,15 +128,6 @@ public class RobotInterfaceController {
 	  on which one it is **/
 	private void buttonEvent(int command) {
 		timeout = false;
-		if (flag = true)	{
-			timer.cancel();
-			timer.purge();
-			timeout();
-		}
-		else	{
-			timeout();
-			flag = true;
-		}
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
@@ -144,19 +135,39 @@ public class RobotInterfaceController {
 						timer.cancel();
 						timer.purge();
 					}
+					flag = false;
 					break;
 			case LEFT:
 					displayScreen(command);
+					if (flag = true)	{
+						timer.cancel();
+						timer.purge();
+						timeout();
+					}
+					else	{
+						timeout();
+						flag = true;
+					}
 					break;
 			case RIGHT:
 					displayScreen(command);
+					if (flag = true)	{
+						timer.cancel();
+						timer.purge();
+						timeout();
+					}
+					else	{
+						timeout();
+						flag = true;
+					}
 					break;
 			case Protocol.OK:
 					displayScreen(command);
 					if (flag = true)	{
 						timer.cancel();
-						timer.purge();
+						timer.purge();		
 					}
+					flag = false;
 					break;
 		}
 	}
