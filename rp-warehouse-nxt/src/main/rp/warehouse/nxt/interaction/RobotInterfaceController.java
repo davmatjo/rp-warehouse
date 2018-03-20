@@ -25,6 +25,7 @@ public class RobotInterfaceController {
 	private int toPickup;
 	private boolean waiting;
 	private boolean timeout;
+	private boolean flag;
 	private Timer timer = new Timer();
 	
 	
@@ -39,6 +40,7 @@ public class RobotInterfaceController {
 		communicator = theCommunicator;
 		main();
 		timeout = true;
+		flag = false;
 	}
 	
 	/* In the main method the button listeners are created to listen to the buttons presses and the
@@ -125,15 +127,22 @@ public class RobotInterfaceController {
 	/** @param command This is the command that is sent by the button press detected by the listeners, it is handled differently depending
 	  on which one it is **/
 	private void buttonEvent(int command) {
-		timeout();
 		timeout = false;
+		if (flag = true)	{
+			timer.cancel();
+			timer.purge();
+			timeout();
+		}
+		else	{
+			timeout();
+			flag = true;
+		}
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
 					break;
 			case LEFT:
 					displayScreen(command);
-					
 					break;
 			case RIGHT:
 					displayScreen(command);
@@ -149,7 +158,6 @@ public class RobotInterfaceController {
 	private void timeout()	{
 		timer.schedule(new TimerTask()	{
 			@Override
-			//timeout will be set to false if the button listener is triggered
 			public void run() {
 				if (timeout = true)	{
 					communicator.sendCommand(Protocol.CANCEL);
@@ -176,7 +184,16 @@ public class RobotInterfaceController {
 			waiting = true;
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, TEXT_WIDTH, TEXT_HEIGHT);
-			timeout();
+			if (flag = true)	{
+				timer.cancel();
+				timer.purge();
+				timeout();
+			}
+			else	{
+				timeout();
+				flag = true;
+			}
+
 			//A timer is created which a task is then added to
 		}
 	}
