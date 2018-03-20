@@ -264,7 +264,7 @@ public class Robot implements Runnable {
         
         // Misses all the cancelled jobs
         while (RewardCounter.checkIfCancelled(currentTask)) {
-            logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getClass() + " was canceled");
+            logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getName() + " was canceled");
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
             route = null;
