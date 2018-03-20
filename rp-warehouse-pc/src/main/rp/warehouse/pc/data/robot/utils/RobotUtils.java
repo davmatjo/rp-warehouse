@@ -20,6 +20,10 @@ public class RobotUtils{
         name = _name;
     }
     
+    /**
+     * Updates Location based on the instruction 
+     * @param lastInstruction - the instruction executed
+     */
     public void updateLocation(int lastInstruction) {
         if (lastInstruction != -1) {
             logger.debug(name + ": " + "Updating location");

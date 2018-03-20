@@ -1,7 +1,7 @@
 package rp.warehouse.pc.data.robot.utils;
 
 /**
- * Signifies the status of robot
+ * States the status of robot
  * 
  * @author roman
  */
@@ -16,6 +16,10 @@ public class Status {
     public static final int WAITING_FOR_DROPOFF = 7;
     public static final int NOTHING = 8;
 
+    /**
+     * @param status
+     * @return - returns the String representation of the Status
+     */
     public static String getWord(int status) {
         String returnWord = "";
         switch (status) {
