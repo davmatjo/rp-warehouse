@@ -28,11 +28,11 @@ public class RewardCounterTest {
         ArrayList<Task> tasks = new ArrayList<>();
         Item item = new Item("top", 6.0f, 3.0f);
         Item item1 = new Item("Legs", 2.0f, 1.0f);
-        task1 = new Task(item, 1, "table");
-        task2 = new Task(item1, 4, "table");
+        task1 = new Task(item, 1, "1001");
+        task2 = new Task(item1, 4, "1001");
         tasks.add(task1);
         tasks.add(task2);
-        Job job = new Job("table", tasks);
+        Job job = new Job("1001", tasks);
         jobs.addJob(job);
 
     }
