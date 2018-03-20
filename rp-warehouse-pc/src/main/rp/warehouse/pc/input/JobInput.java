@@ -188,30 +188,6 @@ public class JobInput {
     }
 
 
-    //method returns all the jobs in a hash map
-    public HashMap<String, Job> wekaJobs() {
-
-        //create a new hashmap
-        HashMap<String, Job> wekaJobs = new HashMap<String, Job>();
-
-        //get the arraylist of jobs from the jobs object
-        ArrayList<Job> jobsList = jobs.getJobs();
-
-        //iterate over all the jobs in jobs
-        for (int i = 0; i>jobs.getJobs().size(); i++) {
-
-            //get the job
-            Job currentJob = jobsList.get(i);
-
-            //put it in the hashMap
-            wekaJobs.put(currentJob.getName(), currentJob);
-
-        }
-
-        return wekaJobs;
-
-
-    }
 
 
 
