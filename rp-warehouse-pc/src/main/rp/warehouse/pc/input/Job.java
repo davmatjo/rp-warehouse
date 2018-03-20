@@ -38,6 +38,10 @@ public class Job {
         return tasks.size();
     }
 
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
     public void setCancelled (int cancelled) {
         if (cancelled == 0) {
             this.cancelled = false;
