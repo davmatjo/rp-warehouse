@@ -55,4 +55,13 @@ public class TestRanges {
 		Assertions.assertEquals(r2, Ranges.rotate(r1, 3));
 	}
 
+	@Test
+	public void wrongRotation() {
+		// Actual reading (south)
+		Ranges r1 = new Ranges(false, false, true, false);
+		// North reading
+		Ranges r2 = new Ranges(true, false, false, false);
+		Assertions.assertNotEquals(r2, Ranges.rotate(r1, 1));
+	}
+
 }
