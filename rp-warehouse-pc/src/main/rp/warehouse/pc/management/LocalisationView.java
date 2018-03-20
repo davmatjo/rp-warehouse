@@ -12,14 +12,14 @@ import java.awt.*;
 public class LocalisationView extends JFrame {
     private LocaliserProgressPanel progressPanel;
 
-    public LocalisationView(Localiser localiser, String robotName, Object nextRobotTrigger) {
+    public LocalisationView(Localiser localiser, String robotName) {
         super("Localising");
 
         JPanel top = new JPanel();
         top.setLayout(new BorderLayout());
         top.add(new LocaliserMapPanel(localiser), BorderLayout.CENTER);
 
-        this.progressPanel = new LocaliserProgressPanel(localiser, nextRobotTrigger, robotName);
+        this.progressPanel = new LocaliserProgressPanel(localiser, robotName);
         top.add(progressPanel, BorderLayout.SOUTH);
 
         this.add(top);

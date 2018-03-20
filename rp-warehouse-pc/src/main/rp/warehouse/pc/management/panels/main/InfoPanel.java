@@ -3,7 +3,9 @@ package rp.warehouse.pc.management.panels.main;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
 import rp.warehouse.pc.data.robot.Robot;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.management.providers.main.RobotListenerManager;
+import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InfoPanel extends JPanel {
+public class InfoPanel extends JPanel implements WarehouseInfoListener {
+    private JLabel warehouseInfo;
+    private float totalReward = 0f;
+    private int jobsCancelled = 0;
+    private int jobsCompleted = 0;
 
     public InfoPanel(List<Robot> robots) {
         this.setLayout(new BorderLayout(0, 10));
@@ -62,6 +68,9 @@ public class InfoPanel extends JPanel {
         taskPanel.add(cancel, BorderLayout.SOUTH);
         taskPanel.setBackground(Color.ORANGE);
 
+        warehouseInfo = new JLabel("No info yet");
+        updateText();
+        RewardCounter.addListener(this);
 
         JPanel logo = new JPanel();
         logo.setSize(150, 100);
@@ -73,8 +82,30 @@ public class InfoPanel extends JPanel {
 
         this.add(taskPanel, BorderLayout.NORTH);
         this.add(robotPanel, BorderLayout.CENTER);
-        this.add(logo, BorderLayout.SOUTH);
+        this.add(warehouseInfo, BorderLayout.SOUTH);
+        //this.add(logo, BorderLayout.SOUTH);
 
     }
 
+    @Override
+    public void rewardChanged(float newReward) {
+        totalReward = newReward;
+        updateText();
+    }
+
+    @Override
+    public void jobCountChanged(int newJobCount) {
+        jobsCompleted = newJobCount;
+        updateText();
+    }
+
+    @Override
+    public void cancelledJobsChanged(int newCancelledCount) {
+        jobsCancelled = newCancelledCount;
+        updateText();
+    }
+
+    private void updateText() {
+        warehouseInfo.setText("Total reward: " + totalReward + " from " + jobsCompleted + " jobs. " + jobsCancelled + " cancelled");
+    }
 }

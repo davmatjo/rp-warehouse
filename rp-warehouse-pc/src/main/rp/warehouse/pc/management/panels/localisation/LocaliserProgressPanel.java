@@ -8,10 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LocaliserProgressPanel extends JPanel {
-    JButton nextRobot;
+    private JButton nextRobot;
 
 
-    public LocaliserProgressPanel(Localiser localiser, Object nextRobotTrigger, String name) {
+    public LocaliserProgressPanel(Localiser localiser, String name) {
         this.setLayout(new BorderLayout());
 
         JProgressBar progressBar = new JProgressBar(0, 100);
@@ -22,8 +22,8 @@ public class LocaliserProgressPanel extends JPanel {
         nextRobot.setEnabled(false);
 
         nextRobot.addActionListener((e) -> {
-            synchronized (nextRobotTrigger) {
-                nextRobotTrigger.notify();
+            synchronized (localiser) {
+                localiser.notify();
             }
         });
 

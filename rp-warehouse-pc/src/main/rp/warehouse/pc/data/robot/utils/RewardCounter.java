@@ -2,11 +2,13 @@ package rp.warehouse.pc.data.robot.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.Jobs;
+import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
 
 /**
  * Used to keep record of the points earned
@@ -19,6 +21,7 @@ public class RewardCounter {
     private static final Map<String, Integer> uncompletedJobReference = new HashMap<>();
     private static final Map<String, Boolean> cancelledJobReference = new HashMap<>();
     private static final Map<String, Boolean> completedJobReference = new HashMap<>();
+    private static final List<WarehouseInfoListener> listeners = new ArrayList<>();
 
     private static float pointsEarned = 0.0f;
     
@@ -29,11 +32,11 @@ public class RewardCounter {
         }
     }
     
-    public static int getJobsDone() {
+    private static int getJobsDone() {
         return completedJobReference.size();
     }
     
-    public static int getnumberJobsCancelled() {
+    private static int getnumberJobsCancelled() {
         return cancelledJobReference.size();
     }
     
@@ -52,7 +55,11 @@ public class RewardCounter {
 
     public synchronized static void addReward(float reward) {
         pointsEarned += reward;
+        for (WarehouseInfoListener listener : listeners) {
+            listener.rewardChanged(getPointsEarned());
+        }
     }
+
     public synchronized static void addCompletedJob(Task task) {
         String jobId= task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
@@ -73,13 +80,19 @@ public class RewardCounter {
                 uncompletedJobReference.put(jobId, 1);
             }
             
-        }else {
-            return;
         }
-        
-        
+
+        for (WarehouseInfoListener listener : listeners) {
+            listener.jobCountChanged(getJobsDone());
+            listener.cancelledJobsChanged(getnumberJobsCancelled());
+        }
+
     }
-    
+
+    public static void addListener(WarehouseInfoListener listener) {
+        listeners.add(listener);
+    }
+
     @Override
     public String toString() {
         return "";

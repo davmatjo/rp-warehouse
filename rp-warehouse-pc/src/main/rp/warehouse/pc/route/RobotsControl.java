@@ -40,7 +40,6 @@ public class RobotsControl {
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     private static ArrayList<Queue<Task>> listOfItems;
-    private static final Object waitForGui = new Object();
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -76,28 +75,31 @@ public class RobotsControl {
                 LoadingView.finishedLoading();
                 final Localiser localiser = new Localiser(comms);
 
-                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i], waitForGui);
-                RobotLocation location = localiser.getPosition();
+//                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
+//                RobotLocation location = localiser.getPosition();
 
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, new RobotLocation(0, 0, 3));
                 robots.add(newRobot);
 
-                localisationView.finishedLocalising();
+//                localisationView.finishedLocalising();
+//
+//                synchronized (localiser) {
+//                    localiser.wait();
+//                }
+//
+//                localisationView.setVisible(false);
 
-                synchronized (waitForGui) {
-                    waitForGui.wait();
-                }
-
-                localisationView.setVisible(false);
+                comms.setRobot(newRobot);
 
                 logger.debug("Robot " + robotNames[i] + " created");
 
             } catch (IOException e) {
                 logger.error("Could not connect to " + robotNames[i]);
-            } catch (NoIdeaException e) {
-                logger.error("Could not localise " + robotNames[i]);
-            } catch (InterruptedException e) {
-                logger.fatal("Interrupted somehow while waiting for gui");
+//            } catch (NoIdeaException e) {
+//                logger.error("Could not localise " + robotNames[i]);
+//            } catch (InterruptedException e) {
+//                logger.fatal("Interrupted somehow while waiting for gui");
+//            }
             }
 
             i++;
