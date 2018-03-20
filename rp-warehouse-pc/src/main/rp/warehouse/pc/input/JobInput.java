@@ -188,8 +188,6 @@ public class JobInput {
 
     }
 
-    public HashMap<>
-
 
 
 

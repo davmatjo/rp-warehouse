@@ -61,7 +61,7 @@ public class Robot implements Runnable {
     private boolean getNextItem = false;                // Tells if needs to pick up the next item
 
     // Utilities
-    private static RobotUtils robotUtils;                              // Used to perform updates of location
+    private RobotUtils robotUtils;                              // Used to perform updates of location
     private static final Logger logger = Logger.getLogger(Robot.class);
 
     public Robot(String ID, String name, Queue<Task> newTasks, Communication comms, RobotLocation startingLocation)
