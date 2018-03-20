@@ -6,10 +6,7 @@ import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class JobInput {
 
@@ -190,6 +187,8 @@ public class JobInput {
 
 
     }
+
+    public HashMap<>
 
 
 
