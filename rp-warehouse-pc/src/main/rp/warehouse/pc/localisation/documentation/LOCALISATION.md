@@ -25,7 +25,13 @@ Initialising a `Localisation` class generates an `ArrayList<Point> blockedPoints
 
 For the localisation to work, the ranges recorded at every point need to be generated beforehand so that the ranges recorded from the robot can be looked up and matched against the known map.
 
-To do this, a `GridMap world` is stored in the class, using the `Warehouse.build()` method to populate it. This then allows for the `world.getXSize()` and `world.getYSize()` methods to be used to get the max X and Y co-ordinates of the world, which can then be used within a for loop to iterate over all of the co-ordinates:
+To do this, a `GridMap world` is stored in the class, using the `Warehouse.build()` method to populate it. This GridMap can be visualised as the following:
+
+![GridMap](GridMap.png)
+
+The red rectangle signifies the bounds of the co-ordinates, meaning that the lower left corner of the red rectangle is (0,0) and the upper right corner is (11,7).
+
+This then allows for the `world.getXSize()` and `world.getYSize()` methods to be used to get the max X and Y co-ordinates of the world, which can then be used within a for loop to iterate over all of the co-ordinates:
 
 ```java
 for (int x = 0; x < world.getXSize(); x++) {
@@ -44,6 +50,12 @@ These are then used to create a `Ranges ranges = new Ranges(up, right, down, lef
 ```java
 warehouseMap.put(ranges, point);
 ```
+
+Running this will result in what is visualsied in the following diagram:
+
+![Ranges example](Ranges.png)
+
+Although only three points have been annotated here, each translucent point also has a Ranges object generated for it.
 
 ### Converters
 
@@ -68,3 +80,22 @@ The line responsible for this filtering is the following:
 ```java
 next.removeIf(p -> !initial.contains(p.subtract(change)) || blockedPoints.contains(p));
 ```
+
+
+## Run-Through Example
+
+Starting the localisation process with the robot facing **EAST** at position **(0,5)**, the following possible positions are discovered:
+
+![Example Part 1](ExamplePart1.png)
+
+In the diagram, the different assumptions are colour coded. These assumptions assume that the first reading was taken with the robot facing in this direction, therefore in this case, the correct ones to follow are the **EAST** assumptions (green). The `LocalisationCollection` objects for each of these assumptions are responsible for rotating the ranges they receive based on their assumption of direction. Since the virtual ranges are generated north-based, they have to rotate the ranges so that they are also north-based according to their assumptions, hence why there are different values in the colour coded ranges.
+
+The available directions to travel in are either 1 or 3, representing RIGHT or LEFT. When 0 (FORWARDS) is not present, a direction is chosen at random, in this case, 3 (LEFT) is chosen:
+
+![Example Part 2](ExamplePart2.png)
+
+After this movement, the ranges are taken again, then filtered for each assumption. As can be shown from the diagram above, the west and south assumptions do not contain any possible locations and east contains 1; however, to ensure correctness, localisation should continue to run until the total number of possible points across all assumptions is 1. In the next iteration of localisation, the available directions are 0 and 1 (FORWARD or RIGHT), since 0 is available, it chooses this:
+
+![Example Part 3](ExamplePart3.png)
+
+Now once the ranges at this location are analysed, the north assumption has lost its possible locations and the only assumption to contain any points is the east assumption. Since the east assumption only has one possible location, localisation is complete, therefore the location and direction is returned. After each rotation, the direction is updated in the assumptions, meaning that the direction returned is the actual direction of which the robot is facing.
