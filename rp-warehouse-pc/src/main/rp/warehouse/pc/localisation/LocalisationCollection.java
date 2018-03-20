@@ -28,7 +28,7 @@ public class LocalisationCollection {
 	private final static String[] headings = new String[] { "North", "East", "South", "West" };
 
 	private final byte startingDirection;
-	private List<Point> possibleLocations = new ArrayList<Point>();
+	private List<Point> possibleLocations = new ArrayList<>();
 	private byte heading;
 
 	/**
