@@ -125,23 +125,21 @@ public class RobotInterfaceController {
 	/** @param command This is the command that is sent by the button press detected by the listeners, it is handled differently depending
 	  on which one it is **/
 	private void buttonEvent(int command) {
+		timeout();
 		timeout = false;
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
-					timeout();
 					break;
 			case LEFT:
 					displayScreen(command);
-					timeout();
+					
 					break;
 			case RIGHT:
 					displayScreen(command);
-					timeout();
 					break;
 			case Protocol.OK:
 					displayScreen(command);
-					timeout();
 					break;
 		}
 	}
