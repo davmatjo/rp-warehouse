@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class JobInput {
+public class JobReader {
 
     //locations where the files to be read are stored
     private String itemsLocation;
@@ -23,7 +23,7 @@ public class JobInput {
     CancelledJobs cancelledJobs = new CancelledJobs();
 
     //will be passed the location of the files as strings and recieve the files?
-    public JobInput() throws FileNotFoundException {
+    public JobReader() throws FileNotFoundException {
         this.itemsLocation = itemsLocation;
         this.jobsLocation = jobsLocation;
         this.locationsLocation = locationsLocation;
@@ -33,9 +33,9 @@ public class JobInput {
         readJobs();
     }
 
-//    public Jobs getJobs() {
-//        return jobs;
-//    }
+    public Jobs getJobs() {
+        return jobs;
+    }
 
     public void readItems() throws FileNotFoundException {
 
@@ -187,28 +187,8 @@ public class JobInput {
 
     }
 
+    public HashMap<String, Job> jobsAndCancellations() {
 
-    //method returns all the jobs in a hash map
-    public HashMap<String, Job> wekaJobs() {
-
-        //create a new hashmap
-        HashMap<String, Job> wekaJobs = new HashMap<String, Job>();
-
-        //get the arraylist of jobs from the jobs object
-        ArrayList<Job> jobsList = jobs.getJobs();
-
-        //iterate over all the jobs in jobs
-        for (int i = 0; i>jobs.getJobs().size(); i++) {
-
-            //get the job
-            Job currentJob = jobsList.get(i);
-
-            //put it in the hashMap
-            wekaJobs.put(currentJob.getName(), currentJob);
-
-        }
-
-        return wekaJobs;
 
 
     }
