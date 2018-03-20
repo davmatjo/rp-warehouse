@@ -89,6 +89,7 @@ public class Robot implements Runnable {
         logger.info(name + ": Started running");
         Rate r = new Rate(RATE);
 
+        status = Status.PICKING_UP;
         // Runs indefinitely
         while (true) {
             r.sleep();
