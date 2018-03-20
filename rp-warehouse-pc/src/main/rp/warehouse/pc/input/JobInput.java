@@ -23,7 +23,7 @@ public class JobInput {
     CancelledJobs cancelledJobs = new CancelledJobs();
 
     //will be passed the location of the files as strings and recieve the files?
-    public JobInput() throws FileNotFoundException {
+    public JobInput(String itemsLocation,String jobsLocation, String locationsLocation, String cancellationsLocation ) throws FileNotFoundException {
         this.itemsLocation = itemsLocation;
         this.jobsLocation = jobsLocation;
         this.locationsLocation = locationsLocation;
@@ -33,14 +33,11 @@ public class JobInput {
         readJobs();
     }
 
-//    public Jobs getJobs() {
-//        return jobs;
-//    }
 
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
-        Scanner scanner = new Scanner(new File("./items.csv"));
+        Scanner scanner = new Scanner(new File(itemsLocation));
 
         //for every line
         while(scanner.hasNext()){
@@ -67,7 +64,7 @@ public class JobInput {
     public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
-        Scanner scanner = new Scanner(new File("./locations.csv"));
+        Scanner scanner = new Scanner(new File(locationsLocation));
 
         //for every line
         while(scanner.hasNext()){
@@ -99,7 +96,7 @@ public class JobInput {
     public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
-        Scanner scanner = new Scanner(new File("./jobs.csv"));
+        Scanner scanner = new Scanner(new File(jobsLocation));
 //        scanner.useDelimiter(",");
 
         //for every line
@@ -158,7 +155,7 @@ public class JobInput {
     public void readCancellations() throws FileNotFoundException {
 
         //read in cancellations
-        Scanner scanner = new Scanner(new File("./cancellations.csv"));
+        Scanner scanner = new Scanner(new File(cancellationsLocation));
 
         //for every line
         while(scanner.hasNext()) {
