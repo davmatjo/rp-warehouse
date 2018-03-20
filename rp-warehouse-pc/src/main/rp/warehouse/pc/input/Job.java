@@ -18,6 +18,14 @@ public class Job {
 
     }
 
+    public Job(String name, ArrayList<Task> tasks, boolean cancelled) {
+
+        this.name = name;
+        this.tasks = tasks;
+        this.cancelled = cancelled;
+
+    }
+
     public String getName() {
         return name;
     }
