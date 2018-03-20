@@ -119,6 +119,7 @@ public class Robot implements Runnable {
                 }
 
             } else if (route.peek() == Protocol.PICKUP) {
+                this.previousLocation = new RobotLocation(location);
                 // When pick up location was reached
                 status = Status.WAITING_FOR_PICKUP;
                 logger.debug(name + ": Waiting for Pick Up");
@@ -131,6 +132,7 @@ public class Robot implements Runnable {
 
                 route = null;
             } else if (route.peek() == Protocol.DROPOFF) {
+                this.previousLocation = new RobotLocation(location);
                 // When drop off location was reached
                 status = Status.WAITING_FOR_DROPOFF;
                 logger.debug(name + ": Waiting for Drop Off");
@@ -342,7 +344,33 @@ public class Robot implements Runnable {
 
     public static String getDirectionString(int direction) {
         // Works out the String representation of the command
-        return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
+        String word = "";
+        switch (direction) {
+        case Protocol.EAST:
+            word = "EAST";
+            break;
+        case Protocol.NORTH:
+            word = "NORTH";
+            break;
+        case Protocol.SOUTH:
+            word = "SOUTH";
+            break;
+        case Protocol.WEST:
+            word = "WEST";
+            break;
+        case Protocol.DROPOFF:
+            word = "DROPOFF";
+            break;
+        case Protocol.WAITING:
+            word = "WAITING";
+            break;
+        case Protocol.PICKUP:
+            word = "PICKUP";
+            break;
+        default:
+            break;
+        }
+        return word;
     }
     
     public boolean isInTransit() {
