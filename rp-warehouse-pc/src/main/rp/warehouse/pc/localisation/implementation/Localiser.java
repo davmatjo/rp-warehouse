@@ -55,6 +55,8 @@ public class Localiser implements Localisation {
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 		// Initialise maps and assumptions
+		for (RobotLocation loc : toBlock)
+			map.updateRangesAroundPositions(loc.toPoint());
 		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
 		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
 		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);
@@ -76,49 +78,53 @@ public class Localiser implements Localisation {
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (needsToRun(northAssumption, eastAssumption, southAssumption, westAssumption)
 				&& runCounter++ < MAX_RUNS) {
-			List<Byte> directions = ranges.getAvailableDirections();
-			// Filter if it can go somewhere
-			if (directions.size() > 0) {
-				List<Byte> tempDirections = new ArrayList<>(directions);
-				// Remove backwards and all directions that would lead to visiting the same
-				// point again.
-				tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
-						.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
-				// If there are any directions left, set these as the directions to use,
-				// otherwise use the old ones.
-				if (tempDirections.size() > 0) {
-					directions = tempDirections;
+			if (hasNoPoints(northAssumption, eastAssumption, southAssumption, westAssumption)) {
+				throw new NoIdeaException(ranges);
+			} else {
+				List<Byte> directions = ranges.getAvailableDirections();
+				// Filter if it can go somewhere
+				if (directions.size() > 0) {
+					List<Byte> tempDirections = new ArrayList<>(directions);
+					// Remove backwards and all directions that would lead to visiting the same
+					// point again.
+					tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
+							.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+					// If there are any directions left, set these as the directions to use,
+					// otherwise use the old ones.
+					if (tempDirections.size() > 0) {
+						directions = tempDirections;
+					}
 				}
-			}
-			logger.info("Available directions: " + directions);
-			// Choose forwards, otherwise choose a random direction from the list of
-			// available directions.
-			final byte direction = directions.contains((byte) 0) ? 0
-					: directions.get(random.nextInt(directions.size()));
-			logger.info("Chosen direction: " + direction);
-			previousDirection = (byte) ((previousDirection + direction) % 4);
-			final Point move = directionPoint[direction];
-			logger.info("Chosen move: " + move);
+				logger.info("Available directions: " + directions);
+				// Choose forwards, otherwise choose a random direction from the list of
+				// available directions.
+				final byte direction = directions.contains((byte) 0) ? 0
+						: directions.get(random.nextInt(directions.size()));
+				logger.info("Chosen direction: " + direction);
+				previousDirection = (byte) ((previousDirection + direction) % 4);
+				final Point move = directionPoint[direction];
+				logger.info("Chosen move: " + move);
 
-			// Move the robot
-			comms.sendMovement(directionProtocol[previousDirection]);
+				// Move the robot
+				comms.sendMovement(directionProtocol[previousDirection]);
 
-			// Update relative position
-			relativePoint = relativePoint.add(move);
-			relativeVisitedPoints.add(relativePoint);
-			logger.info("Previous direction: " + previousDirection);
-			logger.info("Reversal rotation amount: " + direction);
-			// Update ranges
-			ranges = comms.getRanges();
-			logger.info("Received ranges: " + ranges);
+				// Update relative position
+				relativePoint = relativePoint.add(move);
+				relativeVisitedPoints.add(relativePoint);
+				logger.info("Previous direction: " + previousDirection);
+				logger.info("Reversal rotation amount: " + direction);
+				// Update ranges
+				ranges = comms.getRanges();
+				logger.info("Received ranges: " + ranges);
 
-			northAssumption.update(direction, ranges);
-			eastAssumption.update(direction, ranges);
-			southAssumption.update(direction, ranges);
-			westAssumption.update(direction, ranges);
+				northAssumption.update(direction, ranges);
+				eastAssumption.update(direction, ranges);
+				southAssumption.update(direction, ranges);
+				westAssumption.update(direction, ranges);
 
-			for (LocalisationListener listener : listeners) {
-				listener.newPoints(getCurrentLocations());
+				for (LocalisationListener listener : listeners) {
+					listener.newPoints(getCurrentLocations());
+				}
 			}
 		}
 
@@ -149,6 +155,18 @@ public class Localiser implements Localisation {
 	 */
 	private boolean needsToRun(LocalisationCollection... assumptions) {
 		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
+	}
+
+	/**
+	 * Method to determine whether there are no points contained within the
+	 * assumptions.
+	 * 
+	 * @param assumptions
+	 *            the different direction assumptions.
+	 * @return whether there are no points across all assumptions.
+	 */
+	private boolean hasNoPoints(LocalisationCollection... assumptions) {
+		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() == 0;
 	}
 
 	/**

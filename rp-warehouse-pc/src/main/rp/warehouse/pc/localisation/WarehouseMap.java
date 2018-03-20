@@ -1,6 +1,7 @@
 package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,8 +21,9 @@ import rp.warehouse.pc.data.Warehouse;
  */
 public class WarehouseMap {
 
-	private final HashMap<Ranges, ArrayList<Point>> positions = new HashMap<Ranges, ArrayList<Point>>();
-	private final HashMap<Point, Ranges> ranges = new HashMap<Point, Ranges>();
+	private final HashMap<Ranges, ArrayList<Point>> positions = new HashMap<>();
+	private final HashMap<Point, Ranges> ranges = new HashMap<>();
+	private final Point up = new Point(0, 1), right = new Point(1, 0), down = new Point(0, -1), left = new Point(-1, 0);
 	private static final List<Point> blockedPoints = Warehouse.getBlockedLocations().stream().map(Location::toPoint)
 			.collect(Collectors.toList());
 
@@ -61,7 +63,7 @@ public class WarehouseMap {
 	 *            The point of which the ranges occur at.
 	 */
 	private void put(final Ranges ranges, final Point point) {
-		final ArrayList<Point> points = positions.getOrDefault(ranges, new ArrayList<Point>());
+		final ArrayList<Point> points = positions.getOrDefault(ranges, new ArrayList<>());
 		points.add(point);
 		this.positions.put(ranges, points);
 		this.ranges.put(point, ranges);
@@ -101,6 +103,29 @@ public class WarehouseMap {
 	 */
 	public static List<Point> getBlockedPoints() {
 		return blockedPoints;
+	}
+
+	public void updateRangesAroundPositions(final Point point) {
+		final GridMap world = Warehouse.build();
+		List<Point> pointsAround = Arrays.asList(point.add(up), point.add(right), point.add(down), point.add(left));
+		// Remove the points from the ones to change if it is outside of the map, or
+		// inside blocked locations.
+		pointsAround.removeIf(p -> !world.isValidGridPosition((int) p.x, (int) p.y) || blockedPoints.contains(p));
+		for (Point p : pointsAround) {
+			final Ranges range = ranges.get(p);
+			ranges.remove(p);
+			positions.get(range).remove(p);
+			if (p.y > point.y) {
+				range.set((byte) 2, false);
+			} else if (p.x > point.x) {
+				range.set((byte) 3, false);
+			} else if (p.y < point.y) {
+				range.set((byte) 0, false);
+			} else {
+				range.set((byte) 1, false);
+			}
+			put(range, p);
+		}
 	}
 
 	@Override
