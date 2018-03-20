@@ -194,6 +194,7 @@ public class Robot implements Runnable {
                 status = Status.DROPPING_OFF;
 
                 // Add task to the cargo
+                logger.debug(name + " Took task: " + currentTask.getClass() + " of Job: " + currentTask.getJobID());
                 tasksInTheCargo.add(currentTask);
 
                 // Get next item
@@ -206,6 +207,7 @@ public class Robot implements Runnable {
                 status = Status.PICKING_UP;
 
                 // Add task to the cargo
+                logger.debug(name + " Took task: " + currentTask.getClass() + " of Job: " + currentTask.getJobID());
                 tasksInTheCargo.add(currentTask);
 
                 // Get next item

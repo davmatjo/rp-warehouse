@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import javafx.print.JobSettings;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.Jobs;
@@ -82,6 +83,7 @@ public class RewardCounter {
      * @param task - adds the job to be cancelled
      */
     public synchronized static void addCancelledJob(Task task) {
+        logger.debug("Job " + task.getJobID() + " cancelled");
         cancelledJobReference.put(task.getJobID(), true);
         for (WarehouseInfoListener listener : listeners) {
             listener.cancelledJobsChanged(getNumberJobsCancelled());
@@ -110,9 +112,11 @@ public class RewardCounter {
     public synchronized static void addCompletedJob(Task task) {
         String jobId= task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
+            logger.debug("Job " + jobId + " is valid");
             if(uncompletedJobReference.containsKey(jobId)) {
                 
                 int numberOfTaskDone = uncompletedJobReference.get(jobId);
+                logger.debug("Number of tasks done for this Job " + numberOfTaskDone);
                 if(jobReference.get(jobId).numOfTasks() > uncompletedJobReference.get(jobId)) {
                     uncompletedJobReference.put(jobId, numberOfTaskDone+1);
                 } 
