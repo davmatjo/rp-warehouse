@@ -30,6 +30,13 @@ public class RewardCounter {
 
     private static float pointsEarned = 0.0f;
     
+    public static void resetJobs() {
+        jobReference.clear();
+        uncompletedJobReference.clear();
+        cancelledJobReference.clear();
+        completedJobReference.clear();
+    }
+    
     public static void setJobs(Jobs jobs) {
         ArrayList<Job> jobList =jobs.getJobs();
         for (Job job : jobList) {
@@ -37,11 +44,11 @@ public class RewardCounter {
         }
     }
     
-    private static int getJobsDone() {
+    public static int getJobsDone() {
         return completedJobReference.size();
     }
     
-    private static int getNumberJobsCancelled() {
+    public static int getNumberJobsCancelled() {
         return cancelledJobReference.size();
     }
     
@@ -50,6 +57,7 @@ public class RewardCounter {
     }
     
     public static float getNumberUncompletedJobs() {
+        System.out.println("hgfd");
         return uncompletedJobReference.size();
     }
     
