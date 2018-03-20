@@ -140,6 +140,8 @@ public class RobotInterfaceController {
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
+					timer.cancel();
+					timer.purge();
 					break;
 			case LEFT:
 					displayScreen(command);
@@ -149,6 +151,8 @@ public class RobotInterfaceController {
 					break;
 			case Protocol.OK:
 					displayScreen(command);
+					timer.cancel();
+					timer.purge();
 					break;
 		}
 	}
