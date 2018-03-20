@@ -17,7 +17,7 @@ In order to establish the position of the robot, the current approach for the lo
 
 This process will repeat continuously until there is only 1 possible position to exist, or until a set threshold of repetitions has been met.
 
-As the initial heading is unknown, all of the possible positions have to be calculated 4 times simultaneously. This is done so that the robot can assume its heading as all 4 directions until it finds one of which is correct - 1 position found. This process is aided by the `LocalisationCollection` class, which essentially stores an individual list of possible points, the assumed starting heading, and the current heading based on the assumed starting one. All of this information is then used to return the `RobotLocation` of the robot once it has filtered the positions down to a final one.
+As the initial heading is unknown, all of the possible positions have to be calculated 4 times simultaneously. This is done so that the robot can assume its heading as all 4 directions until it finds one of which is correct - 1 position found. This process is aided by the `LocaliserAssumption` class, which essentially stores an individual list of possible points, the assumed starting heading, and the current heading based on the assumed starting one. All of this information is then used to return the `RobotLocation` of the robot once it has filtered the positions down to a final one.
 
 Rather than basing the localisation on probability, this approach is based on certainty - it is certain about its final location or not at all. This is because it only relies on the range sensor looking for a range 1 grid space away, which is reliable. Making use of this certainty ensures that the entire localisation process is robust and works well.
 
@@ -90,7 +90,7 @@ Starting the localisation process with the robot facing **EAST** at position **(
 
 ![Example Part 1](ExamplePart1.png)
 
-In the diagram, the different assumptions are colour coded. These assumptions assume that the first reading was taken with the robot facing in this direction, therefore in this case, the correct ones to follow are the **EAST** assumptions (green). The `LocalisationCollection` objects for each of these assumptions are responsible for rotating the ranges they receive based on their assumption of direction. Since the virtual ranges are generated north-based, they have to rotate the ranges so that they are also north-based according to their assumptions, hence why there are different values in the colour coded ranges.
+In the diagram, the different assumptions are colour coded. These assumptions assume that the first reading was taken with the robot facing in this direction, therefore in this case, the correct ones to follow are the **EAST** assumptions (green). The `LocaliserAssumption` objects for each of these assumptions are responsible for rotating the ranges they receive based on their assumption of direction. Since the virtual ranges are generated north-based, they have to rotate the ranges so that they are also north-based according to their assumptions, hence why there are different values in the colour coded ranges.
 
 The available directions to travel in are either **1** or **3**, representing **RIGHT** or **LEFT**. When **0 (FORWARDS)** is **not** present, a direction is chosen at random, in this case, **3 (LEFT)** is chosen:
 
