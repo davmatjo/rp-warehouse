@@ -9,7 +9,10 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.input.Job;
+import rp.warehouse.pc.input.Jobs;
 import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
 
@@ -29,18 +32,37 @@ import static org.mockito.Mockito.when;
  */
 public class RobotTest {
     public Robot robot ;
+    private Jobs jobs;
+    private Task task1;
+    private Task task2;
 
     @Before
     public void setup() {
-        Item item = new Item("hel", 2.0f, 3.0f);
-        Item item2 = new Item("hel", 2.0f, 3.0f);
+        jobs = new Jobs();
+        ArrayList<Task> tasks = new ArrayList<>();
+        Item item = new Item("top", 6.0f, 3.0f);
+        Item item2 = new Item("Legs", 2.0f, 1.0f);
+        task1 = new Task(item, 2, "table");
+        task2 = new Task(item2, 2, "table");
+        tasks.add(task1);
+        tasks.add(task2);
+        Job job = new Job("table", tasks);
+        jobs.addJob(job);
+        
+        RewardCounter.setJobs(jobs);
+        
+//        Item item = new Item("hel", 2.0f, 3.0f);
+//        Item item2 = new Item("hel", 2.0f, 3.0f);
         Location location = new Location(3, 3);
         Location location2 = new Location(5, 3);
         
         item.setLocation(location);
         item2.setLocation(location2);
-        Queue<Task> items= new LinkedList<Task>(Arrays.asList(new Task(item, 2, "d2")));
-        items.add(new Task(item2, 2, "d2"));
+        
+        Queue<Task> items= new LinkedList<Task>();
+        items.add(task1);
+        items.add(task2);
+        
         Communication mockedCommunications = mock(Communication.class);
         when(mockedCommunications.sendLoadingRequest(2)).thenReturn(2);
         //ExecutorService mockedPool = mock(ExecutorService.class);
@@ -81,13 +103,13 @@ public class RobotTest {
         //PowerMockito.mockStatic(RoutePlan.class);
         //Mockito.when(RoutePlan.plan(robot, new Location(3, 3))).thenReturn(mockedRoute);
         ExecutorService mockedPool = mock(ExecutorService.class);
-        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
-        //setup();
+        
         robot.run();
+//        Thread t = new Thread(robot);
+//        t.start();
         System.out.println("Hell");
         
         Assertions.assertEquals(robot.getID(),"0016531AFBE1");
-     // Shut down the pool to prevent new threads being created, and allow the program to end
     }
 //    
 //    @Test
