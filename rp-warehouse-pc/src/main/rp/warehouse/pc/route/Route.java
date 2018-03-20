@@ -19,11 +19,11 @@ public class Route implements Iterable<Integer> {
 
     Route(List<Node> nodes, boolean pickup, Node goalNode) {
         locations = new LinkedList<>();
-        nodes.stream().limit(4).forEach((n) -> locations.add(n.toLocation()));
+        nodes.stream().limit(3).forEach((n) -> locations.add(n.toLocation()));
 
         route = new LinkedList<>();
 
-        for (int i = 1; i < nodes.size() && i < 4; i ++) {
+        for (int i = 1; i < nodes.size() && i < 3; i ++) {
 
             if (nodes.get(i-1).getX() == nodes.get(i).getX() - 1) {
                 route.add(Protocol.EAST);
@@ -42,7 +42,7 @@ public class Route implements Iterable<Integer> {
             }
 
         }
-        if (nodes.size() < 4) {
+        if (nodes.size() < 3) {
             if (!nodes.get(nodes.size() - 1).equals(goalNode)) {
                 route.add(Protocol.WAITING);
             } else {

@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Warehouse;
 import rp.warehouse.pc.data.robot.Robot;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
 public class Node {
 	private static final Logger logger = Logger.getLogger(Node.class);
@@ -200,6 +201,11 @@ public class Node {
 			for (Robot robot : others) {
 				logger.debug("New robot blocked locations");
 				Route directions = robot.getRoute();
+
+				if (tick == 0) {
+					RobotLocation current = robot.getLocation();
+					int direction = current.getDirection();
+				}
 
 				try {
 					blocked.add(directions.getLocation(tick));

@@ -26,6 +26,38 @@ public class RobotLocation extends Location {
         this.direction = direction;
     }
 
+    public void forward() {
+        switch (direction) {
+            case Protocol.NORTH:
+                setY(getY() + 1);
+                break;
+            case Protocol.EAST:
+                setX(getX() + 1);
+                break;
+            case Protocol.SOUTH:
+                setY(getY() - 1);
+                break;
+            case Protocol.WEST:
+                setX(getX() - 1);
+        }
+    }
+
+    public void backward() {
+        switch (direction) {
+            case Protocol.NORTH:
+                setY(getY() - 1);
+                break;
+            case Protocol.EAST:
+                setX(getX() - 1);
+                break;
+            case Protocol.SOUTH:
+                setY(getY() + 1);
+                break;
+            case Protocol.WEST:
+                setX(getX() + 1);
+        }
+    }
+
     public int getDirection() {
         return direction;
     }
