@@ -10,7 +10,7 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 
-public class TestLocalisationCollection {
+public class TestLocaliserAssumption {
 	private final byte[] opposite = new byte[] { 0, 3, 2, 1 };
 	private final byte NORTH = Ranges.UP, EAST = Ranges.RIGHT, SOUTH = Ranges.DOWN, WEST = Ranges.LEFT;
 	private final WarehouseMap map = new WarehouseMap();
@@ -18,10 +18,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topCornerToBottom() {
 		// Actual direction: south
-		LocalisationCollection north = new LocalisationCollection(NORTH, map);
-		LocalisationCollection east = new LocalisationCollection(EAST, map);
-		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
-		LocalisationCollection west = new LocalisationCollection(WEST, map);
+		LocaliserAssumption north = new LocaliserAssumption(NORTH, map);
+		LocaliserAssumption east = new LocaliserAssumption(EAST, map);
+		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
+		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
 		final Ranges r1 = getRanges(0, 7, SOUTH);
 		// Start
 		start(r1, north, east, south, west);
@@ -49,10 +49,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topCornerArcRoundToSecondAisle() {
 		// Actual direction: west
-		LocalisationCollection north = new LocalisationCollection(NORTH, map);
-		LocalisationCollection east = new LocalisationCollection(EAST, map);
-		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
-		LocalisationCollection west = new LocalisationCollection(WEST, map);
+		LocaliserAssumption north = new LocaliserAssumption(NORTH, map);
+		LocaliserAssumption east = new LocaliserAssumption(EAST, map);
+		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
+		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(0, 7, WEST);
 		start(r1, north, east, south, west);
@@ -82,10 +82,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topOfLastAisleToTopCorner() {
 		// Actual direction: south
-		LocalisationCollection north = new LocalisationCollection(NORTH, map);
-		LocalisationCollection east = new LocalisationCollection(EAST, map);
-		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
-		LocalisationCollection west = new LocalisationCollection(WEST, map);
+		LocaliserAssumption north = new LocaliserAssumption(NORTH, map);
+		LocaliserAssumption east = new LocaliserAssumption(EAST, map);
+		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
+		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(11, 5, SOUTH);
 		start(r1, north, east, south, west);
@@ -107,10 +107,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void needsToRunAfterOneMove() {
 		// Actual direction: north
-		LocalisationCollection north = new LocalisationCollection(NORTH, map);
-		LocalisationCollection east = new LocalisationCollection(EAST, map);
-		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
-		LocalisationCollection west = new LocalisationCollection(WEST, map);
+		LocaliserAssumption north = new LocaliserAssumption(NORTH, map);
+		LocaliserAssumption east = new LocaliserAssumption(EAST, map);
+		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
+		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(5, 2, NORTH);
 		start(r1, north, east, south, west);
@@ -126,22 +126,22 @@ public class TestLocalisationCollection {
 		return Ranges.rotate(map.getRanges(new Point(x, y)), opposite[heading]);
 	}
 
-	private void start(Ranges r, LocalisationCollection... assumptions) {
+	private void start(Ranges r, LocaliserAssumption... assumptions) {
 		Stream.of(assumptions).forEach(l -> l.start(r));
 	}
 
-	private void update(byte d, Ranges r, LocalisationCollection... assumptions) {
+	private void update(byte d, Ranges r, LocaliserAssumption... assumptions) {
 		Stream.of(assumptions).forEach(l -> l.update(d, r));
 	}
 
-	private RobotLocation getLocation(LocalisationCollection... assumptions) {
-		return Stream.of(assumptions).filter(LocalisationCollection::isComplete)
+	private RobotLocation getLocation(LocaliserAssumption... assumptions) {
+		return Stream.of(assumptions).filter(LocaliserAssumption::isComplete)
 				.map(l -> new RobotLocation(l.getPoint(), Localiser.directionProtocol[l.getHeading()])).findFirst()
 				.get();
 	}
 
-	private boolean needsToRun(LocalisationCollection... assumptions) {
-		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
+	private boolean needsToRun(LocaliserAssumption... assumptions) {
+		return Stream.of(assumptions).mapToInt(LocaliserAssumption::getNumberOfPoints).sum() != 1;
 	}
 
 }
