@@ -13,7 +13,7 @@ import lejos.geom.Point;
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
-import rp.warehouse.pc.localisation.LocalisationCollection;
+import rp.warehouse.pc.localisation.LocaliserAssumption;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
 import rp.warehouse.pc.localisation.WarehouseMap;
@@ -33,7 +33,7 @@ public class Localiser implements Localisation {
 			LEFT = Protocol.WEST;
 	public static final byte[] directionProtocol = new byte[] { FORWARD, RIGHT, BACKWARD, LEFT };
 	private final WarehouseMap map = new WarehouseMap();
-	private final LocalisationCollection northAssumption, eastAssumption, southAssumption, westAssumption;
+	private final LocaliserAssumption northAssumption, eastAssumption, southAssumption, westAssumption;
 	private final Point[] directionPoint = new Point[4];
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
@@ -58,16 +58,16 @@ public class Localiser implements Localisation {
 		for (RobotLocation loc : toBlock)
 			map.updateRangesAroundPositions(loc.toPoint());
 		// North assumption
-		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
+		this.northAssumption = new LocaliserAssumption(Ranges.UP, map);
 		this.northAssumption.addBlockedLocations(toBlock);
 		// East assumption
-		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
+		this.eastAssumption = new LocaliserAssumption(Ranges.RIGHT, map);
 		this.eastAssumption.addBlockedLocations(toBlock);
 		// South assumption
-		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);
+		this.southAssumption = new LocaliserAssumption(Ranges.DOWN, map);
 		this.southAssumption.addBlockedLocations(toBlock);
 		// West assumption
-		this.westAssumption = new LocalisationCollection(Ranges.LEFT, map);
+		this.westAssumption = new LocaliserAssumption(Ranges.LEFT, map);
 		this.westAssumption.addBlockedLocations(toBlock);
 		// Communications
 		this.comms = comms;
@@ -140,7 +140,7 @@ public class Localiser implements Localisation {
 
 		// One of the assumptions is complete, return the completed position
 		final RobotLocation location = Stream.of(northAssumption, eastAssumption, southAssumption, westAssumption)
-				.filter(LocalisationCollection::isComplete)
+				.filter(LocaliserAssumption::isComplete)
 				.map(l -> new RobotLocation(l.getPoint(), directionProtocol[l.getHeading()])).findFirst().get();
 		logger.debug("Found location: " + location);
 		return location;
@@ -163,8 +163,8 @@ public class Localiser implements Localisation {
 	 *            the different direction assumptions.
 	 * @return whether the loop needs to run.
 	 */
-	private boolean needsToRun(LocalisationCollection... assumptions) {
-		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
+	private boolean needsToRun(LocaliserAssumption... assumptions) {
+		return Stream.of(assumptions).mapToInt(LocaliserAssumption::getNumberOfPoints).sum() != 1;
 	}
 
 	/**
@@ -175,8 +175,8 @@ public class Localiser implements Localisation {
 	 *            the different direction assumptions.
 	 * @return whether there are no points across all assumptions.
 	 */
-	private boolean hasNoPoints(LocalisationCollection... assumptions) {
-		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() == 0;
+	private boolean hasNoPoints(LocaliserAssumption... assumptions) {
+		return Stream.of(assumptions).mapToInt(LocaliserAssumption::getNumberOfPoints).sum() == 0;
 	}
 
 	/**

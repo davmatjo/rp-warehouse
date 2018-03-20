@@ -17,13 +17,13 @@ import rp.warehouse.pc.localisation.implementation.Localiser;
  * @author Kieran
  *
  */
-public class LocalisationCollection {
+public class LocaliserAssumption {
 
 	private final static Point[] directionPoint = new Point[] { new Point(0, 1), new Point(1, 0), new Point(0, -1),
 			new Point(-1, 0) };
 	private final WarehouseMap map;
 	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
-	private static final Logger logger = Logger.getLogger(LocalisationCollection.class);
+	private static final Logger logger = Logger.getLogger(LocaliserAssumption.class);
 
 	private final static String[] headings = new String[] { "North", "East", "South", "West" };
 
@@ -37,7 +37,7 @@ public class LocalisationCollection {
 	 * @param direction
 	 *            the starting direction of the robot.
 	 */
-	public LocalisationCollection(final byte direction, final WarehouseMap map) {
+	public LocaliserAssumption(final byte direction, final WarehouseMap map) {
 		this.startingDirection = direction;
 		this.map = map;
 		this.heading = direction;
