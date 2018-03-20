@@ -1,5 +1,7 @@
 # Team 2.4 RP Warehouse Repo
 
+![Logo](boiExpress.png)
+
 ## General Information
 * Branches are created for developing features, these can be made for
   group development of a feature, or individually. These should be able to
