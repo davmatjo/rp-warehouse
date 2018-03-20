@@ -24,10 +24,7 @@ public class RobotInterfaceController {
 	private int jobAmount;
 	private int toPickup;
 	private boolean waiting;
-	private boolean timeout;
-	private boolean flag;
-	private Timer timer = new Timer();
-	
+	private Timeout timer;
 	
 	
 	/*A communicator is created so that commands can be sent*/
@@ -39,13 +36,13 @@ public class RobotInterfaceController {
 		jobAmount = 0;
 		communicator = theCommunicator;
 		main();
-		timeout = true;
-		flag = false;
 	}
 	
 	/* In the main method the button listeners are created to listen to the buttons presses and the
 	 * command sent is changed depending on which one is pressed */
 	private void main() {
+		timer = new Timeout(communicator);
+		timer.run();
 		Button.ENTER.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
@@ -127,70 +124,30 @@ public class RobotInterfaceController {
 	/** @param command This is the command that is sent by the button press detected by the listeners, it is handled differently depending
 	  on which one it is **/
 	private void buttonEvent(int command) {
-		timeout = false;
 		switch(command)	{
 			case Protocol.CANCEL:
+					timer.interrupt();
 					communicator.sendCommand(Protocol.CANCEL);
-					if (flag = true)	{
-						timer.cancel();
-						timer.purge();
-					}
-					flag = false;
 					break;
 			case LEFT:
+					timer.interrupt();
+					timer = new Timeout(communicator);
+					timer.run();
 					displayScreen(command);
-					if (flag = true)	{
-						timer.cancel();
-						timer.purge();
-						timeout();
-					}
-					else	{
-						timeout();
-						flag = true;
-					}
 					break;
 			case RIGHT:
+					timer.interrupt();
+					timer = new Timeout(communicator);
+					timer.run();
 					displayScreen(command);
-					if (flag = true)	{
-						timer.cancel();
-						timer.purge();
-						timeout();
-					}
-					else	{
-						timeout();
-						flag = true;
-					}
 					break;
 			case Protocol.OK:
+					timer.interrupt();
 					displayScreen(command);
-					if (flag = true)	{
-						timer.cancel();
-						timer.purge();		
-					}
-					flag = false;
 					break;
 		}
 	}
-	/* This method is called to timeout the robot if the user does not press anything and it will send cancel to the communicator
-	 * if this is the case
-	 */
-	private void timeout()	{
-		timer.schedule(new TimerTask()	{
-			@Override
-			public void run() {
-				if (timeout = true)	{
-					communicator.sendCommand(Protocol.CANCEL);
-					flag = false;
-				}
-				else	{
-					timeout = true;
-					flag = false;
-				}
-			}
-			//there is a 60 second delay currently before the timeout is sent but this can be changed
-		}, 60000);
-		
-	}
+
 	/* This method is called by other classes when the robot is ready to pickup an item, this prevents the robot from performing it whilst
 	 * doing a job
 	 */
@@ -205,17 +162,8 @@ public class RobotInterfaceController {
 			waiting = true;
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, TEXT_WIDTH, TEXT_HEIGHT);
-			if (flag = true)	{
-				timer.cancel();
-				timer.purge();
-				timeout();
-			}
-			else	{
-				timeout();
-				flag = true;
-			}
-
-			//A timer is created which a task is then added to
+			timer = new Timeout(communicator);
+			timer.run();
 		}
 	}
 }
