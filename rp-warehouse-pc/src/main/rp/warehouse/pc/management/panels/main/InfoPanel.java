@@ -91,18 +91,16 @@ public class InfoPanel extends JPanel implements WarehouseInfoListener {
         RewardCounter.addListener(this);
 
         // Logo
-        JPanel logo = new JPanel();
-        logo.setSize(150, 100);
-        ImageIcon icon = new ImageIcon("./logo.jpg");
+        JPanel bottom = new JPanel();
+
         JLabel label = new JLabel();
-        label.setSize(150, 100);
-        label.setIcon(icon);
-        logo.add(label);
+        label.setIcon(new ImageIcon(new ImageIcon("./boiExpress.png").getImage()));
+        bottom.add(warehouseInfo);
+        bottom.add(label);
 
         this.add(taskPanel, BorderLayout.NORTH);
         this.add(robotPanel, BorderLayout.CENTER);
-        this.add(warehouseInfo, BorderLayout.SOUTH);
-        //this.add(logo, BorderLayout.SOUTH);
+        this.add(bottom, BorderLayout.SOUTH);
 
     }
 
