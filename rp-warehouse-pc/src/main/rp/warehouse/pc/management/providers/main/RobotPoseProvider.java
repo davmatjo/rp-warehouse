@@ -66,7 +66,7 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                     previous = robot.getLocation();
 
                     RobotLocation currentLocation = robot.getLocation();
-                    currentLocation.backward();
+                    changeLocationReversed(currentLocation, currentLocation.getDirection());
 
                     currentPose = currentLocation.toPose();
 
@@ -118,4 +118,26 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                 break;
         }
     }
+
+    /**
+     * Changes a location based on a direction, but goes back in time
+     * @param location location to change
+     * @param direction opposite of direction to travel
+     */
+    private void changeLocationReversed(RobotLocation location, int direction) {
+        switch (direction) {
+            case Protocol.NORTH:
+                location.setY(location.getY() - 1);
+                break;
+            case Protocol.EAST:
+                location.setX(location.getX() - 1);
+                break;
+            case Protocol.SOUTH:
+                location.setY(location.getY() + 1);
+                break;
+            case Protocol.WEST:
+                location.setX(location.getX() + 1);
+        }
+    }
+
 }
