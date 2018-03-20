@@ -22,7 +22,7 @@ public class LocalisationCollection {
 	private final static Point[] directionPoint = new Point[] { new Point(0, 1), new Point(1, 0), new Point(0, -1),
 			new Point(-1, 0) };
 	private final WarehouseMap map;
-	private final static List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
+	private final List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private static final Logger logger = Logger.getLogger(LocalisationCollection.class);
 
 	private final static String[] headings = new String[] { "North", "East", "South", "West" };
@@ -41,6 +41,18 @@ public class LocalisationCollection {
 		this.startingDirection = direction;
 		this.map = map;
 		this.heading = direction;
+	}
+
+	/**
+	 * Method to add additional blocked locations to the assumption - used to add
+	 * existing robot locations to prevent them from being assumed again.
+	 * 
+	 * @param toBlock
+	 *            the list of locations to block.
+	 */
+	public void addBlockedLocations(List<RobotLocation> toBlock) {
+		for (RobotLocation loc : toBlock)
+			blockedPoints.add(loc.toPoint());
 	}
 
 	/**

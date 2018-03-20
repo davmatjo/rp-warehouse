@@ -57,10 +57,19 @@ public class Localiser implements Localisation {
 		// Initialise maps and assumptions
 		for (RobotLocation loc : toBlock)
 			map.updateRangesAroundPositions(loc.toPoint());
+		// North assumption
 		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
+		this.northAssumption.addBlockedLocations(toBlock);
+		// East assumption
 		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
+		this.eastAssumption.addBlockedLocations(toBlock);
+		// South assumption
 		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);
+		this.southAssumption.addBlockedLocations(toBlock);
+		// West assumption
 		this.westAssumption = new LocalisationCollection(Ranges.LEFT, map);
+		this.westAssumption.addBlockedLocations(toBlock);
+		// Communications
 		this.comms = comms;
 	}
 
