@@ -76,7 +76,6 @@ public class RewardCounter {
      * @return - returns the number of jobs which are currently undone
      */
     public static float getNumberUncompletedJobs() {
-        System.out.println("hgfd");
         return uncompletedJobReference.size();
     }
     
@@ -136,6 +135,7 @@ public class RewardCounter {
                     addReward(earnedRewards);
                     logger.debug("Earned " + earnedRewards + " points for Item(s) " + taskElement.getItem());
                 }
+                logger.debug("Total points " + getPointsEarned() );
             }
             
         } else {
