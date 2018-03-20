@@ -25,6 +25,7 @@ public class RobotInterfaceController {
 	private int toPickup;
 	private boolean waiting;
 	private boolean timeout;
+	private Timer timer = new Timer();
 	
 	
 	
@@ -147,7 +148,6 @@ public class RobotInterfaceController {
 	 * if this is the case
 	 */
 	private void timeout()	{
-		Timer timer = new Timer();
 		timer.schedule(new TimerTask()	{
 			@Override
 			//timeout will be set to false if the button listener is triggered
