@@ -2,7 +2,6 @@ package rp.warehouse.pc.data.robot.utils;
 
 import java.util.ArrayList;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;

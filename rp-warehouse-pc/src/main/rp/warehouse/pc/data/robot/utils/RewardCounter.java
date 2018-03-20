@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.Jobs;
 import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
