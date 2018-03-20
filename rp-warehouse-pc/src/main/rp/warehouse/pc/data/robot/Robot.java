@@ -368,6 +368,7 @@ public class Robot implements Runnable {
             word = "PICKUP";
             break;
         default:
+            word = "NO IDEA";
             break;
         }
         return word;

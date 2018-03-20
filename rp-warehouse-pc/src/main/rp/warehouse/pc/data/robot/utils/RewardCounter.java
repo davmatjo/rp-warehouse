@@ -74,7 +74,7 @@ public class RewardCounter {
     /**
      * @return - returns the number of jobs which are currently undone
      */
-    public static float getNumberUncompletedJobs() {
+    public static int getNumberUncompletedJobs() {
         return uncompletedJobReference.size();
     }
     
