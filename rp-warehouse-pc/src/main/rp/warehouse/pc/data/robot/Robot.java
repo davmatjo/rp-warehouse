@@ -42,7 +42,7 @@ public class Robot implements Runnable {
     private Route route;                // Queue of directions for the current task
     private int lastInstruction = -1;   // The current Instruction being done by robot (For WMI)
     private RobotLocation location;     // Current location of the robot
-    private RobotLocation previouseLocation;
+    private RobotLocation previousLocation;
     Localiser loc;
 
     // Job information
@@ -80,7 +80,7 @@ public class Robot implements Runnable {
         comms.setDirection(startingLocation.getDirection());
 
         this.location = startingLocation;
-        this.previouseLocation = new RobotLocation(location);
+        this.previousLocation = new RobotLocation(location);
         robotUtils = new RobotUtils(location, name);
 
         logger.info(name + ": Created");
@@ -151,7 +151,7 @@ public class Robot implements Runnable {
 
                 // Updates the last Instruction and location (Location is one ahead)
                 lastInstruction = route.poll();
-                this.previouseLocation = new RobotLocation(location);
+                this.previousLocation = new RobotLocation(location);
                 robotUtils.updateLocation(lastInstruction);
                 comms.sendMovement(lastInstruction);
 
@@ -248,8 +248,8 @@ public class Robot implements Runnable {
         logger.debug(name + ": Cancelled current Job");
     }
     
-    public RobotLocation getPreviouseLocation() {
-        return previouseLocation;
+    public RobotLocation getPreviousLocation() {
+        return previousLocation;
     }
 
     /**
