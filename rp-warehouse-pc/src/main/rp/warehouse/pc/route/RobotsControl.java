@@ -6,10 +6,8 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
-import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingView;
-import rp.warehouse.pc.management.LocalisationView;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;

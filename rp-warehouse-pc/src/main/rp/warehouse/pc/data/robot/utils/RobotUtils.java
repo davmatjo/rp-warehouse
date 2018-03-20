@@ -28,36 +28,8 @@ public class RobotUtils{
         if (lastInstruction != -1) {
             logger.debug(name + ": " + "Updating location");
 
-            int x, y;
-            x = location.getX();
-            y = location.getY();
-            int directionPointing = 0;
-
-            // Works out the direction change
-            switch (lastInstruction) {
-            case Protocol.NORTH:
-                y += 1;
-                directionPointing = Protocol.NORTH;
-                break;
-            case Protocol.EAST:
-                x += 1;
-                directionPointing = Protocol.EAST;
-                break;
-            case Protocol.SOUTH:
-                y -= 1;
-                directionPointing = Protocol.SOUTH;
-                break;
-            case Protocol.WEST:
-                x -= 1;
-                directionPointing = Protocol.WEST;
-                break;
-
-            default:
-                break;
-            }
-            location.setX(x);
-            location.setY(y);
-            location.setDirection(directionPointing);
+            location.setDirection(lastInstruction);
+            location.forward();
             logger.info(name + ": " + "Current location X: " + location.getX() + " Y: " + location.getY());
         }
     }
