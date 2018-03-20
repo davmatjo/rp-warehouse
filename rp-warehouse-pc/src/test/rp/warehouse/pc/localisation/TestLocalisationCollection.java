@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Assertions;
 import lejos.geom.Point;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.localisation.implementation.Localiser;
 
 public class TestLocalisationCollection {
-	private final byte[] directionProtocol = new byte[] { 3, 4, 5, 6 };
 	private final byte[] opposite = new byte[] { 0, 3, 2, 1 };
 	private final byte NORTH = Ranges.UP, EAST = Ranges.RIGHT, SOUTH = Ranges.DOWN, WEST = Ranges.LEFT;
 	private final WarehouseMap map = new WarehouseMap();
@@ -136,7 +136,8 @@ public class TestLocalisationCollection {
 
 	private RobotLocation getLocation(LocalisationCollection... assumptions) {
 		return Stream.of(assumptions).filter(LocalisationCollection::isComplete)
-				.map(l -> new RobotLocation(l.getPoint(), directionProtocol[l.getHeading()])).findFirst().get();
+				.map(l -> new RobotLocation(l.getPoint(), Localiser.directionProtocol[l.getHeading()])).findFirst()
+				.get();
 	}
 
 	private boolean needsToRun(LocalisationCollection... assumptions) {
