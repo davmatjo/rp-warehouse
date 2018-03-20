@@ -46,6 +46,9 @@ public class RewardCounter {
     
     public synchronized static void addCancelledJob(Task task) {
         cancelledJobReference.put(task.getJobID(), true);
+        for (WarehouseInfoListener listener : listeners) {
+            listener.cancelledJobsChanged(getnumberJobsCancelled());
+        }
     }
     
     public static boolean checkIfCancelled(Task task) {
