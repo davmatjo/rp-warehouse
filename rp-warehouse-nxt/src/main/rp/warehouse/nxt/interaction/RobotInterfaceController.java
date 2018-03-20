@@ -19,8 +19,8 @@ public class RobotInterfaceController {
 	
 	private final static int LEFT = 10;
 	private final static int RIGHT = 11;
-	private final static int TEXT_WIDTH = 48;
-	private final static int TEXT_HEIGHT = 32;
+	private final static int TEXT_WIDTH = 0;
+	private final static int TEXT_HEIGHT = 4;
 	private int jobAmount;
 	private int toPickup;
 	private boolean waiting;
