@@ -33,9 +33,9 @@ public class JobInput {
         readJobs();
     }
 
-    public Jobs getJobs() {
-        return jobs;
-    }
+//    public Jobs getJobs() {
+//        return jobs;
+//    }
 
     public void readItems() throws FileNotFoundException {
 
@@ -113,7 +113,6 @@ public class JobInput {
             arrayList.addAll(list);
 
             //get the name of the job
-//            System.out.println("job name: " + arrayList.get(0));
             String name = arrayList.get(0);
 
             //remove the name from the list
