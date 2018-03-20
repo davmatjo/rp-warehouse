@@ -129,6 +129,7 @@ public class RobotInterfaceController {
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
+					timeout();
 					break;
 			case LEFT:
 					displayScreen(command);
