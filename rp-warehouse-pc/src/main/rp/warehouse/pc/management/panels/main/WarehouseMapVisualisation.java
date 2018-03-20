@@ -1,10 +1,10 @@
 package rp.warehouse.pc.management.panels.main;
 
+import lejos.robotics.navigation.Pose;
 import org.apache.log4j.Logger;
 import rp.robotics.mapping.IGridMap;
 import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
-import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.management.providers.main.RobotPoseProvider;
@@ -28,6 +28,7 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         renderPaths(g2);
+        renderRelativeText(g2);
     }
 
     /**
@@ -68,6 +69,18 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
 
         }
 
+    }
+
+    private void renderRelativeText(Graphics2D g2) {
+        g2.setPaint(new Color(13, 71, 161));
+        g2.setStroke(new BasicStroke(3));
+        for (Map.Entry<Robot, RobotPoseProvider> robotPose : robotsPoses) {
+            Pose current = robotPose.getValue().getPose();
+            float x = scale(current.getX()) + X_MARGIN + 15;
+            float y = (float) scale(flipY(current.getY())) + Y_MARGIN - 30;
+            g2.drawString(robotPose.getKey().getName(), x, y);
+            g2.drawString(robotPose.getKey().getTask().count + " to pick up", x, y + 15);
+        }
     }
 
 }

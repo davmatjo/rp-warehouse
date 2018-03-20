@@ -13,7 +13,7 @@ public class Timeout extends Thread	{
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(25000);
 			communicator.sendCommand(Protocol.CANCEL);
 		} 	catch (InterruptedException e) {
 			

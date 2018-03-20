@@ -3,6 +3,7 @@ package rp.warehouse.pc.input;
 import rp.warehouse.pc.data.Task;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Job {
 
@@ -16,6 +17,12 @@ public class Job {
         this.name = name;
         this.tasks = tasks;
 
+    }
+
+    public Job(Job job) {
+        this.name = job.name;
+        this.cancelled = job.cancelled;
+        this.tasks = job.tasks.stream().map(Task::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public Job(String name, ArrayList<Task> tasks, boolean cancelled) {

@@ -6,12 +6,15 @@ import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingView;
+import rp.warehouse.pc.management.LocalisationView;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,7 +64,9 @@ public class RobotsControl {
         int i = 0;
 
         RoutePlan.setRobots(robots);
-        
+
+        List<RobotLocation> locations = new ArrayList<>();
+
         // Create robots
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
@@ -71,10 +76,12 @@ public class RobotsControl {
                 pool.execute(comms);
 
                 LoadingView.finishedLoading();
-                final Localiser localiser = new Localiser(comms, new ArrayList<>());
-
+//                final Localiser localiser = new Localiser(comms, locations);
+//
 //                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
 //                RobotLocation location = localiser.getPosition();
+//
+//                locations.add(location);
 
                 Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, robotLocations[i]);
                 robots.add(newRobot);

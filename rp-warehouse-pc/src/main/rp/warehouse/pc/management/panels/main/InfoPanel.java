@@ -19,6 +19,7 @@ public class InfoPanel extends JPanel implements WarehouseInfoListener {
     private float totalReward = 0f;
     private int jobsCancelled = 0;
     private int jobsCompleted = 0;
+    private int uncompleted = 0;
 
     public InfoPanel(List<Robot> robots) {
         // Panel properties
@@ -122,7 +123,13 @@ public class InfoPanel extends JPanel implements WarehouseInfoListener {
         updateText();
     }
 
+    @Override
+    public void uncompletedJobsChanged(int newUncompletedCount) {
+        uncompleted = newUncompletedCount;
+        updateText();
+    }
+
     private void updateText() {
-        warehouseInfo.setText("Total reward: " + totalReward + " from " + jobsCompleted + " jobs. " + jobsCancelled + " cancelled");
+        warehouseInfo.setText("Total reward: " + totalReward + " from " + jobsCompleted + " jobs. " + jobsCancelled + " cancelled " + uncompleted + " uncompleted");
     }
 }

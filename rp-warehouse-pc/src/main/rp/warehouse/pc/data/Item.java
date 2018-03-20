@@ -22,6 +22,13 @@ public class Item {
         this.location = location;
     }
 
+    public Item(Item item) {
+        this.name = item.name;
+        this.reward = item.reward;
+        this.weight = item.weight;
+        this.location = new Location(item.location);
+    }
+
     //method to set the location of the item
     public void setLocation(Location location) {
         this.location = location;

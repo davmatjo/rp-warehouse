@@ -201,7 +201,7 @@ public class Node {
 				logger.debug("New robot blocked locations");
 				Route directions = robot.getRoute();
 
-				if (tick == 0 && robot.isInTransit()) {
+				if (tick == 1) {
 					blocked.add(robot.getPreviousLocation());
 				}
 

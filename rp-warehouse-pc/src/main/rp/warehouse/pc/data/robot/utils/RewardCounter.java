@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import javafx.print.JobSettings;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.Jobs;
@@ -47,7 +46,7 @@ public class RewardCounter {
     public static void setJobs(Jobs jobs) {
         ArrayList<Job> jobList =jobs.getJobs();
         for (Job job : jobList) {
-           jobReference.put(job.getName(), job);
+           jobReference.put(job.getName(), new Job(job));
         }
     }
     
@@ -110,7 +109,7 @@ public class RewardCounter {
      * @param task - adds Task which was competed
      */
     public synchronized static void addCompletedJob(Task task) {
-        String jobId= task.getJobID();
+        String jobId = task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
             logger.debug("Job " + jobId + " is valid");
             if(uncompletedJobReference.containsKey(jobId)) {
@@ -148,6 +147,7 @@ public class RewardCounter {
         for (WarehouseInfoListener listener : listeners) {
             listener.jobCountChanged(getJobsDone());
             listener.cancelledJobsChanged(getNumberJobsCancelled());
+            listener.uncompletedJobsChanged(getNumberUncompletedJobs());
         }
 
     }

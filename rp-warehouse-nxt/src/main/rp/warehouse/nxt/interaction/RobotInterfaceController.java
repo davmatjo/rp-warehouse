@@ -42,7 +42,6 @@ public class RobotInterfaceController {
 	 * command sent is changed depending on which one is pressed */
 	private void main() {
 		timer = new Timeout(communicator);
-		timer.run();
 		Button.ENTER.addButtonListener(new ButtonListener()	{
 			@Override
 			public void buttonPressed(Button b) {
@@ -132,13 +131,13 @@ public class RobotInterfaceController {
 			case LEFT:
 					timer.interrupt();
 					timer = new Timeout(communicator);
-					timer.run();
+					timer.start();
 					displayScreen(command);
 					break;
 			case RIGHT:
 					timer.interrupt();
 					timer = new Timeout(communicator);
-					timer.run();
+					timer.start();
 					displayScreen(command);
 					break;
 			case Protocol.OK:
@@ -163,7 +162,7 @@ public class RobotInterfaceController {
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, TEXT_WIDTH, TEXT_HEIGHT);
 			timer = new Timeout(communicator);
-			timer.run();
+			timer.start();
 		}
 	}
 }

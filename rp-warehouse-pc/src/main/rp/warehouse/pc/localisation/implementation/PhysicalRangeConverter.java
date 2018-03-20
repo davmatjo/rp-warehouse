@@ -13,7 +13,7 @@ public class PhysicalRangeConverter implements RangeConverter {
 
 	// Offset of the sensor from the robot in cm.
 	private final static float SENSOR_OFFSET = 5;
-	private final static float ADDITIONAL_THRESHOLD = 1.25f;
+	private final static float ADDITIONAL_THRESHOLD = 2;
 
 	@Override
 	public boolean toGrid(float range) {

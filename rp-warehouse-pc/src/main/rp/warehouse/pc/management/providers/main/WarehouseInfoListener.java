@@ -7,4 +7,6 @@ public interface WarehouseInfoListener {
     void jobCountChanged(int newJobCount);
 
     void cancelledJobsChanged(int newCancelledCount);
+
+    void uncompletedJobsChanged(int newUncompletedCount);
 }

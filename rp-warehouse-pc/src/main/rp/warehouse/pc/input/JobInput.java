@@ -31,8 +31,12 @@ public class JobInput {
         readItems();
         readLocations();
         readJobs();
+        RewardCounter.setJobs(jobs);
     }
 
+    public Jobs getJobs() {
+        return jobs;
+    }
 
     public void readItems() throws FileNotFoundException {
 
@@ -147,8 +151,6 @@ public class JobInput {
 
         }
         scanner.close();
-
-        RewardCounter.setJobs(jobs);
 
     }
 

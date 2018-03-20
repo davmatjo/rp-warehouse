@@ -14,6 +14,12 @@ public class Task {
         this.jobID = jobID;
     }
 
+    public Task(Task task) {
+        this.item = new Item(task.item);
+        this.count = task.count;
+        this.jobID = task.jobID;
+    }
+
     public Item getItem() {
         return item;
     }
