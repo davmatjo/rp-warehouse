@@ -38,7 +38,7 @@ public class Localiser implements Localisation {
 	private byte previousDirection = 0;
 	private final Communication comms;
 	private Point relativePoint = new Point(0, 0);
-	private final HashSet<Point> relativeVisitedPoints = new HashSet<Point>();
+	private final HashSet<Point> relativeVisitedPoints = new HashSet<>();
 	private final List<LocalisationListener> listeners = new ArrayList<>();
 
 	/**
@@ -71,16 +71,21 @@ public class Localiser implements Localisation {
 			// Filter if it can go somewhere
 			if (directions.size() > 0) {
 				List<Byte> tempDirections = new ArrayList<>(directions);
-				// Remove all directions that would lead to visiting the same point again.
-				tempDirections.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+				// Remove backwards and all directions that would lead to visiting the same
+				// point again.
+				tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
+						.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+				// If there are any directions left, set these as the directions to use,
+				// otherwise use the old ones.
 				if (tempDirections.size() > 0) {
 					directions = tempDirections;
 				}
 			}
 			logger.info("Available directions: " + directions);
-			// Choose forwards
-			// Choose a random direction from the list of available directions.
-			final byte direction = directions.contains((byte) 0) ? 0 : directions.get(random.nextInt(directions.size()));
+			// Choose forwards, otherwise choose a random direction from the list of
+			// available directions.
+			final byte direction = directions.contains((byte) 0) ? 0
+					: directions.get(random.nextInt(directions.size()));
 			logger.info("Chosen direction: " + direction);
 			previousDirection = (byte) ((previousDirection + direction) % 4);
 			final Point move = directionPoint[direction];
@@ -122,7 +127,8 @@ public class Localiser implements Localisation {
 	 * @return a stream of all of the locations.
 	 */
 	public List<Stream<RobotLocation>> getCurrentLocations() {
-		return Arrays.asList(northAssumption.stream(), eastAssumption.stream(), southAssumption.stream(), westAssumption.stream());
+		return Arrays.asList(northAssumption.stream(), eastAssumption.stream(), southAssumption.stream(),
+				westAssumption.stream());
 	}
 
 	/**
@@ -136,6 +142,12 @@ public class Localiser implements Localisation {
 		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
 	}
 
+	/**
+	 * Method to add a listener to the Localiser.
+	 * 
+	 * @param listener
+	 *            the listener
+	 */
 	public void addListener(LocalisationListener listener) {
 		listeners.add(listener);
 	}
