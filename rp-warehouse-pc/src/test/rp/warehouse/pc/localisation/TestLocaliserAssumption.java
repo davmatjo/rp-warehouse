@@ -1,5 +1,6 @@
 package rp.warehouse.pc.localisation;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -120,6 +121,36 @@ public class TestLocaliserAssumption {
 		update(d2, r2, north, east, south, west);
 
 		Assertions.assertTrue(needsToRun(north, east, south, west));
+	}
+
+	@Test
+	public void preLocalisedRobot() {
+		// Actual direction: east
+		final RobotLocation preLocalised = new RobotLocation(0, 0, Protocol.SOUTH);
+
+		final WarehouseMap map = new WarehouseMap();
+		map.updateRangesAroundPositions(preLocalised.toPoint());
+
+		LocaliserAssumption north = new LocaliserAssumption(NORTH, map);
+		LocaliserAssumption east = new LocaliserAssumption(EAST, map);
+		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
+		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
+		// Start
+		final Ranges r1 = getRanges(9, 2, NORTH);
+		start(r1, north, east, south, west);
+		// Go forward
+		final byte d2 = Ranges.UP;
+		final Ranges r2 = getRanges(9, 3, NORTH);
+		update(d2, r2, north, east, south, west);
+		// Go forward
+		final byte d3 = Ranges.UP;
+		final Ranges r3 = getRanges(9, 4, NORTH);
+		update(d3, r3, north, east, south, west);
+
+		System.out.println("N: " + north.stream().collect(Collectors.toList()));
+		System.out.println("E: " + east.stream().collect(Collectors.toList()));
+		System.out.println("S: " + south.stream().collect(Collectors.toList()));
+		System.out.println("W: " + west.stream().collect(Collectors.toList()));
 	}
 
 	private Ranges getRanges(int x, int y, int heading) {
