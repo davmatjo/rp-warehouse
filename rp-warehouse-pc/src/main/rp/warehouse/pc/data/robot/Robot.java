@@ -246,6 +246,7 @@ public class Robot implements Runnable {
         // Only shuts down when dropped off all the items
         if (tasks.isEmpty() && currentWeightOfCargo == 0) {
             logger.info(name + ": I am Done");
+            Thread.currentThread().interrupt();
             System.exit(0);
         } else if (getNextItem && !tasks.isEmpty()) {
             currentTask = tasks.poll();

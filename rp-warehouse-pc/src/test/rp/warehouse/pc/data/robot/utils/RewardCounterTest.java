@@ -12,7 +12,11 @@ import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.Jobs;
-
+/**
+ * 
+ * @author roman
+ *
+ */
 public class RewardCounterTest {
     
     @Test

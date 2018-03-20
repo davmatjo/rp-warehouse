@@ -22,7 +22,11 @@ import java.util.concurrent.ExecutorService;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+/**
+ * 
+ * @author roman
+ *
+ */
 public class RobotTest {
     public Robot robot ;
 
