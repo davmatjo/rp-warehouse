@@ -156,6 +156,9 @@ public class RobotInterfaceController {
 				if (timeout = true)	{
 					communicator.sendCommand(Protocol.CANCEL);
 				}
+				else	{
+					timeout = true;
+				}
 			}
 			//there is a 60 second delay currently before the timeout is sent but this can be changed
 		}, 60000);
