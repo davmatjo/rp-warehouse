@@ -18,10 +18,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topCornerToBottom() {
 		// Actual direction: south
-		LocalisationCollection north = new LocalisationCollection(NORTH);
-		LocalisationCollection east = new LocalisationCollection(EAST);
-		LocalisationCollection south = new LocalisationCollection(SOUTH);
-		LocalisationCollection west = new LocalisationCollection(WEST);
+		LocalisationCollection north = new LocalisationCollection(NORTH, map);
+		LocalisationCollection east = new LocalisationCollection(EAST, map);
+		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
+		LocalisationCollection west = new LocalisationCollection(WEST, map);
 		final Ranges r1 = getRanges(0, 7, SOUTH);
 		// Start
 		start(r1, north, east, south, west);
@@ -49,10 +49,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topCornerArcRoundToSecondAisle() {
 		// Actual direction: west
-		LocalisationCollection north = new LocalisationCollection(NORTH);
-		LocalisationCollection east = new LocalisationCollection(EAST);
-		LocalisationCollection south = new LocalisationCollection(SOUTH);
-		LocalisationCollection west = new LocalisationCollection(WEST);
+		LocalisationCollection north = new LocalisationCollection(NORTH, map);
+		LocalisationCollection east = new LocalisationCollection(EAST, map);
+		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
+		LocalisationCollection west = new LocalisationCollection(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(0, 7, WEST);
 		start(r1, north, east, south, west);
@@ -82,10 +82,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void topOfLastAisleToTopCorner() {
 		// Actual direction: south
-		LocalisationCollection north = new LocalisationCollection(NORTH);
-		LocalisationCollection east = new LocalisationCollection(EAST);
-		LocalisationCollection south = new LocalisationCollection(SOUTH);
-		LocalisationCollection west = new LocalisationCollection(WEST);
+		LocalisationCollection north = new LocalisationCollection(NORTH, map);
+		LocalisationCollection east = new LocalisationCollection(EAST, map);
+		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
+		LocalisationCollection west = new LocalisationCollection(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(11, 5, SOUTH);
 		start(r1, north, east, south, west);
@@ -107,10 +107,10 @@ public class TestLocalisationCollection {
 	@Test
 	public void needsToRunAfterOneMove() {
 		// Actual direction: north
-		LocalisationCollection north = new LocalisationCollection(NORTH);
-		LocalisationCollection east = new LocalisationCollection(EAST);
-		LocalisationCollection south = new LocalisationCollection(SOUTH);
-		LocalisationCollection west = new LocalisationCollection(WEST);
+		LocalisationCollection north = new LocalisationCollection(NORTH, map);
+		LocalisationCollection east = new LocalisationCollection(EAST, map);
+		LocalisationCollection south = new LocalisationCollection(SOUTH, map);
+		LocalisationCollection west = new LocalisationCollection(WEST, map);
 		// Start
 		final Ranges r1 = getRanges(5, 2, NORTH);
 		start(r1, north, east, south, west);
