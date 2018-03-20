@@ -8,9 +8,15 @@ import rp.systems.WheeledRobotSystem;
 import rp.util.Rate;
 import rp.warehouse.nxt.communication.Protocol;
 
+/**
+ * @author Marcos Manning
+ * 
+ * This class moves the robot based on directions and gives feedback once the action is complete.
+ * It also ensures the robot follows the line properly and detects junctions. 
+ */
+
 public class MotionController implements Movement {
 
-	// temporary values until calibration is added
 	private double leftLineLimit = 0;
 	private double rightLineLimit= 0;
 	private DifferentialPilot pilot;
@@ -18,6 +24,12 @@ public class MotionController implements Movement {
 	private LightSensor rightSensor;
 	private Direction previousDirection;
 
+	/**
+	 * Constructor
+	 * @param educatorBot robot configuration
+	 * @param port1 left light sensor
+	 * @param port2 right light sensor
+	 */
 	public MotionController(WheeledRobotConfiguration educatorBot, SensorPort port1, SensorPort port2) {
 		this.pilot = new WheeledRobotSystem(educatorBot).getPilot();
 		this.leftSensor = new LightSensor(port1);
@@ -26,6 +38,10 @@ public class MotionController implements Movement {
 		calibrateSensors();
 	}
 
+	/**
+	 * Sets the facing direction
+	 * @param direction
+	 */
 	public void setDirection(int direction) {
 		switch (direction) {
 			case Protocol.NORTH:
@@ -44,6 +60,12 @@ public class MotionController implements Movement {
 	}
 
 	@Override
+	/**
+	 * Moves the robot in the specified based on the direction it was previously facing.
+	 * 
+	 * @param direction the direction to move in
+	 * @return True if the action is completed, False if something went wrong
+	 */
 	public boolean move(Direction direction) {
 
 		int rotation = 0;
@@ -119,6 +141,12 @@ public class MotionController implements Movement {
 		return travel(rotation);
 	}
 
+	/**
+	 * Helper for move function.
+	 * Does line checking and junction detection.
+	 * @param rotation amount to rotate
+	 * @return True if the movement is completed, False if not
+	 */
 	private boolean travel(int rotation) {
 		boolean junction = false;
 
@@ -152,12 +180,12 @@ public class MotionController implements Movement {
 		return true;
 	}
 
-	// calibrates the sensors on startup.
+	/**
+	 * Calibrates the sensor on startup.
+	 */
 	private void calibrateSensors() {
-//		while (temp) {
-//			LCD.drawString("l " + leftSensor.getLightValue() + " r " + rightSensor.getLightValue(), 0, 0);
-//		}
 
+		//get average value for sensors on the line
 		int rightDark = 0;
 		int leftDark = 0;
 		for (int i = 0; i < 3; i++) {
@@ -170,6 +198,7 @@ public class MotionController implements Movement {
 		leftDark = leftDark/3;
 		System.out.println("Dark value finshed");
 		
+		//get average value for sensor not on the line
 		int rightLight= 0;
 		int leftLight = 0;
 		for (int i = 0; i < 3; i++) {
@@ -182,11 +211,15 @@ public class MotionController implements Movement {
 		leftLight = leftLight/3;
 		System.out.println("Light value finshed");
 
+		//sets limit as midpoint of the two values
 		rightLineLimit = (rightDark + rightLight)*0.5;
 		leftLineLimit = (leftDark + leftLight)*0.5;
 		LCD.drawString("l " + leftLineLimit + " r " + rightLineLimit, 0, 0);
 	}
 
+	/**
+	 * Rotates the robot at right angles. Used by localisation.
+	 */
 	public void rotate() {
 		pilot.rotate(90);
 	}
