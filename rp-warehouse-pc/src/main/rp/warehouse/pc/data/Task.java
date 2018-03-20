@@ -28,6 +28,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return count + " of item " + item.toString();
+        return "Job " + jobID + " | " + count + " of item " + item.toString();
     }
 }

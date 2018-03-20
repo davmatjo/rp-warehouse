@@ -12,5 +12,6 @@ public class Protocol {
 	public static final int PICKUP = 8;
 	public static final int LOCALISE = 9;
 	public static final int DROPOFF = 10;
+	public static final int SETDIR = 11;
 
 }

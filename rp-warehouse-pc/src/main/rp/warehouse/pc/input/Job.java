@@ -10,7 +10,7 @@ public class Job {
     private String name;
     private ArrayList<Task> tasks;
 
-    Job(String name, ArrayList<Task> tasks) {
+    public Job(String name, ArrayList<Task> tasks) {
         this.name = name;
         this.tasks = tasks;
     }

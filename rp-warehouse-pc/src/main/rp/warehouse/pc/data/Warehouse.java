@@ -26,6 +26,7 @@ public class Warehouse {
 	private static final float height = 2.48f, width = 3.68f, xInset = 0.14f, yInset = 0.15f, cellSize = 0.30f;
 	private static final int gridWidth = 12, gridHeight = 8;
 	public static final int gridSize = 27;
+	public static final int possiblePoints = 76;
 
 	// The map of the warehouse
 	private static final GridMap map = new GridMap(gridWidth, gridHeight, xInset, yInset, cellSize,

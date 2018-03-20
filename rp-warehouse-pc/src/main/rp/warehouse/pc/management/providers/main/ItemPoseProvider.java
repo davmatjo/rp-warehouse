@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.providers;
+package rp.warehouse.pc.management.providers.main;
 
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;

@@ -1,4 +1,4 @@
-package rp.warehouse.pc.management.providers;
+package rp.warehouse.pc.management.providers.main;
 
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
@@ -66,7 +66,7 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                     previous = robot.getLocation();
 
                     RobotLocation currentLocation = robot.getLocation();
-                    changeLocationReversed(currentLocation, currentLocation.getDirection());
+                    currentLocation.backward();
 
                     currentPose = currentLocation.toPose();
 
@@ -116,27 +116,6 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
             case 0:
                 currentPose = new Pose(currentPose.getX(), currentPose.getY() + INTERPOLATION, currentPose.getHeading());
                 break;
-        }
-    }
-
-    /**
-     * Changes a location based on a direction, but goes back in time
-     * @param location location to change
-     * @param direction opposite of direction to travel
-     */
-    private void changeLocationReversed(RobotLocation location, int direction) {
-        switch (direction) {
-            case Protocol.NORTH:
-                location.setY(location.getY() - 1);
-                break;
-            case Protocol.EAST:
-                location.setX(location.getX() - 1);
-                break;
-            case Protocol.SOUTH:
-                location.setY(location.getY() + 1);
-                break;
-            case Protocol.WEST:
-                location.setX(location.getX() + 1);
         }
     }
 }

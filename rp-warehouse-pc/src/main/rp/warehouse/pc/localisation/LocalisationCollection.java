@@ -2,10 +2,12 @@ package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
 import lejos.geom.Point;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 
 /**
@@ -21,7 +23,9 @@ public class LocalisationCollection {
 			new Point(-1, 0) };
 	private final static WarehouseMap map = new WarehouseMap();
 	private final static List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
-	private static final Logger logger = Logger.getLogger(Localiser.class);
+	private static final Logger logger = Logger.getLogger(LocalisationCollection.class);
+
+	private final static String[] headings = new String[] {"North", "East", "South", "West"};
 
 	private final byte startingDirection;
 	private List<Point> possibleLocations = new ArrayList<Point>();
@@ -66,19 +70,23 @@ public class LocalisationCollection {
 	 *            the ranges discovered after moving.
 	 */
 	public void update(final byte direction, final Ranges ranges) {
-		// Update the current heading using modulo.
-		heading = (byte) ((heading + direction) % 4);
-		// Get the respective change in direction, relative to the initial assumption
-		// and the heading.
-		final Point move = directionPoint[heading];
-		try {
-			// Get the possible points of which the robot could be in given the current
-			// ranges, rotated by the current heading to use north-based ranges.
-			List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
-			// Then filter these positions.
-			possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
-		} catch (NoIdeaException e) {
-			logger.info("(" + startingDirection + "): No more directions");
+		// Only update if there are locations to process
+		if (possibleLocations.size() > 0) {
+			// Update the current heading using modulo.
+			heading = (byte) ((heading + direction) % 4);
+			logger.info("(" + startingDirection + ") Facing: " + headings[heading]);
+			// Get the respective change in direction, relative to the initial assumption
+			// and the heading.
+			final Point move = directionPoint[heading];
+			try {
+				// Get the possible points of which the robot could be in given the current
+				// ranges, rotated by the current heading to use north-based ranges.
+				List<Point> possiblePoints = map.getPoints(Ranges.rotate(ranges, heading));
+				// Then filter these positions.
+				possibleLocations = filterPositions(possibleLocations, possiblePoints, move);
+			} catch (NoIdeaException e) {
+				logger.info("(" + startingDirection + "): No more directions");
+			}
 		}
 	}
 
@@ -117,6 +125,10 @@ public class LocalisationCollection {
 	 */
 	public byte getHeading() {
 		return heading;
+	}
+
+	public Stream<RobotLocation> stream() {
+		return possibleLocations.stream().map(l -> new RobotLocation(l, Localiser.directionProtocol[heading]));
 	}
 
 	/**

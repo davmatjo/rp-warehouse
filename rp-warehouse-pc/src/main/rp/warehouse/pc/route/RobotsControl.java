@@ -2,15 +2,16 @@ package rp.warehouse.pc.route;
 
 import org.apache.log4j.Logger;
 
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
-import rp.warehouse.pc.management.LoadingFrame;
+import rp.warehouse.pc.localisation.implementation.Localiser;
+import rp.warehouse.pc.management.LoadingView;
 import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,8 +33,8 @@ public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
-    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Jarvis"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "00165312C16A"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     private static ArrayList<Queue<Task>> listOfItems;
@@ -65,26 +66,52 @@ public class RobotsControl {
         for (Queue<Task> items : listOfItems) {
             logger.trace("Robot " + i + " is being created" );
 
-            Robot newRobot = null;// Need to implement properly
             try {
-                newRobot = new Robot(robotIDs[i], robotNames[i], items, pool, robotLocations[i]);
+                Communication comms = new Communication(robotIDs[i], robotNames[i]);
+                pool.execute(comms);
+
+                LoadingView.finishedLoading();
+                final Localiser localiser = new Localiser(comms);
+
+//                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
+//                RobotLocation location = localiser.getPosition();
+
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, new RobotLocation(0, 0, 3));
                 robots.add(newRobot);
+
+//                localisationView.finishedLocalising();
+//
+//                synchronized (localiser) {
+//                    localiser.wait();
+//                }
+//
+//                localisationView.setVisible(false);
+
+                comms.setRobot(newRobot);
+
                 logger.debug("Robot " + robotNames[i] + " created");
+
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Could not connect to " + robotNames[i]);
+//            } catch (NoIdeaException e) {
+//                logger.error("Could not localise " + robotNames[i]);
+//            } catch (InterruptedException e) {
+//                logger.fatal("Interrupted somehow while waiting for gui");
+//            }
             }
-            
+
             i++;
         }
         
         
         // Runs Robot threads
         for (Robot robot : robots) {
+            //robot.localiseRobot();
             pool.execute(robot);
         }
         logger.debug("Array of Robots has been created with " + robots.size() + " robots");
 
-        LoadingFrame.finishedLoading();
+        LoadingView.finishedLoading();
         new MainView(robots);
 
         // Shut down the pool to prevent new threads being created, and allow the program to end

@@ -1,6 +1,7 @@
 package rp.warehouse.pc.input;
 
 import rp.warehouse.pc.data.*;
+import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.File;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import rp.warehouse.pc.data.robot.utils.RewardCounter;
 
 public class JobInput {
 
@@ -51,7 +51,7 @@ public class JobInput {
             String line = scanner.next();
             //split the above string into an array of strings:
             List<String> list = Arrays.asList(line.split(","));
-            //convert that list to an arraylist emsto make it easier to work with
+            //convert that list to an arraylist to make it easier to work with
             ArrayList<String> arrayList = new ArrayList<>(list.size());
             arrayList.addAll(list);
 

@@ -15,7 +15,7 @@ import rp.warehouse.pc.localisation.Ranges;
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
     private final String name;
-    private final Robot robot;
+    private Robot robot;
     private final DataInputStream fromNXT;
     private final DataOutputStream toNXT;
     private final Object waitForMovement = new Object();
@@ -29,11 +29,9 @@ public class Communication implements Runnable {
      *
      * @param ID Robot ID - hexadecimal string
      * @param name Robot name string
-     * @param robot Robot object
      * @throws IOException If could not create the robot
      */
-    public Communication(final String ID, final String name, final Robot robot) throws IOException {
-        this.robot = robot;
+    public Communication(final String ID, final String name) throws IOException {
         this.name = name;
 
         NXTComm nxtComm;
@@ -52,6 +50,10 @@ public class Communication implements Runnable {
 
         fromNXT = new DataInputStream(nxtComm.getInputStream());
         toNXT = new DataOutputStream(nxtComm.getOutputStream());
+    }
+
+    public void setRobot(Robot robot) {
+        this.robot = robot;
     }
 
     /**
@@ -207,6 +209,11 @@ public class Communication implements Runnable {
             logger.error("Interrupted somehow: " + e.getMessage());
             return Ranges.fromArray(ranges, Ranges.physicalConverter);
         }
+    }
+
+    public void setDirection(int direction) {
+        sendData(Protocol.SETDIR);
+        sendData(direction);
     }
 
     /**
