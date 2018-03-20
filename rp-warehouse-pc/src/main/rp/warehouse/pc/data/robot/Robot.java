@@ -61,7 +61,7 @@ public class Robot implements Runnable {
     private boolean getNextItem = false;                // Tells if needs to pick up the next item
 
     // Utilities
-    private static RobotUtils robotUtils;                              // Used to perform updates of location
+    private RobotUtils robotUtils;                              // Used to perform updates of location
     private static final Logger logger = Logger.getLogger(Robot.class);
 
     public Robot(String ID, String name, Queue<Task> newTasks, Communication comms, RobotLocation startingLocation)
@@ -89,6 +89,7 @@ public class Robot implements Runnable {
         logger.info(name + ": Started running");
         Rate r = new Rate(RATE);
 
+        status = Status.PICKING_UP;
         // Runs indefinitely
         while (true) {
             r.sleep();
@@ -263,7 +264,7 @@ public class Robot implements Runnable {
         
         // Misses all the cancelled jobs
         while (RewardCounter.checkIfCancelled(currentTask)) {
-            logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getClass() + " was canceled");
+            logger.debug(name + ": Job " + currentTask.jobID + " , Item " + currentItem.getName() + " was canceled");
             this.currentTask = tasks.poll();
             this.currentItem = currentTask.getItem();
             route = null;
