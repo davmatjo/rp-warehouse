@@ -69,11 +69,15 @@ public class Localiser implements Localisation {
 		// Get the readings from the sensors
 		Ranges ranges = comms.getRanges();
 
-		// Update ranges
+		// Start ranges
 		northAssumption.start(ranges);
 		eastAssumption.start(ranges);
 		southAssumption.start(ranges);
 		westAssumption.start(ranges);
+
+		if (hasNoPoints(northAssumption, eastAssumption, southAssumption, westAssumption)) {
+			throw new NoIdeaException(ranges);
+		}
 
 		// Run whilst there are multiple points, or the maximum iterations has occurred.
 		while (needsToRun(northAssumption, eastAssumption, southAssumption, westAssumption)
@@ -82,18 +86,15 @@ public class Localiser implements Localisation {
 				throw new NoIdeaException(ranges);
 			} else {
 				List<Byte> directions = ranges.getAvailableDirections();
-				// Filter if it can go somewhere
-				if (directions.size() > 0) {
-					List<Byte> tempDirections = new ArrayList<>(directions);
-					// Remove backwards and all directions that would lead to visiting the same
-					// point again.
-					tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
-							.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
-					// If there are any directions left, set these as the directions to use,
-					// otherwise use the old ones.
-					if (tempDirections.size() > 0) {
-						directions = tempDirections;
-					}
+				List<Byte> tempDirections = new ArrayList<>(directions);
+				// Remove backwards and all directions that would lead to visiting the same
+				// point again.
+				tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
+						.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+				// If there are any directions left, set these as the directions to use,
+				// otherwise use the old ones.
+				if (tempDirections.size() > 0) {
+					directions = tempDirections;
 				}
 				logger.info("Available directions: " + directions);
 				// Choose forwards, otherwise choose a random direction from the list of
