@@ -336,6 +336,10 @@ public class Robot implements Runnable {
         // Works out the String representation of the command
         return (direction <= 4 ? (direction == 3 ? "North" : "East") : (direction == 5 ? "South" : "West"));
     }
+    
+    public boolean isInTransit() {
+        return status == Status.PICKING_UP || status == Status.DROPPING_OFF;
+    }
 
     @Override
     public String toString() {
