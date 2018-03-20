@@ -21,11 +21,11 @@ public class LocalisationCollection {
 
 	private final static Point[] directionPoint = new Point[] { new Point(0, 1), new Point(1, 0), new Point(0, -1),
 			new Point(-1, 0) };
-	private final static WarehouseMap map = new WarehouseMap();
+	private final WarehouseMap map;
 	private final static List<Point> blockedPoints = WarehouseMap.getBlockedPoints();
 	private static final Logger logger = Logger.getLogger(LocalisationCollection.class);
 
-	private final static String[] headings = new String[] {"North", "East", "South", "West"};
+	private final static String[] headings = new String[] { "North", "East", "South", "West" };
 
 	private final byte startingDirection;
 	private List<Point> possibleLocations = new ArrayList<Point>();
@@ -37,8 +37,9 @@ public class LocalisationCollection {
 	 * @param direction
 	 *            the starting direction of the robot.
 	 */
-	public LocalisationCollection(final byte direction) {
+	public LocalisationCollection(final byte direction, final WarehouseMap map) {
 		this.startingDirection = direction;
+		this.map = map;
 		this.heading = direction;
 	}
 

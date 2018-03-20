@@ -1,6 +1,10 @@
 package rp.warehouse.pc.localisation.implementation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
@@ -12,6 +16,7 @@ import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.LocalisationCollection;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
+import rp.warehouse.pc.localisation.WarehouseMap;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
 import rp.warehouse.pc.management.providers.localisation.LocalisationListener;
 
@@ -27,10 +32,8 @@ public class Localiser implements Localisation {
 	private static final byte FORWARD = Protocol.NORTH, RIGHT = Protocol.EAST, BACKWARD = Protocol.SOUTH,
 			LEFT = Protocol.WEST;
 	public static final byte[] directionProtocol = new byte[] { FORWARD, RIGHT, BACKWARD, LEFT };
-	private final LocalisationCollection northAssumption = new LocalisationCollection(Ranges.UP),
-			eastAssumption = new LocalisationCollection(Ranges.RIGHT),
-			southAssumption = new LocalisationCollection(Ranges.DOWN),
-			westAssumption = new LocalisationCollection(Ranges.LEFT);
+	private final WarehouseMap map = new WarehouseMap();
+	private final LocalisationCollection northAssumption, eastAssumption, southAssumption, westAssumption;
 	private final Point[] directionPoint = new Point[4];
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
@@ -44,12 +47,18 @@ public class Localiser implements Localisation {
 	/**
 	 * An implementation of the Localisation interface.
 	 */
-	public Localiser(Communication comms) {
+	public Localiser(Communication comms, List<RobotLocation> toBlock) {
+		// Initialise points
 		relativeVisitedPoints.add(new Point(0, 0));
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
+		// Initialise maps and assumptions
+		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
+		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
+		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);
+		this.westAssumption = new LocalisationCollection(Ranges.LEFT, map);
 		this.comms = comms;
 	}
 
