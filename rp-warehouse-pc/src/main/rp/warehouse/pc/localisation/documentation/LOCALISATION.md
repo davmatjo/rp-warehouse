@@ -19,6 +19,8 @@ This process will repeat continuously until there is only 1 possible position to
 
 As the initial heading is unknown, all of the possible positions have to be calculated 4 times simultaneously. This is done so that the robot can assume its heading as all 4 directions until it finds one of which is correct - 1 position found. This process is aided by the `LocalisationCollection` class, which essentially stores an individual list of possible points, the assumed starting heading, and the current heading based on the assumed starting one. All of this information is then used to return the `RobotLocation` of the robot once it has filtered the positions down to a final one.
 
+Rather than basing the localisation on probability, this approach is based on certainty - it is certain about its final location or not at all. This is because it only relies on the range sensor looking for a range 1 grid space away, which is reliable. Making use of this certainty ensures that the entire localisation process is robust and works well.
+
 ## Generating Ranges
 
 Initialising a `Localisation` class generates an `ArrayList<Point> blockedPoints` using the `Warehouse.getBlockedLocations()` method.
