@@ -131,14 +131,34 @@ public class RobotInterfaceController {
 					break;
 			case LEFT:
 					displayScreen(command);
+					timeout();
 					break;
 			case RIGHT:
 					displayScreen(command);
+					timeout();
 					break;
 			case Protocol.OK:
 					displayScreen(command);
+					timeout();
 					break;
 		}
+	}
+	/* This method is called to timeout the robot if the user does not press anything and it will send cancel to the communicator
+	 * if this is the case
+	 */
+	private void timeout()	{
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask()	{
+			@Override
+			//timeout will be set to false if the button listener is triggered
+			public void run() {
+				if (timeout = true)	{
+					communicator.sendCommand(Protocol.CANCEL);
+				}
+			}
+			//there is a 60 second delay currently before the timeout is sent but this can be changed
+		}, 60000);
+		
 	}
 	/* This method is called by other classes when the robot is ready to pickup an item, this prevents the robot from performing it whilst
 	 * doing a job
@@ -154,21 +174,8 @@ public class RobotInterfaceController {
 			waiting = true;
 			LCD.clearDisplay();
 			LCD.drawString("Pickup amount: " + toPickup, TEXT_WIDTH, TEXT_HEIGHT);
+			timeout();
 			//A timer is created which a task is then added to
-			Timer timer = new Timer();
-			timer.schedule(new TimerTask()	{
-				@Override
-				//timeout will be set to false if the button listener is triggered
-				public void run() {
-					if (timeout = true)	{
-						communicator.sendCommand(Protocol.CANCEL);
-						timeout = false;
-					}
-				}
-				//there is a 30 second delay currently before the timeout is sent but this can be changed
-			}, 30000);
-			
-
 		}
 	}
 }
