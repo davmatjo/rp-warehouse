@@ -55,6 +55,8 @@ public class Localiser implements Localisation {
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
 		// Initialise maps and assumptions
+		for (RobotLocation loc : toBlock)
+			map.updateRangesAroundPositions(loc.toPoint());
 		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
 		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
 		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);

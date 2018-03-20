@@ -72,6 +72,19 @@ public class Ranges {
 	}
 
 	/**
+	 * Method to update the value for a specific direction of a range.
+	 * 
+	 * @param direction
+	 *            the direction to update.
+	 * @param value
+	 *            the value to change to.
+	 */
+	public void set(final byte direction, final boolean value) {
+		assert direction >= UP && direction <= LEFT;
+		ranges[direction] = value;
+	}
+
+	/**
 	 * Method to get a list of available directions to travel in given the ranges.
 	 * 
 	 * @return The directions of which can be travelled without collisions.
