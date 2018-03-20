@@ -15,6 +15,13 @@ public class Item {
         this.weight = weight;
     }
 
+    public Item(String name, Float reward, Float weight, Location location) {
+        this.name = name;
+        this.reward = reward;
+        this.weight = weight;
+        this.location = location;
+    }
+
     //method to set the location of the item
     public void setLocation(Location location) {
         this.location = location;
