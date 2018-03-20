@@ -2,7 +2,6 @@ package rp.warehouse.pc.input;
 
 import rp.warehouse.pc.data.*;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
-import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,10 +10,10 @@ import java.util.*;
 public class JobInput {
 
     //locations where the files to be read are stored
-    private String itemsLocation;
-    private String jobsLocation;
-    private String locationsLocation;
-    private String cancellationsLocation;
+    private String itemsPath;
+    private String jobsPath;
+    private String locationsPath;
+    private String cancellationsPath;
     private static String home = System.getProperty("user.home");
 
     //create the objects that will hold the items/jobs/etc
@@ -22,22 +21,31 @@ public class JobInput {
     Jobs jobs = new Jobs();
     CancelledJobs cancelledJobs = new CancelledJobs();
 
+    public Items getItems() {
+        return items;
+    }
+
+    public Jobs getJobs() {
+        return jobs;
+    }
+
     //will be passed the location of the files as strings and recieve the files?
-    public JobInput(String itemsLocation,String jobsLocation, String locationsLocation, String cancellationsLocation ) throws FileNotFoundException {
-        this.itemsLocation = itemsLocation;
-        this.jobsLocation = jobsLocation;
-        this.locationsLocation = locationsLocation;
-        this.cancellationsLocation = cancellationsLocation;
+    public JobInput(String itemsPath,String jobsPath, String locationsPath, String cancellationsPath ) throws FileNotFoundException {
+        this.itemsPath = itemsPath;
+        this.jobsPath = jobsPath;
+        this.locationsPath = locationsPath;
+        this.cancellationsPath = cancellationsPath;
         readItems();
         readLocations();
         readJobs();
+        readCancellations();
     }
 
 
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
-        Scanner scanner = new Scanner(new File(itemsLocation));
+        Scanner scanner = new Scanner(new File(itemsPath));
 
         //for every line
         while(scanner.hasNext()){
@@ -64,7 +72,7 @@ public class JobInput {
     public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
-        Scanner scanner = new Scanner(new File(locationsLocation));
+        Scanner scanner = new Scanner(new File(locationsPath));
 
         //for every line
         while(scanner.hasNext()){
@@ -96,7 +104,7 @@ public class JobInput {
     public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
-        Scanner scanner = new Scanner(new File(jobsLocation));
+        Scanner scanner = new Scanner(new File(jobsPath));
 //        scanner.useDelimiter(",");
 
         //for every line
@@ -155,7 +163,7 @@ public class JobInput {
     public void readCancellations() throws FileNotFoundException {
 
         //read in cancellations
-        Scanner scanner = new Scanner(new File(cancellationsLocation));
+        Scanner scanner = new Scanner(new File(cancellationsPath));
 
         //for every line
         while(scanner.hasNext()) {
