@@ -90,11 +90,11 @@ Starting the localisation process with the robot facing **EAST** at position **(
 
 In the diagram, the different assumptions are colour coded. These assumptions assume that the first reading was taken with the robot facing in this direction, therefore in this case, the correct ones to follow are the **EAST** assumptions (green). The `LocalisationCollection` objects for each of these assumptions are responsible for rotating the ranges they receive based on their assumption of direction. Since the virtual ranges are generated north-based, they have to rotate the ranges so that they are also north-based according to their assumptions, hence why there are different values in the colour coded ranges.
 
-The available directions to travel in are either 1 or 3, representing RIGHT or LEFT. When 0 (FORWARDS) is not present, a direction is chosen at random, in this case, 3 (LEFT) is chosen:
+The available directions to travel in are either **1** or **3**, representing **RIGHT** or **LEFT**. When **0 (FORWARDS)** is **not** present, a direction is chosen at random, in this case, **3 (LEFT)** is chosen:
 
 ![Example Part 2](ExamplePart2.png)
 
-After this movement, the ranges are taken again, then filtered for each assumption. As can be shown from the diagram above, the west and south assumptions do not contain any possible locations and east contains 1; however, to ensure correctness, localisation should continue to run until the total number of possible points across all assumptions is 1. In the next iteration of localisation, the available directions are 0 and 1 (FORWARD or RIGHT), since 0 is available, it chooses this:
+After this movement, the ranges are taken again, then filtered for each assumption. As can be shown from the diagram above, the west and south assumptions do not contain any possible locations and east contains **1**; however, to ensure correctness, localisation should continue to run until the total number of possible points across all assumptions is **1**. In the next iteration of localisation, the available directions are **0** and **1 (FORWARD or RIGHT)**, since **0** is available, it chooses this:
 
 ![Example Part 3](ExamplePart3.png)
 
