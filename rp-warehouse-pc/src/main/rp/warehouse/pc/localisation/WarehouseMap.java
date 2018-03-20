@@ -1,7 +1,6 @@
 package rp.warehouse.pc.localisation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -107,7 +106,11 @@ public class WarehouseMap {
 
 	public void updateRangesAroundPositions(final Point point) {
 		final GridMap world = Warehouse.build();
-		List<Point> pointsAround = Arrays.asList(point.add(up), point.add(right), point.add(down), point.add(left));
+		List<Point> pointsAround = new ArrayList<>();
+		pointsAround.add(point.add(up));
+		pointsAround.add(point.add(right));
+		pointsAround.add(point.add(down));
+		pointsAround.add(point.add(left));
 		// Remove the points from the ones to change if it is outside of the map, or
 		// inside blocked locations.
 		pointsAround.removeIf(p -> !world.isValidGridPosition((int) p.x, (int) p.y) || blockedPoints.contains(p));
