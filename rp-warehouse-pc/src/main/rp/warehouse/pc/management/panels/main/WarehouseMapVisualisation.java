@@ -32,7 +32,6 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
 
     /**
      * Renders all planned routes for all robots
-     *
      * @param g2 Graphics2D
      */
     private void renderPaths(Graphics2D g2) {
@@ -56,11 +55,12 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
                 // Draw future routes, if any
                 for (int i : route) {
                     RobotLocation nextLocation = new RobotLocation(currentLocation);
-                    changeLocation(nextLocation, nextLocation.getDirection());
+                    nextLocation.setDirection(i);
+                    nextLocation.forward();
 
                     renderLine(currentLocation.toGridPoint()
-                            , nextLocation.toGridPoint()
-                            , g2);
+                            ,  nextLocation.toGridPoint()
+                            ,  g2);
 
                     currentLocation = new RobotLocation(nextLocation);
                 }
@@ -69,28 +69,5 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
         }
 
     }
-
-    /**
-     * Takes a location and changes it based on a direction
-     *
-     * @param location  Location to edit
-     * @param direction Direction to move location by
-     */
-    private void changeLocation(RobotLocation location, int direction) {
-        switch (direction) {
-            case Protocol.NORTH:
-                location.setY(location.getY() + 1);
-                break;
-            case Protocol.EAST:
-                location.setX(location.getX() + 1);
-                break;
-            case Protocol.SOUTH:
-                location.setY(location.getY() - 1);
-                break;
-            case Protocol.WEST:
-                location.setX(location.getX() - 1);
-        }
-    }
-
 
 }
