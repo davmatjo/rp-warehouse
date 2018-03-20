@@ -205,19 +205,7 @@ public class Node {
 
 				if (tick == 0 && robot.isInTransit()) {
 					RobotLocation current = robot.getLocation();
-					switch (current.getDirection()) {
-						case Protocol.NORTH:
-							current.setY(current.getY() - 1);
-							break;
-						case Protocol.EAST:
-							current.setX(current.getX() - 1);
-							break;
-						case Protocol.SOUTH:
-							current.setY(current.getY() + 1);
-							break;
-						case Protocol.WEST:
-							current.setX(current.getX() + 1);
-					}
+					current.backward();
 					blocked.add(current);
 				}
 
