@@ -140,6 +140,10 @@ public class RobotInterfaceController {
 		switch(command)	{
 			case Protocol.CANCEL:
 					communicator.sendCommand(Protocol.CANCEL);
+					if (flag = true)	{
+						timer.cancel();
+						timer.purge();
+					}
 					break;
 			case LEFT:
 					displayScreen(command);
@@ -149,6 +153,10 @@ public class RobotInterfaceController {
 					break;
 			case Protocol.OK:
 					displayScreen(command);
+					if (flag = true)	{
+						timer.cancel();
+						timer.purge();
+					}
 					break;
 		}
 	}
@@ -161,9 +169,11 @@ public class RobotInterfaceController {
 			public void run() {
 				if (timeout = true)	{
 					communicator.sendCommand(Protocol.CANCEL);
+					flag = false;
 				}
 				else	{
 					timeout = true;
+					flag = false;
 				}
 			}
 			//there is a 60 second delay currently before the timeout is sent but this can be changed

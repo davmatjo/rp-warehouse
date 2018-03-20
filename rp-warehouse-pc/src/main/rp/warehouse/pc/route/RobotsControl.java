@@ -71,12 +71,12 @@ public class RobotsControl {
                 pool.execute(comms);
 
                 LoadingView.finishedLoading();
-                final Localiser localiser = new Localiser(comms);
+                final Localiser localiser = new Localiser(comms, new ArrayList<>());
 
 //                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
 //                RobotLocation location = localiser.getPosition();
 
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, new RobotLocation(0, 0, 3));
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, robotLocations[i]);
                 robots.add(newRobot);
 
 //                localisationView.finishedLocalising();

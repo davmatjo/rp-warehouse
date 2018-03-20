@@ -1,6 +1,10 @@
 package rp.warehouse.pc.localisation.implementation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
@@ -12,6 +16,7 @@ import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.localisation.LocalisationCollection;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.Ranges;
+import rp.warehouse.pc.localisation.WarehouseMap;
 import rp.warehouse.pc.localisation.interfaces.Localisation;
 import rp.warehouse.pc.management.providers.localisation.LocalisationListener;
 
@@ -27,10 +32,8 @@ public class Localiser implements Localisation {
 	private static final byte FORWARD = Protocol.NORTH, RIGHT = Protocol.EAST, BACKWARD = Protocol.SOUTH,
 			LEFT = Protocol.WEST;
 	public static final byte[] directionProtocol = new byte[] { FORWARD, RIGHT, BACKWARD, LEFT };
-	private final LocalisationCollection northAssumption = new LocalisationCollection(Ranges.UP),
-			eastAssumption = new LocalisationCollection(Ranges.RIGHT),
-			southAssumption = new LocalisationCollection(Ranges.DOWN),
-			westAssumption = new LocalisationCollection(Ranges.LEFT);
+	private final WarehouseMap map = new WarehouseMap();
+	private final LocalisationCollection northAssumption, eastAssumption, southAssumption, westAssumption;
 	private final Point[] directionPoint = new Point[4];
 	private final byte MAX_RUNS = 100;
 	private byte runCounter = 0;
@@ -38,18 +41,24 @@ public class Localiser implements Localisation {
 	private byte previousDirection = 0;
 	private final Communication comms;
 	private Point relativePoint = new Point(0, 0);
-	private final HashSet<Point> relativeVisitedPoints = new HashSet<Point>();
+	private final HashSet<Point> relativeVisitedPoints = new HashSet<>();
 	private final List<LocalisationListener> listeners = new ArrayList<>();
 
 	/**
 	 * An implementation of the Localisation interface.
 	 */
-	public Localiser(Communication comms) {
+	public Localiser(Communication comms, List<RobotLocation> toBlock) {
+		// Initialise points
 		relativeVisitedPoints.add(new Point(0, 0));
 		directionPoint[Ranges.UP] = new Point(0, 1);
 		directionPoint[Ranges.RIGHT] = new Point(1, 0);
 		directionPoint[Ranges.DOWN] = new Point(0, -1);
 		directionPoint[Ranges.LEFT] = new Point(-1, 0);
+		// Initialise maps and assumptions
+		this.northAssumption = new LocalisationCollection(Ranges.UP, map);
+		this.eastAssumption = new LocalisationCollection(Ranges.RIGHT, map);
+		this.southAssumption = new LocalisationCollection(Ranges.DOWN, map);
+		this.westAssumption = new LocalisationCollection(Ranges.LEFT, map);
 		this.comms = comms;
 	}
 
@@ -71,16 +80,21 @@ public class Localiser implements Localisation {
 			// Filter if it can go somewhere
 			if (directions.size() > 0) {
 				List<Byte> tempDirections = new ArrayList<>(directions);
-				// Remove all directions that would lead to visiting the same point again.
-				tempDirections.removeIf(d -> relativeVisitedPoints.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+				// Remove backwards and all directions that would lead to visiting the same
+				// point again.
+				tempDirections.removeIf(d -> d == (byte) 2 || relativeVisitedPoints
+						.contains(relativePoint.add(directionPoint[(previousDirection + d) % 4])));
+				// If there are any directions left, set these as the directions to use,
+				// otherwise use the old ones.
 				if (tempDirections.size() > 0) {
 					directions = tempDirections;
 				}
 			}
 			logger.info("Available directions: " + directions);
-			// Choose forwards
-			// Choose a random direction from the list of available directions.
-			final byte direction = directions.contains((byte) 0) ? 0 : directions.get(random.nextInt(directions.size()));
+			// Choose forwards, otherwise choose a random direction from the list of
+			// available directions.
+			final byte direction = directions.contains((byte) 0) ? 0
+					: directions.get(random.nextInt(directions.size()));
 			logger.info("Chosen direction: " + direction);
 			previousDirection = (byte) ((previousDirection + direction) % 4);
 			final Point move = directionPoint[direction];
@@ -122,7 +136,8 @@ public class Localiser implements Localisation {
 	 * @return a stream of all of the locations.
 	 */
 	public List<Stream<RobotLocation>> getCurrentLocations() {
-		return Arrays.asList(northAssumption.stream(), eastAssumption.stream(), southAssumption.stream(), westAssumption.stream());
+		return Arrays.asList(northAssumption.stream(), eastAssumption.stream(), southAssumption.stream(),
+				westAssumption.stream());
 	}
 
 	/**
@@ -136,6 +151,12 @@ public class Localiser implements Localisation {
 		return Stream.of(assumptions).mapToInt(LocalisationCollection::getNumberOfPoints).sum() != 1;
 	}
 
+	/**
+	 * Method to add a listener to the Localiser.
+	 * 
+	 * @param listener
+	 *            the listener
+	 */
 	public void addListener(LocalisationListener listener) {
 		listeners.add(listener);
 	}
