@@ -48,9 +48,13 @@ public class Ranges {
 	 * stored, using pre-converted values.
 	 * 
 	 * @param up
+	 *            pre-converted north/up range.
 	 * @param right
+	 *            pre-converted east/right range.
 	 * @param down
+	 *            pre-converted south/down range.
 	 * @param left
+	 *            pre-converter west/left range.
 	 */
 	public Ranges(final boolean up, final boolean right, final boolean down, final boolean left) {
 		this.ranges[0] = up;
@@ -168,11 +172,20 @@ public class Ranges {
 
 	/**
 	 * Method to clone a Ranges object, giving a new instance to avoid pointers.
+	 * 
+	 * @return a copy of this ranges object, same value, different reference.
 	 */
 	public Ranges clone() {
 		return new Ranges(ranges[0], ranges[1], ranges[2], ranges[3]);
 	}
 
+	/**
+	 * Provides a string representation of this Ranges object. Similar to:<br>
+	 * UP: a, RIGHT: b, DOWN: c, LEFT: d<br>
+	 * Where a, b, c and d are the values within this Ranges object.
+	 * 
+	 * @return the string representation of this Ranges object.
+	 */
 	@Override
 	public String toString() {
 		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
@@ -181,6 +194,10 @@ public class Ranges {
 	/**
 	 * Determine whether this Range object is equal to another range object based on
 	 * the values of the ranges within them.
+	 * 
+	 * @param obj
+	 *            the object to compare equality to.
+	 * @return whether this ranges object equals the other.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -205,6 +222,8 @@ public class Ranges {
 	/**
 	 * Generate a hash code of this ranges object, considers the values of the
 	 * ranges themselves rather than the object as a whole.
+	 * 
+	 * @return the hash code of this ranges object.
 	 */
 	@Override
 	public int hashCode() {

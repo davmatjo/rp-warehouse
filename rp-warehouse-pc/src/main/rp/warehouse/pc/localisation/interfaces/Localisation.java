@@ -16,6 +16,7 @@ public interface Localisation {
 	 * 
 	 * @return The estimated position of the robot.
 	 * @throws NoIdeaException
+	 *             Thrown when the robot is unsure of its location.
 	 */
 	public RobotLocation getPosition() throws NoIdeaException;
 

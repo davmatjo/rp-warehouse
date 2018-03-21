@@ -12,6 +12,13 @@ import rp.warehouse.pc.localisation.interfaces.RangeConverter;
  */
 public class VirtualRangeConverter implements RangeConverter {
 
+	/**
+	 * Converts the given virtual reading to a value suitable for the Ranges class.
+	 * 
+	 * @param range
+	 *            the virtual range reading.
+	 * @return the suitable value for the Ranges class from the virtual reading.
+	 */
 	@Override
 	public boolean toGrid(float range) {
 		// Grid points are 0.3 units apart.
