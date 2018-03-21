@@ -125,7 +125,7 @@ public class TestLocaliserAssumption {
 
 	@Test
 	public void preLocalisedRobot() {
-		// Actual direction: east
+		// Actual direction: west
 		final RobotLocation preLocalised = new RobotLocation(0, 7, Protocol.WEST);
 
 		final WarehouseMap map = new WarehouseMap();
