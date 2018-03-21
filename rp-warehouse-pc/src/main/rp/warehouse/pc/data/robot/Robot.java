@@ -144,6 +144,7 @@ public class Robot implements Runnable {
                 route = null;
             } else if (route.peek() == Protocol.WAITING) {
                 // When the location is occupied
+                this.previousLocation = new RobotLocation(location);
                 r.sleep();
 
                 route = null;

@@ -103,9 +103,7 @@ public class JobSelector {
 			}
 			logger.debug("Sorting both arrays based on total reward and concatenating");
 			sortByReward(jobs);
-			jobs.forEach((a) -> System.out.println(a.getItems()));
 			sortByReward(cancelledJobs);
-			cancelledJobs.forEach((a) -> System.out.println(a.getItems()));
 			jobs.addAll(cancelledJobs);
 			
 			reader.close();
