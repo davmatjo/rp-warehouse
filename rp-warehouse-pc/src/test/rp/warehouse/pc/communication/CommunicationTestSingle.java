@@ -1,9 +1,6 @@
 package rp.warehouse.pc.communication;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.localisation.Ranges;
@@ -45,8 +42,8 @@ public class CommunicationTestSingle {
         Assert.assertNotNull(response);
     }
 
-    @Test
-    public void close() {
+    @AfterClass
+    public static void close() {
         communication.close();
     }
 }

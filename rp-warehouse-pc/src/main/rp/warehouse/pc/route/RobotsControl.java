@@ -66,12 +66,13 @@ public class RobotsControl {
         List<Communication> communications = new ArrayList<>();
         for (int i = 0; i < robotNames.length; i++) {
             try {
-                communications.add(new Communication(robotIDs[i], robotNames[i]));
-                pool.execute(communications.get(i));
+                Communication communication = new Communication(robotIDs[i], robotNames[i]);
+                communications.add(communication);
+                pool.execute(communication);
 
                 LoadingView.finishedLoading();
 
-                Localiser localiser = new Localiser(communications.get(i), locations);
+                Localiser localiser = new Localiser(communication, locations);
                 LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
 
                 RobotLocation location = localiser.getPosition();

@@ -32,7 +32,7 @@ public class MotionController implements Movement {
 	 */
 	public MotionController(WheeledRobotConfiguration educatorBot, SensorPort port1, SensorPort port2) {
 		this.pilot = new WheeledRobotSystem(educatorBot).getPilot();
-		this.pilot.setTravelSpeed(0.24);
+		this.pilot.setTravelSpeed(0.18);
 		this.leftSensor = new LightSensor(port1);
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
