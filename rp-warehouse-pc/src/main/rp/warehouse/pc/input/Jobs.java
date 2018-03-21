@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Jobs {
 
-    private ArrayList<Job> jobs = new ArrayList<Job>();
+    private ArrayList<Job> jobs = new ArrayList<>();
 
     public ArrayList<Job> getJobs() {
         return jobs;
@@ -19,9 +19,9 @@ public class Jobs {
     public Job getJob(String jobName) {
         Job job = null;
         //iterate over array list
-        for (int i = 0; i < jobs.size(); i++) {
-            if(jobs.get(i).equals(jobName)) {
-                job = jobs.get(i);
+        for (Job job1 : jobs) {
+            if (job1.equals(jobName)) {
+                job = job1;
             }
         }
         return job;

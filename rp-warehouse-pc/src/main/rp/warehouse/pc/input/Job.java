@@ -49,11 +49,8 @@ public class Job {
         tasks.add(task);
     }
 
-    public void setCancelled (int cancelled) {
-        if (cancelled == 0) {
-            this.cancelled = false;
-        } else
-            this.cancelled = true;
+    public void setCancelled(int cancelled) {
+        this.cancelled = cancelled != 0;
 
     }
 

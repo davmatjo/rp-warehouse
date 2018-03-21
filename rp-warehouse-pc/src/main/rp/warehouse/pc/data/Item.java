@@ -1,7 +1,5 @@
 package rp.warehouse.pc.data;
 
-import rp.warehouse.pc.data.Location;
-
 public class Item {
 
     private String name;
@@ -29,11 +27,6 @@ public class Item {
         this.location = new Location(item.location);
     }
 
-    //method to set the location of the item
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     //method to return the items reward
     public Float getReward() {
         return reward;
@@ -46,6 +39,11 @@ public class Item {
 
     public Location getLocation() {
         return location;
+    }
+
+    //method to set the location of the item
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override

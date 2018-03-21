@@ -18,7 +18,7 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
     private static final Logger logger = Logger.getLogger(WarehouseMapVisualisation.class);
     private final List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses;
 
-    public WarehouseMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, List<Map.Entry<Robot, RobotPoseProvider>> robots) {
+    WarehouseMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, List<Map.Entry<Robot, RobotPoseProvider>> robots) {
         super(_gridMap, _lineMap, _scaleFactor);
         this.robotsPoses = robots;
     }
@@ -33,6 +33,7 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
 
     /**
      * Renders all planned routes for all robots
+     *
      * @param g2 Graphics2D
      */
     private void renderPaths(Graphics2D g2) {
@@ -60,8 +61,8 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
                     nextLocation.forward();
 
                     renderLine(currentLocation.toGridPoint()
-                            ,  nextLocation.toGridPoint()
-                            ,  g2);
+                            , nextLocation.toGridPoint()
+                            , g2);
 
                     currentLocation = new RobotLocation(nextLocation);
                 }

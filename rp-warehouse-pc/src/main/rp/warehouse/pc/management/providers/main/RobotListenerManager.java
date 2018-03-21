@@ -2,7 +2,6 @@ package rp.warehouse.pc.management.providers.main;
 
 import org.apache.log4j.Logger;
 import rp.util.Rate;
-import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 
 import javax.swing.*;

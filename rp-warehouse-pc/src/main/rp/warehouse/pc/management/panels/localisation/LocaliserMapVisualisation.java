@@ -17,10 +17,10 @@ import java.util.stream.Stream;
 
 public class LocaliserMapVisualisation extends GridMapVisualisation implements LocalisationListener {
     private Localiser localiser;
-    private Color[] directionColours = new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA};
+    private Color[] directionColours = new Color[]{Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA};
     private List<Stream<RobotLocation>> possiblePoints = new ArrayList<>();
 
-    public LocaliserMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, Localiser localiser) {
+    LocaliserMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, Localiser localiser) {
         super(_gridMap, _lineMap, _scaleFactor);
 
         this.localiser = localiser;
@@ -50,17 +50,18 @@ public class LocaliserMapVisualisation extends GridMapVisualisation implements L
 
     /**
      * **adapted from rp-pc** gets a quadrilateral using a width and height then draws it
-     * @param width width of quad
+     *
+     * @param width  width of quad
      * @param height height of quad
-     * @param pose position of centre of quad
-     * @param g2 graphics2D
+     * @param pose   position of centre of quad
+     * @param g2     graphics2D
      */
     private void drawQuadrilateral(float width, float height, Pose pose, Graphics2D g2) {
 
         width = width / 2f;
         height = height / 2f;
 
-        renderRelative(new Line[] {
+        renderRelative(new Line[]{
                 // front
                 new Line(width, height, width, -height),
                 // back
@@ -75,9 +76,10 @@ public class LocaliserMapVisualisation extends GridMapVisualisation implements L
 
     /**
      * **From rp-pc** renders a line array around a pose
+     *
      * @param _lines Lines to draw
-     * @param _pose Centre position
-     * @param _g2 Graphics2D
+     * @param _pose  Centre position
+     * @param _g2    Graphics2D
      */
     private void renderRelative(Line[] _lines, Pose _pose, Graphics2D _g2) {
 

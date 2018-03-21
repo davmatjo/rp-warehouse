@@ -2,13 +2,11 @@
 
 package rp.warehouse.pc.input;
 
-import rp.warehouse.pc.input.Job;
-
 import java.util.ArrayList;
 
 public class CancelledJobs {
 
-    ArrayList<Job> cancelledJobs = new ArrayList<Job>();
+    ArrayList<Job> cancelledJobs = new ArrayList<>();
 
     public ArrayList<Job> getCancelledJobs() {
         return cancelledJobs;
