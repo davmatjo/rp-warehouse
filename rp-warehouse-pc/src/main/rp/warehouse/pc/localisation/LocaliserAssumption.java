@@ -140,6 +140,13 @@ public class LocaliserAssumption {
 		return heading;
 	}
 
+	/**
+	 * Method to get a stream of the RobotLocations that are currently possible
+	 * locations for this assumption handler.
+	 * 
+	 * @return the stream of currently possible locations for this assumption
+	 *         handler.
+	 */
 	public Stream<RobotLocation> stream() {
 		return possibleLocations.stream().map(l -> new RobotLocation(l, Localiser.directionProtocol[heading]));
 	}

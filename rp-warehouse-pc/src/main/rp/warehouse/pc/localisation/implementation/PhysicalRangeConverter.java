@@ -15,6 +15,13 @@ public class PhysicalRangeConverter implements RangeConverter {
 	private final static float SENSOR_OFFSET = 5;
 	private final static float ADDITIONAL_THRESHOLD = 2;
 
+	/**
+	 * Converts the given physical reading to a value suitable for the Ranges class.
+	 * 
+	 * @param range
+	 *            the physical range reading.
+	 * @return the suitable value for the Ranges class from the physical reading.
+	 */
 	@Override
 	public boolean toGrid(float range) {
 		// Grid points are 27cm apart.

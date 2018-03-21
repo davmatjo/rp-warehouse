@@ -73,6 +73,9 @@ public class Localiser implements Localisation {
 		this.comms = comms;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public RobotLocation getPosition() throws NoIdeaException {
 		// Get the readings from the sensors
