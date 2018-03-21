@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import rp.warehouse.pc.assignment.Auctioner;
 import rp.warehouse.pc.communication.Communication;
-import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
@@ -17,13 +16,10 @@ import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
 /**
  * Used to link different part of the system together
  * 

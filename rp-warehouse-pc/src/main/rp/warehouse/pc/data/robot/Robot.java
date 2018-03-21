@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-
+import rp.util.Rate;
 import lejos.util.Delay;
+
 import org.apache.log4j.Logger;
 
-import rp.util.Rate;
+
 import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Item;
