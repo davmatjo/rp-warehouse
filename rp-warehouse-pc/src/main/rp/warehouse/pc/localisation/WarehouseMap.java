@@ -115,7 +115,7 @@ public class WarehouseMap {
 		// inside blocked locations.
 		pointsAround.removeIf(p -> !world.isValidGridPosition((int) p.x, (int) p.y) || blockedPoints.contains(p));
 		for (Point p : pointsAround) {
-			final Ranges range = ranges.get(p);
+			final Ranges range = ranges.get(p).clone();
 			ranges.remove(p);
 			positions.get(range).remove(p);
 			if (p.y > point.y) {
