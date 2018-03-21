@@ -2,25 +2,25 @@ package rp.warehouse.pc.data.robot;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import rp.util.Rate;
 import lejos.util.Delay;
+import java.util.Queue;
+import java.util.List;
+import rp.util.Rate;
 
 import org.apache.log4j.Logger;
 
-
-import rp.warehouse.pc.communication.Communication;
-import rp.warehouse.pc.communication.Protocol;
-import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.communication.Communication;
 import rp.warehouse.pc.data.robot.utils.RobotUtils;
+import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.robot.utils.Status;
-import rp.warehouse.pc.localisation.implementation.Localiser;
-import rp.warehouse.pc.route.Route;
 import rp.warehouse.pc.route.RoutePlan;
+import rp.warehouse.pc.data.Item;
+import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.route.Route;
+
 
 /**
  *Runnable class of Robot which runs as a thread.
@@ -270,7 +270,7 @@ public class Robot implements Runnable {
             Thread.currentThread().interrupt();
             System.exit(0);
         } else if (getNextItem && !tasks.isEmpty()) {
-            // Prevents NullPointer when going the last task
+            // Prevents NullPointer when doing the last task
             currentTask = tasks.poll();
             currentItem = currentTask.getItem();
             getNextItem = false;
