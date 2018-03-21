@@ -75,12 +75,11 @@ public class JobSelector {
 		Collections.sort(j, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
 	}
 
-	public ArrayList<Job> sortPredicted(String pfile, ArrayList<Job> j) {
+	public ArrayList<Job> sortPredicted(String pfile) {
 		BufferedReader reader;
-		ArrayList<Job> jobs = new ArrayList<Job>(); //An ArrayList for the jobs that won't be potentially cancelled.
-		ArrayList<Job> cancelledJobs = new ArrayList<Job>(); //An ArrayList for the jobs that will be potentially cancelled.
-		ArrayList<Job> result = new ArrayList<Job>(); //An ArrayList for the result of the concatenated, sorted job arrays.
-		HashMap<String, Integer> predictions = new LinkedHashMap<String, Integer>(); //Predictions from WEKA put into a HashMap of ids and values.
+		ArrayList<Job> validJobs = new ArrayList<>(); //An ArrayList for the jobs that won't be potentially cancelled.
+		ArrayList<Job> cancelledJobs = new ArrayList<>(); //An ArrayList for the jobs that will be potentially cancelled.		
+		HashMap<String, Integer> predictions = new LinkedHashMap<>(); //Predictions from WEKA put into a HashMap of ids and values.
 		
 		try {
 			reader = new BufferedReader(new FileReader(pfile));
@@ -96,9 +95,9 @@ public class JobSelector {
 			int index = 0;
 			for(Integer i: predictions.values()) {
 				if(i == 0)
-					jobs.add(j.get(index));
+					validJobs.add(jobs.get(index));
 				else 
-					cancelledJobs.add(j.get(index));
+					cancelledJobs.add(jobs.get(index));
 				index++;
 			}
 			logger.debug("Sorting both arrays based on total reward and concatenating");
@@ -107,7 +106,7 @@ public class JobSelector {
 			jobs.addAll(cancelledJobs);
 			
 			reader.close();
-			return jobs;
+			return validJobs;
 			
 		} catch (FileNotFoundException e) {
 			System.out.println("File does not exist");
