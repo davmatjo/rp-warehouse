@@ -203,11 +203,11 @@ public class Node {
 
 				if (tick == 1) {
 					blocked.add(robot.getPreviousLocation());
-					blocked.add(robot.getLocation());
 				}
 
 				try {
 					blocked.add(directions.getLocation(tick - 1));
+					blocked.add(directions.getLocation(tick));
 				} catch (IndexOutOfBoundsException e) {
 					logger.trace("Robot has no plan this far");
 					blocked.add(robot.getLocation());

@@ -72,7 +72,14 @@ public class JobSelector {
 	
 	public void sortByReward(ArrayList<Job> j) {
 		logger.debug("Sorting jobs based on total reward.");
-		Collections.sort(j, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
+		j.sort((a, b) -> {
+			final float aReward = totalReward(a), bReward = totalReward(b);
+			if (aReward == bReward) {
+				return (int) (a.getItems().stream().mapToDouble(t -> t.count * t.item.getWeight()).sum() - b.getItems().stream().mapToDouble(t -> t.count * t.item.getWeight()).sum());
+			} else {
+				return (int) (bReward - aReward);
+			}
+		});
 	}
 
 	public ArrayList<Job> sortPredicted(String pfile) {
