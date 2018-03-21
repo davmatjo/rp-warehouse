@@ -5,7 +5,10 @@ import rp.warehouse.pc.communication.Protocol;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.robot.Robot;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class Route implements Iterable<Integer> {
     private static final Logger logger = Logger.getLogger(Route.class);
@@ -23,21 +26,21 @@ public class Route implements Iterable<Integer> {
 
         route = new LinkedList<>();
 
-        for (int i = 1; i < nodes.size() && i < 3; i ++) {
+        for (int i = 1; i < nodes.size() && i < 3; i++) {
 
-            if (nodes.get(i-1).getX() == nodes.get(i).getX() - 1) {
+            if (nodes.get(i - 1).getX() == nodes.get(i).getX() - 1) {
                 route.add(Protocol.EAST);
             }
 
-            if (nodes.get(i-1).getX() == nodes.get(i).getX() + 1) {
+            if (nodes.get(i - 1).getX() == nodes.get(i).getX() + 1) {
                 route.add(Protocol.WEST);
             }
 
-            if (nodes.get(i-1).getY() == nodes.get(i).getY() + 1) {
+            if (nodes.get(i - 1).getY() == nodes.get(i).getY() + 1) {
                 route.add(Protocol.SOUTH);
             }
 
-            if (nodes.get(i-1).getY() == nodes.get(i).getY() - 1) {
+            if (nodes.get(i - 1).getY() == nodes.get(i).getY() - 1) {
                 route.add(Protocol.NORTH);
             }
 

@@ -1,7 +1,5 @@
 package rp.warehouse.pc.data;
 
-import rp.warehouse.pc.data.Item;
-
 public class Task {
 
     public final Item item;
