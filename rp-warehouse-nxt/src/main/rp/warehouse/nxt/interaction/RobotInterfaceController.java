@@ -152,7 +152,7 @@ public class RobotInterfaceController {
 	 */
 	public void pickup(int amount) {
 		toPickup = amount;
-		if (toPickup < 0) {
+		if (toPickup < 1) {
 			LCD.drawString("Confirm dropoff", TEXT_WIDTH,TEXT_HEIGHT);
 			Button.waitForAnyPress();
 			communicator.sendCommand(Protocol.PICKUP);
