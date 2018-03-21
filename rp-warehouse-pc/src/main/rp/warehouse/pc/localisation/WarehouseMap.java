@@ -118,15 +118,17 @@ public class WarehouseMap {
 			final Ranges range = ranges.get(p).clone();
 			ranges.remove(p);
 			positions.get(range).remove(p);
+			final byte direction;
 			if (p.y > point.y) {
-				range.set((byte) 2, false);
+				direction = 2;
 			} else if (p.x > point.x) {
-				range.set((byte) 3, false);
+				direction = 3;
 			} else if (p.y < point.y) {
-				range.set((byte) 0, false);
+				direction = 0;
 			} else {
-				range.set((byte) 1, false);
+				direction = 1;
 			}
+			range.set(direction, false);
 			put(range, p);
 		}
 	}
