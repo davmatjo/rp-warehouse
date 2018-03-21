@@ -65,6 +65,10 @@ public class Route implements Iterable<Integer> {
         return route.poll();
     }
 
+    public int size() {
+        return route.size();
+    }
+
     public Location getLocation(int i) {
         return locations.get(i);
     }

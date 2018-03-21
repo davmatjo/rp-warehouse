@@ -1,13 +1,15 @@
 package rp.warehouse.pc.assignment;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import org.apache.log4j.Logger;
-import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.route.RobotsControl;
+import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.input.Job;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 // It all works I think
 // This is the big boy you want to make to replace SimpleAssigner
@@ -19,8 +21,8 @@ import rp.warehouse.pc.route.RobotsControl;
  */
 public class Auctioner {
 
-	private ArrayList<Job> jobs;
-	private ArrayList<Location> robots;
+	private List<Job> jobs;
+	private List<Location> robots;
 	
 	private static final TSP tsp = new TSP(); 
 	private static final Logger logger = Logger.getLogger(Auctioner.class);
@@ -31,16 +33,16 @@ public class Auctioner {
 	 * @param robots
 	 *            List of robot locations
 	 */
-	public Auctioner(ArrayList<Job> jobs, ArrayList<Location> robots) {
+	public Auctioner(List<Job> jobs, List<RobotLocation> robots) {
 		this.jobs = jobs;
-		this.robots = robots;
+		this.robots = new ArrayList<>(robots);
 	}
 
 	/**
 	 * Assigns all items
 	 */
-	public void assign() {
-		RobotsControl.addRobots(auction());
+	public List<Queue<Task>> assign() {
+		return auction();
 	}
 	
 	/**
@@ -48,10 +50,10 @@ public class Auctioner {
 	 * their location. Winner is the bid with the lowest cost, winner is assigned
 	 * their chosen item. Repeat until all the items in the job are assigned
 	 */
-	ArrayList<Queue<Task>> auction() {
-		ArrayList<Queue<Task>> assignedItems = new ArrayList<Queue<Task>>();
+	private List<Queue<Task>> auction() {
+		List<Queue<Task>> assignedItems = new ArrayList<>();
 		for (int i = 0; i < robots.size(); i++) {
-			assignedItems.add(new LinkedList<Task>());
+			assignedItems.add(new LinkedList<>());
 		}
 		
 		while (!jobs.isEmpty()) {
@@ -59,16 +61,16 @@ public class Auctioner {
 			jobs.remove(0);
 			logger.debug("Assigning next job");
 			
-			ArrayList<Queue<Task>> assigning = new ArrayList<Queue<Task>>();
+			List<Queue<Task>> assigning = new ArrayList<>();
 			for (int i = 0; i < robots.size(); i++) {
-				assigning.add(new LinkedList<Task>());
+				assigning.add(new LinkedList<>());
 			}
 			
 			ArrayList<Task> unassignedItems = job.getItems();
 			
 			// Auction items
 			while (!unassignedItems.isEmpty()) {
-				ArrayList<Bid> bids = new ArrayList<Bid>();
+				ArrayList<Bid> bids = new ArrayList<>();
 				for (int i = 0; i < assigning.size(); i++) {
 					bids.add(getBid(job, assigning.get(i), i));
 				}

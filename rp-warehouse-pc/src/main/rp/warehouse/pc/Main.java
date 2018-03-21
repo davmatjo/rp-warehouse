@@ -7,6 +7,7 @@ import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.input.JobInput;
 import rp.warehouse.pc.input.Jobs;
 import rp.warehouse.pc.management.LoadingView;
+import rp.warehouse.pc.route.RobotsControl;
 import rp.warehouse.pc.selection.JobSelector;
 
 import java.io.FileNotFoundException;
@@ -29,9 +30,9 @@ public class Main {
 
         JobSelector jobSelector = new JobSelector(jobsList, 0, false, 0f);
         List<Job> jobs1 = jobSelector.sortPredicted("./prediction.csv", jobsList);
-        jobs1.forEach((a)  -> System.out.println(a.getItems()));
 
-//        new Auctioner(jobs.getJobs(), new ArrayList<>(Arrays.asList(new RobotLocation(5, 5, 1), new RobotLocation(5, 5, 1), new RobotLocation(5, 5, 1)))).assign();
+        RobotsControl.run(jobs1);
+
         logger.debug("Main thread ending");
     }
 }

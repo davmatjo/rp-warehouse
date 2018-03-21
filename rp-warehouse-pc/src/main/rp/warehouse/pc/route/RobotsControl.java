@@ -2,10 +2,13 @@ package rp.warehouse.pc.route;
 
 import org.apache.log4j.Logger;
 
+import rp.warehouse.pc.assignment.Auctioner;
 import rp.warehouse.pc.communication.Communication;
+import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
+import rp.warehouse.pc.input.Job;
 import rp.warehouse.pc.localisation.NoIdeaException;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.LoadingView;
@@ -14,10 +17,12 @@ import rp.warehouse.pc.management.MainView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Used to link different part of the system together
@@ -40,7 +45,7 @@ public class RobotsControl {
     private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
-    private static ArrayList<Queue<Task>> listOfItems;
+    private static List<Queue<Task>> listOfItems;
     
     private static final Logger logger = Logger.getLogger(RobotsControl.class);
 
@@ -56,35 +61,29 @@ public class RobotsControl {
      * the size of the array should be 1
      * 
      */
-    public static void addRobots(ArrayList<Queue<Task>> _listOfItems) {
-        listOfItems=_listOfItems;
+    public static void run(List<Job> jobs) {
+
+
         logger.debug("Starting Robot Creation");
 
-        ExecutorService pool = Executors.newFixedThreadPool(listOfItems.size() * 2);
-        int i = 0;
-
-        RoutePlan.setRobots(robots);
+        ExecutorService pool = Executors.newFixedThreadPool(robotNames.length * 2);
 
         List<RobotLocation> locations = new ArrayList<>();
 
-        // Create robots
-        for (Queue<Task> items : listOfItems) {
-            logger.trace("Robot " + i + " is being created" );
-
+        List<Communication> communications = new ArrayList<>();
+        for (int i=0; i<robotNames.length; i++) {
             try {
-                Communication comms = new Communication(robotIDs[i], robotNames[i]);
-                pool.execute(comms);
+                communications.add(new Communication(robotIDs[i], robotNames[i]));
+                pool.execute(communications.get(i));
 
                 LoadingView.finishedLoading();
-                final Localiser localiser = new Localiser(comms, locations);
 
+                Localiser localiser = new Localiser(communications.get(i), locations);
                 LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
+
                 RobotLocation location = localiser.getPosition();
 
                 locations.add(location);
-
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
-                robots.add(newRobot);
 
                 localisationView.finishedLocalising();
 
@@ -94,19 +93,39 @@ public class RobotsControl {
 
                 localisationView.setVisible(false);
 
-                comms.setRobot(newRobot);
+            } catch (NoIdeaException e) {
+                logger.error("Could not localise " + robotNames[i]);
+            } catch (InterruptedException e) {
+                logger.fatal("Interrupted somehow while waiting for gui");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Auctioner auctioner = new Auctioner(jobs, locations);
+
+        listOfItems = auctioner.assign();
+
+        RoutePlan.setRobots(robots);
+
+
+        int i = 0;
+        // Create robots
+        for (Queue<Task> items : listOfItems) {
+            logger.trace("Robot " + i + " is being created" );
+
+            try {
+
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, communications.get(i), locations.get(i));
+                robots.add(newRobot);
+
+                communications.get(i).setRobot(newRobot);
 
                 logger.debug("Robot " + robotNames[i] + " created");
 
             } catch (IOException e) {
                 logger.error("Could not connect to " + robotNames[i]);
-            } catch (NoIdeaException e) {
-                logger.error("Could not localise " + robotNames[i]);
-            } catch (InterruptedException e) {
-                logger.fatal("Interrupted somehow while waiting for gui");
             }
-
-
             i++;
         }
         

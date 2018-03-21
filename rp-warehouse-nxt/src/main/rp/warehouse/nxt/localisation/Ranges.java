@@ -2,16 +2,17 @@ package rp.warehouse.nxt.localisation;
 
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
+import lejos.nxt.addon.OpticalDistanceSensor;
 import lejos.util.Delay;
 import rp.warehouse.nxt.motion.MotionController;
 
 public class Ranges {
 	private final MotionController motion;
-	private final UltrasonicSensor sensor;
+	private final OpticalDistanceSensor sensor;
 
 	public Ranges(MotionController motion) {
 		this.motion = motion;
-		this.sensor = new UltrasonicSensor(SensorPort.S3);
+		this.sensor = new OpticalDistanceSensor(SensorPort.S2);
 	}
 
 	public float[] getRanges() {

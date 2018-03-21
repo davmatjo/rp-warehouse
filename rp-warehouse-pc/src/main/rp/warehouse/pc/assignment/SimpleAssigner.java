@@ -56,7 +56,6 @@ public class SimpleAssigner {
 
 		}
 		logger.debug("All jobs assigned");
-		RobotsControl.addRobots(assignedItems);
 
 	}
 }
