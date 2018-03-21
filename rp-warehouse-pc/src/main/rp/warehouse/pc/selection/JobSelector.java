@@ -77,9 +77,9 @@ public class JobSelector {
 
 	public ArrayList<Job> sortPredicted(String pfile) {
 		BufferedReader reader;
-		ArrayList<Job> validJobs = new ArrayList<Job>(); //An ArrayList for the jobs that won't be potentially cancelled.
-		ArrayList<Job> cancelledJobs = new ArrayList<Job>(); //An ArrayList for the jobs that will be potentially cancelled.		
-		HashMap<String, Integer> predictions = new LinkedHashMap<String, Integer>(); //Predictions from WEKA put into a HashMap of ids and values.
+		ArrayList<Job> validJobs = new ArrayList<>(); //An ArrayList for the jobs that won't be potentially cancelled.
+		ArrayList<Job> cancelledJobs = new ArrayList<>(); //An ArrayList for the jobs that will be potentially cancelled.		
+		HashMap<String, Integer> predictions = new LinkedHashMap<>(); //Predictions from WEKA put into a HashMap of ids and values.
 		
 		try {
 			reader = new BufferedReader(new FileReader(pfile));
