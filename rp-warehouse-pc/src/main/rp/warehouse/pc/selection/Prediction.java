@@ -27,13 +27,13 @@ public class Prediction {
 		log.setAdditivity(false);
 		BasicConfigurator.configure();
 		
-		String jfile = "files/jobs.csv";
-		String trainfile = "files/training_jobs.csv";
+		String jfile = "jobs.csv";
+		String trainfile = "training_jobs.csv";
 		
-		String wrfile = "files/items.csv";
-		String lfile = "files/locations.csv";
+		String wrfile = "items.csv";
+		String lfile = "locations.csv";
 		
-		String cfile = "files/cancellations.csv";
+		String cfile = "cancellations.csv";
 		
 		log.debug("Started reading item files...");
 		
@@ -41,19 +41,19 @@ public class Prediction {
 		log.debug("Successfully read " + itemMap.size() + " items!");
 		
 		log.debug("Creating WEKA training set ARFF.");
-		JobTraining.makeARFF(trainfile, cfile, itemMap, "files/training.arff");
+		JobTraining.makeARFF(trainfile, cfile, itemMap, "training.arff");
 		log.debug("Creating WEKA job set ARFF.");
-		JobTraining.makeARFF(jfile, itemMap, "files/jobs.arff");
+		JobTraining.makeARFF(jfile, itemMap, "jobs.arff");
 		log.debug("WEKA files succsessfully created.");
 		
 		try {
 			log.debug("Reading ARFF file to training set.");
-			DataSource tsource = new DataSource("files/training.arff");
+			DataSource tsource = new DataSource("training.arff");
 			Instances tdata = tsource.getDataSet();
 			tdata.setClass(tdata.attribute("cancelled"));
 			log.debug("Successfully created training set.");
 			
-			DataSource jsource = new DataSource("files/jobs.arff");
+			DataSource jsource = new DataSource("jobs.arff");
 			Instances jdata = jsource.getDataSet();
 			
 			log.debug("Successfully created test set.");
@@ -88,8 +88,8 @@ public class Prediction {
 			s.setInstances(tdata);
 			s.writeBatch();
 			
-			File file = new File("files/test.csv");
-			Files.write(Paths.get("files/test.csv"), classified, Charset.defaultCharset());
+			File file = new File("prediction.csv");
+			Files.write(Paths.get("prediction.csv"), classified, Charset.defaultCharset());
 			
 			log.debug("Finished");
 		} catch (Exception e) {

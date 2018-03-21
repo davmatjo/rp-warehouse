@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import rp.warehouse.pc.assignment.SimpleAssigner;
 import rp.warehouse.pc.data.Task;
@@ -30,7 +31,6 @@ public class JobSelector {
 			this.cancelled = false;
 		}
 		this.value = value;
-		run();
 	}
 
 	public void setPrediction(boolean prediction) {
@@ -67,12 +67,12 @@ public class JobSelector {
 	
 	public void sortByReward() {
 		logger.debug("Sorting jobs based on total reward.");
-		Collections.sort(jobs, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
+		Collections.sort(jobs, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
 	}
 	
 	public void sortByReward(ArrayList<Job> j) {
 		logger.debug("Sorting jobs based on total reward.");
-		Collections.sort(j, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
+		Collections.sort(j, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
 	}
 
 	public ArrayList<Job> sortPredicted(String pfile, ArrayList<Job> j) {
@@ -80,7 +80,7 @@ public class JobSelector {
 		ArrayList<Job> jobs = new ArrayList<Job>(); //An ArrayList for the jobs that won't be potentially cancelled.
 		ArrayList<Job> cancelledJobs = new ArrayList<Job>(); //An ArrayList for the jobs that will be potentially cancelled.
 		ArrayList<Job> result = new ArrayList<Job>(); //An ArrayList for the result of the concatenated, sorted job arrays.
-		HashMap<String, Integer> predictions = new HashMap<String, Integer>(); //Predictions from WEKA put into a HashMap of ids and values.
+		HashMap<String, Integer> predictions = new LinkedHashMap<String, Integer>(); //Predictions from WEKA put into a HashMap of ids and values.
 		
 		try {
 			reader = new BufferedReader(new FileReader(pfile));
@@ -93,20 +93,23 @@ public class JobSelector {
 				predictions.put(data[0], Integer.parseInt(data[1]));				
 			}
 			logger.debug("Splitting jobs into arrays called on cancellation...");
+			int index = 0;
 			for(Integer i: predictions.values()) {
-				int index = 0;
 				if(i == 0)
 					jobs.add(j.get(index));
 				else 
-					cancelledJobs.add(j.get(index));					
+					cancelledJobs.add(j.get(index));
+				index++;
 			}
 			logger.debug("Sorting both arrays based on total reward and concatenating");
 			sortByReward(jobs);
+			jobs.forEach((a) -> System.out.println(a.getItems()));
 			sortByReward(cancelledJobs);
+			cancelledJobs.forEach((a) -> System.out.println(a.getItems()));
 			jobs.addAll(cancelledJobs);
 			
 			reader.close();
-			return result;
+			return jobs;
 			
 		} catch (FileNotFoundException e) {
 			System.out.println("File does not exist");
@@ -115,9 +118,5 @@ public class JobSelector {
 			System.out.println("IO Failed");
 			return null;
 		} 
-	}
-	public void run() {
-		sortByReward();
-		new SimpleAssigner(jobs);
 	}
 }

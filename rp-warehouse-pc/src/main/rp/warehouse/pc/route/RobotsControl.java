@@ -36,8 +36,8 @@ public class RobotsControl {
     private static final ArrayList<Robot> robots = new ArrayList<Robot>();
     
     //Will crash as only has one element 
-    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Jarvis"};
-    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "00165312C16A"};
+    private static final String[] robotNames = new String[] {"ExpressBoi", "Meme Machine", "Orphan"};
+    private static final String[] robotIDs = new String[] {"0016531AFBE1", "0016531501CA", "0016531303E0"};
     private static final RobotLocation[] robotLocations = new RobotLocation[] {new RobotLocation(0, 0, 3),
     new RobotLocation(11, 7, 3), new RobotLocation(0, 7, 3)};
     private static ArrayList<Queue<Task>> listOfItems;
@@ -76,23 +76,23 @@ public class RobotsControl {
                 pool.execute(comms);
 
                 LoadingView.finishedLoading();
-//                final Localiser localiser = new Localiser(comms, locations);
-//
-//                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
-//                RobotLocation location = localiser.getPosition();
-//
-//                locations.add(location);
+                final Localiser localiser = new Localiser(comms, locations);
 
-                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, robotLocations[i]);
+                LocalisationView localisationView = new LocalisationView(localiser, robotNames[i]);
+                RobotLocation location = localiser.getPosition();
+
+                locations.add(location);
+
+                Robot newRobot = new Robot(robotIDs[i], robotNames[i], items, comms, location);
                 robots.add(newRobot);
 
-//                localisationView.finishedLocalising();
-//
-//                synchronized (localiser) {
-//                    localiser.wait();
-//                }
-//
-//                localisationView.setVisible(false);
+                localisationView.finishedLocalising();
+
+                synchronized (localiser) {
+                    localiser.wait();
+                }
+
+                localisationView.setVisible(false);
 
                 comms.setRobot(newRobot);
 
@@ -100,12 +100,12 @@ public class RobotsControl {
 
             } catch (IOException e) {
                 logger.error("Could not connect to " + robotNames[i]);
-//            } catch (NoIdeaException e) {
-//                logger.error("Could not localise " + robotNames[i]);
-//            } catch (InterruptedException e) {
-//                logger.fatal("Interrupted somehow while waiting for gui");
-//            }
+            } catch (NoIdeaException e) {
+                logger.error("Could not localise " + robotNames[i]);
+            } catch (InterruptedException e) {
+                logger.fatal("Interrupted somehow while waiting for gui");
             }
+
 
             i++;
         }
