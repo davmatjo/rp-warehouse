@@ -1,5 +1,6 @@
 package rp.warehouse.pc.route;
 
+import lejos.geom.Point;
 import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.robot.Robot;
@@ -48,11 +49,7 @@ public class RoutePlan {
      * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
      */
     public synchronized static Route planDropOff(Robot robot) {
-
-        Route plan1 = planRoute(robot, dropoff, false);
-        Route plan2 = planRoute(robot, dropoff2, false);
-
-        return plan1.size() > plan2.size() ? plan2 : plan1;
+        return planRoute(robot, new Location(4, 7), false);
     }
 
     /**

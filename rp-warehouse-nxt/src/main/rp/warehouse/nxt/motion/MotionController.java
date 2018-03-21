@@ -176,6 +176,7 @@ public class MotionController implements Movement {
 		}
 		// returns true once it has reached a junction
 		pilot.travel(0.08);
+		pilot.stop();
 		return true;
 	}
 
