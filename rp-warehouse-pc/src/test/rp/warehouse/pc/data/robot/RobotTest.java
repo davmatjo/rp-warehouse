@@ -39,8 +39,8 @@ public class RobotTest {
     public void setup() {
         jobs = new Jobs();
         ArrayList<Task> tasks = new ArrayList<>();
-        Item item = new Item("top", 6.0f, 3.0f);
-        Item item2 = new Item("Legs", 2.0f, 1.0f);
+        Item item = new Item("top", 6.0f, 3.0f, new Location(3, 3));
+        Item item2 = new Item("Legs", 2.0f, 1.0f, new Location(5, 3));
         task1 = new Task(item, 2, "table");
         task2 = new Task(item2, 2, "table");
         tasks.add(task1);
@@ -52,11 +52,6 @@ public class RobotTest {
         
 //        Item item = new Item("hel", 2.0f, 3.0f);
 //        Item item2 = new Item("hel", 2.0f, 3.0f);
-        Location location = new Location(3, 3);
-        Location location2 = new Location(5, 3);
-        
-        item.setLocation(location);
-        item2.setLocation(location2);
         
         Queue<Task> items= new LinkedList<Task>();
         items.add(task1);

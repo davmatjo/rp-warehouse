@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import rp.warehouse.pc.data.Item;
+import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.input.Job;
@@ -26,8 +27,8 @@ public class RewardCounterTest {
     public void setUp() {
         jobs = new Jobs();
         ArrayList<Task> tasks = new ArrayList<>();
-        Item item = new Item("top", 6.0f, 3.0f);
-        Item item1 = new Item("Legs", 2.0f, 1.0f);
+        Item item = new Item("top", 6.0f, 3.0f, new Location(2, 2) );
+        Item item1 = new Item("Legs", 2.0f, 1.0f, new Location(2, 2));
         task1 = new Task(item, 1, "1001");
         task2 = new Task(item1, 4, "1001");
         tasks.add(task1);
