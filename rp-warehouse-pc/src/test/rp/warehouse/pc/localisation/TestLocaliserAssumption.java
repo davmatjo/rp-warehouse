@@ -125,8 +125,8 @@ public class TestLocaliserAssumption {
 
 	@Test
 	public void preLocalisedRobot() {
-		// Actual direction: east
-		final RobotLocation preLocalised = new RobotLocation(0, 0, Protocol.SOUTH);
+		// Actual direction: west
+		final RobotLocation preLocalised = new RobotLocation(0, 7, Protocol.WEST);
 
 		final WarehouseMap map = new WarehouseMap();
 		map.updateRangesAroundPositions(preLocalised.toPoint());
@@ -136,16 +136,12 @@ public class TestLocaliserAssumption {
 		LocaliserAssumption south = new LocaliserAssumption(SOUTH, map);
 		LocaliserAssumption west = new LocaliserAssumption(WEST, map);
 		// Start
-		final Ranges r1 = getRanges(9, 2, NORTH);
+		final Ranges r1 = getRanges(2, 1, NORTH);
 		start(r1, north, east, south, west);
 		// Go forward
 		final byte d2 = Ranges.UP;
-		final Ranges r2 = getRanges(9, 3, NORTH);
+		final Ranges r2 = getRanges(2, 2, NORTH);
 		update(d2, r2, north, east, south, west);
-		// Go forward
-		final byte d3 = Ranges.UP;
-		final Ranges r3 = getRanges(9, 4, NORTH);
-		update(d3, r3, north, east, south, west);
 
 		System.out.println("N: " + north.stream().collect(Collectors.toList()));
 		System.out.println("E: " + east.stream().collect(Collectors.toList()));

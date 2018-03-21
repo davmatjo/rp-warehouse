@@ -166,6 +166,13 @@ public class Ranges {
 		return new Ranges(array[0], array[1], array[2], array[3]);
 	}
 
+	/**
+	 * Method to clone a Ranges object, giving a new instance to avoid pointers.
+	 */
+	public Ranges clone() {
+		return new Ranges(ranges[0], ranges[1], ranges[2], ranges[3]);
+	}
+
 	@Override
 	public String toString() {
 		return "UP: " + ranges[0] + ", RIGHT: " + ranges[1] + ", DOWN: " + ranges[2] + ", LEFT: " + ranges[3];
