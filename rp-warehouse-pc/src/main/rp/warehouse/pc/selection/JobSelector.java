@@ -1,8 +1,13 @@
 package rp.warehouse.pc.selection;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import java.util.Collections;
+import java.util.HashMap;
 
 import rp.warehouse.pc.assignment.SimpleAssigner;
 import rp.warehouse.pc.data.Task;
@@ -64,7 +69,53 @@ public class JobSelector {
 		logger.debug("Sorting jobs based on total reward.");
 		Collections.sort(jobs, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
 	}
+	
+	public void sortByReward(ArrayList<Job> j) {
+		logger.debug("Sorting jobs based on total reward.");
+		Collections.sort(j, (a, b) -> (int)totalReward(b) - (int)totalReward(a));
+	}
 
+	public ArrayList<Job> sortPredicted(String pfile, ArrayList<Job> j) {
+		BufferedReader reader;
+		ArrayList<Job> jobs = new ArrayList<Job>(); //An ArrayList for the jobs that won't be potentially cancelled.
+		ArrayList<Job> cancelledJobs = new ArrayList<Job>(); //An ArrayList for the jobs that will be potentially cancelled.
+		ArrayList<Job> result = new ArrayList<Job>(); //An ArrayList for the result of the concatenated, sorted job arrays.
+		HashMap<String, Integer> predictions = new HashMap<String, Integer>(); //Predictions from WEKA put into a HashMap of ids and values.
+		
+		try {
+			reader = new BufferedReader(new FileReader(pfile));
+			String line;
+			logger.debug("Started reading from prediction file...");
+			while ((line = reader.readLine()) != null) {
+				String[] data = line.split(",");
+				data[1] = data[1].substring(0, 1);
+				logger.debug("Putting results from WEKA into a HashMap.");
+				predictions.put(data[0], Integer.parseInt(data[1]));				
+			}
+			logger.debug("Splitting jobs into arrays called on cancellation...");
+			for(Integer i: predictions.values()) {
+				int index = 0;
+				if(i == 0)
+					jobs.add(j.get(index));
+				else 
+					cancelledJobs.add(j.get(index));					
+			}
+			logger.debug("Sorting both arrays based on total reward and concatenating");
+			sortByReward(jobs);
+			sortByReward(cancelledJobs);
+			jobs.addAll(cancelledJobs);
+			
+			reader.close();
+			return result;
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("File does not exist");
+			return null;
+		} catch (IOException e) {
+			System.out.println("IO Failed");
+			return null;
+		} 
+	}
 	public void run() {
 		sortByReward();
 		new SimpleAssigner(jobs);
