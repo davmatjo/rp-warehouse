@@ -1,7 +1,6 @@
 package rp.warehouse.pc.management.panels.main;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
-
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.management.providers.main.RobotListenerManager;
@@ -9,7 +8,6 @@ import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

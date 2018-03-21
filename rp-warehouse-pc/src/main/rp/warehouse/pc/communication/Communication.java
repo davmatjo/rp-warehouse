@@ -1,33 +1,32 @@
 package rp.warehouse.pc.communication;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+import org.apache.log4j.Logger;
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.localisation.Ranges;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
     private final String name;
-    private Robot robot;
     private final DataInputStream fromNXT;
     private final DataOutputStream toNXT;
     private final Object waitForMovement = new Object();
     private final Object waitForPickup = new Object();
     private final Object waitForRanges = new Object();
-    private volatile int pickupCount = 0;
     private final float[] ranges = new float[4];
+    private Robot robot;
+    private volatile int pickupCount = 0;
     private boolean open = true;
 
     /**
-     *
-     * @param ID Robot ID - hexadecimal string
+     * @param ID   Robot ID - hexadecimal string
      * @param name Robot name string
      * @throws IOException If could not create the robot
      */
@@ -119,7 +118,7 @@ public class Communication implements Runnable {
                 }
 
                 case Protocol.LOCALISE: {
-                    for (int i=0; i < 4; i++) {
+                    for (int i = 0; i < 4; i++) {
                         float range = fromNXT.readFloat();
                         logger.trace(name + ": Range read " + range);
                         ranges[i] = range;

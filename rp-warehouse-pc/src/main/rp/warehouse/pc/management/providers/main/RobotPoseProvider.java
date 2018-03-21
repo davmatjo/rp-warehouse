@@ -9,11 +9,11 @@ import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 
 public class RobotPoseProvider implements PoseProvider, Runnable {
-    private Robot robot;
-    private final Object lock = new Object();
-    private Pose currentPose;
     private static final float INTERPOLATION = 0.005f;
-    private Rate r  = new Rate(16);
+    private final Object lock = new Object();
+    private Robot robot;
+    private Pose currentPose;
+    private Rate r = new Rate(16);
 
     public RobotPoseProvider(Robot robot) {
         this.robot = robot;
@@ -25,6 +25,7 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
 
     /**
      * Provides the current pose of the robot, interpolated based on time between readings
+     *
      * @return Pose of the robot, normalised for the grid
      */
     @Override

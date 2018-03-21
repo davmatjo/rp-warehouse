@@ -3,8 +3,6 @@ package rp.warehouse.pc.management;
 import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.panels.localisation.LocaliserMapPanel;
 import rp.warehouse.pc.management.panels.localisation.LocaliserProgressPanel;
-import rp.warehouse.pc.management.panels.main.InfoPanel;
-import rp.warehouse.pc.management.panels.main.WarehouseMapPanel;
 
 import javax.swing.*;
 import java.awt.*;
