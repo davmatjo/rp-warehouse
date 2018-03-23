@@ -21,7 +21,6 @@ public class RoutePlan {
 
     private static final Logger logger = Logger.getLogger(RoutePlan.class);
     private static final Location dropoff = new Location(4, 7);
-    private static final Location dropoff2 = new Location(7, 7);
     private static List<Robot> robotsList = new ArrayList<>();
 
     /**
@@ -49,7 +48,7 @@ public class RoutePlan {
      * @return we return 'plan' - a queue of integer route instructions for RouteExecution to understand
      */
     public synchronized static Route planDropOff(Robot robot) {
-        return planRoute(robot, new Location(4, 7), false);
+        return planRoute(robot, dropoff, false);
     }
 
     /**
