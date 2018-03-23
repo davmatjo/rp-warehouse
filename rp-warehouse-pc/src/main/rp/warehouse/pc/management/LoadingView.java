@@ -4,6 +4,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * A frame with an indeterminate loading bar
+ * @author dxj786
+ */
 public class LoadingView extends JFrame {
     private static LoadingView loadingView;
 

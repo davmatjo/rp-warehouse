@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains a map that visualises the robots
+ * @see WarehouseMapVisualisation
+ */
 public class WarehouseMapPanel extends JPanel {
 
     /**

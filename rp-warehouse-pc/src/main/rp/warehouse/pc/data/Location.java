@@ -6,20 +6,37 @@ import rp.robotics.navigation.GridPose;
 import rp.robotics.navigation.Heading;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 
+/**
+ * Location class that stores an x and y co-ordinate
+ * @author dxj786
+ */
 public class Location {
     private int x;
     private int y;
 
+    /**
+     * Create a location from a pair of co-ordinates
+     * @param x x co-ordinate
+     * @param y y co-ordinate
+     */
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Create a location that is a copy of another location
+     * @param l location to copy
+     */
     public Location(Location l) {
         this.x = l.x;
         this.y = l.y;
     }
 
+    /**
+     * Create a location from a Point
+     * @param point point to use
+     */
     public Location(Point point) {
         this.x = (int) point.x;
         this.y = (int) point.y;
@@ -41,10 +58,16 @@ public class Location {
         this.y = y;
     }
 
+    /**
+     * @return this location as a Point
+     */
     public Point toPoint() {
         return new Point(x, y);
     }
 
+    /**
+     * @return this location as a pose with co-ordinates matching those of the GridMap
+     */
     public Pose toPose() {
         return Warehouse.build().toPose(new GridPose(getX(), getY(), Heading.PLUS_Y));
     }

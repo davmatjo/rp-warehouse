@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains various robot and warehouse information, including the task view which allows cancellation
+ * @author dxj786
+ */
 public class InfoPanel extends JPanel implements WarehouseInfoListener {
     private JLabel warehouseInfo;
     private float totalReward = 0f;

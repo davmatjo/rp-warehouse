@@ -4,6 +4,10 @@ import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import rp.config.WheeledRobotConfiguration;
 
+/**
+ * Tuned parameters for the robot we are using
+ * @author dxj786
+ */
 public class RobotParameters {
         private static final float WHEEL_DIAMETER = 0.056f;
         private static final float TRACK_WIDTH = 0.11235f;

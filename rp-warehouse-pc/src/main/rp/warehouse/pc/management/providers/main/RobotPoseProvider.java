@@ -8,6 +8,10 @@ import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 
+/**
+ * Provides the current position of the robot by smoothing the position between updates
+ * @author dxj786
+ */
 public class RobotPoseProvider implements PoseProvider, Runnable {
     private static final float INTERPOLATION = 0.005f;
     private final Object lock = new Object();

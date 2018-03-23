@@ -6,6 +6,9 @@ import rp.warehouse.pc.data.Item;
 
 import java.util.HashMap;
 
+/**
+ * @author megan
+ */
 public class Items {
 
     private HashMap<String, Item> items = new HashMap<String, Item>();

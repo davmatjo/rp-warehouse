@@ -14,12 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Visualises the state of localisation on a map
+ * @author dxj786
+ */
 public class LocaliserMapVisualisation extends GridMapVisualisation implements LocalisationListener {
     private Color[] directionColours = new Color[]{Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA};
     private List<Stream<RobotLocation>> possiblePoints = new ArrayList<>();
 
     /**
-     * Creates a visualisation of the waehouse map that also shows possible locations during localisation
+     * Creates a visualisation of the warehouse map that also shows possible locations during localisation
      * @param _gridMap gridMap
      * @param _lineMap lineMap
      * @param _scaleFactor scale of map

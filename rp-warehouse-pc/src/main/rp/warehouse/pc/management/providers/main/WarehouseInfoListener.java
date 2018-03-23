@@ -2,6 +2,7 @@ package rp.warehouse.pc.management.providers.main;
 
 /**
  * Listener for information about the general state of the warehouse
+ * @author dxj786
  */
 public interface WarehouseInfoListener {
 

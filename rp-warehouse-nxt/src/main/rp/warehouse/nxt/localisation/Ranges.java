@@ -6,6 +6,10 @@ import lejos.nxt.addon.OpticalDistanceSensor;
 import lejos.util.Delay;
 import rp.warehouse.nxt.motion.MotionController;
 
+/**
+ * Class to get ranges for localisation from the robot
+ * @author dxj786
+ */
 public class Ranges {
 	private final MotionController motion;
 	private final OpticalDistanceSensor sensor;

@@ -10,7 +10,7 @@ import java.util.Queue;
 
 /**
  * A simple job assigner Splits items between robots evenly
- *
+ * @deprecated - dxj786
  * @author Dylan
  */
 public class SimpleAssigner {

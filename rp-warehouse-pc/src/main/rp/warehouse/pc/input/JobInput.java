@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author Megan
+ */
 public class JobInput {
 
     //locations where the files to be read are stored
@@ -32,14 +35,6 @@ public class JobInput {
      */
     public Items getItems() {
         return items;
-    }
-
-    /**
-     * returns the jobs
-     * @return
-     */
-    public Jobs getJobs() {
-        return jobs;
     }
 
     //will be passed the location of the files as strings and recieve the files?
@@ -63,6 +58,9 @@ public class JobInput {
         RewardCounter.setJobs(jobs);
     }
 
+    /**
+     * @return The jobs that have been read in
+     */
     public Jobs getJobs() {
         return jobs;
     }

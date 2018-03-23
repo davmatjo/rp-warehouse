@@ -9,9 +9,9 @@ public class Item {
 
     /**
      * Assigns names/rewards/weight when the item is made
-     * @param name
-     * @param reward
-     * @param weight
+     * @param name name of the item
+     * @param reward reward of the item
+     * @param weight weight of the item
      */
     public Item(String name, Float reward, Float weight) {
         this.name = name;
@@ -21,10 +21,10 @@ public class Item {
 
     /**
      * Constructor that also takes in the location of an item
-     * @param name
-     * @param reward
-     * @param weight
-     * @param location
+     * @param name name of the item
+     * @param reward reward of the item
+     * @param weight weight of the item
+     * @param location location of the item
      */
     public Item(String name, Float reward, Float weight, Location location) {
         this.name = name;
@@ -34,48 +34,55 @@ public class Item {
     }
 
     /**
+     * Creats an item from an item
+     * @param item item to copy
+     */
+    public Item(Item item) {
+        this.name = item.name;
+        this.reward = item.reward;
+        this.weight = item.weight;
+        this.location = item.location;
+    }
+
+    /**
      * sets the Location of the item accordingly
-     * @param location
+     * @param location location of the item
      */
     public void setLocation(Location location) {
         this.location = location;
     }
 
     /**
-     * returns the reward of the item
-     * @return
+     * @return the reward of the item
      */
     public Float getReward() {
         return reward;
     }
 
     /**
-     * returns the items
-     * @return
+     * @return weight of the item
      */
     public float getWeight() {
         return weight;
     }
 
     /**
-     * returns the location of the item
-     * @return
+     * @return location of the item
      */
     public Location getLocation() {
         return location;
     }
 
-    @Override
     /**
-     * returns the item as a string
+     * @return A string containing the relevant item information
      */
+    @Override
     public String toString() {
         return "at " + location + " of weight " + weight + " with reward " + reward;
     }
 
     /**
-     * returns the name of the item
-     * @return
+     * @return name of the item
      */
     public String getName() {
         return name;

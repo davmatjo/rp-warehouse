@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Provides progress to a JProgressBar
+ * @author dxj786
+ */
 public class LocalisationProgressProvider implements LocalisationListener {
     private JProgressBar progressBar;
     private int initialReading = 0;

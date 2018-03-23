@@ -6,6 +6,11 @@ import rp.warehouse.pc.localisation.implementation.Localiser;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Contains a LocaliserMapVisualisation
+ * @author dxj786
+ * @see LocaliserMapVisualisation
+ */
 public class LocaliserMapPanel extends JPanel {
 
     /**

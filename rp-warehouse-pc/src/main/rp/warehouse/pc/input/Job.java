@@ -5,6 +5,10 @@ import rp.warehouse.pc.data.Task;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * Job that contains a number of tasks
+ * @author Megan
+ */
 public class Job {
 
     //has an item name and the count
@@ -14,8 +18,8 @@ public class Job {
 
     /**
      * Constructor
-     * @param name
-     * @param tasks
+     * @param name job ID
+     * @param tasks tasks this job contains
      */
     public Job(String name, ArrayList<Task> tasks) {
 
@@ -26,9 +30,9 @@ public class Job {
 
     /**
      * Constructor
-     * @param name
-     * @param tasks
-     * @param cancelled
+     * @param name job ID
+     * @param tasks tasks this job contains
+     * @param cancelled whether this job is cancelled
      */
     public Job(String name, ArrayList<Task> tasks, boolean cancelled) {
 
@@ -38,26 +42,33 @@ public class Job {
 
     }
 
+    /**
+     * Creates a job from another job
+     * @param job job to copy
+     */
+    public Job(Job job) {
+        this.name = job.name;
+        this.cancelled = job.cancelled;
+        this.tasks = job.tasks.stream().map(Task::new).collect(Collectors.toCollection(ArrayList::new));
+    }
+
 
     /**
-     * returns the name of the job
-     * @return
+     * @return the name of the job
      */
     public String getName() {
         return name;
     }
 
     /**
-     * returns the Items in the job
-     * @return
+     * @return the Items in the job
      */
     public ArrayList<Task> getItems() {
         return tasks;
     }
 
     /**
-     * returns the amount of tasks in a job
-     * @return
+     * @return the amount of tasks in a job
      */
     public int numOfTasks() {
         return tasks.size();
@@ -65,7 +76,7 @@ public class Job {
 
     /**
      * adds a task to a job
-     * @param task
+     * @param task task to add
      */
     public void addTask(Task task) {
         tasks.add(task);
@@ -73,7 +84,7 @@ public class Job {
 
     /**
      * sets whether a job was cancelled or not
-     * @param cancelled
+     * @param cancelled whether this job was cancelled
      */
     public void setCancelled(int cancelled) {
         this.cancelled = cancelled != 0;

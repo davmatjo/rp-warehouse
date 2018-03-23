@@ -10,6 +10,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Main class that does route planning
+ * @author Ali & dxj786
+ */
 public class Node {
     private static final Logger logger = Logger.getLogger(Node.class);
     private static List<Robot> robotList;
@@ -110,8 +114,8 @@ public class Node {
      * A method which finds the Route for a robot from its starting node to its ending (goal) node
      * @param currentNode the node the robot is currently at.
      * @param goalNode the node the robot wants to go to.
-     * @param the list of nodes that have been opened.
-     * @param the list of nodes that have been closed.
+     * @param openList list of nodes that have been opened.
+     * @param closedList list of nodes that have been closed.
      * @return returns the the final (goal) node in the path, but with all parent pointer set, including its parent pointer.
      */
     private Node navigate(Node currentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
@@ -179,8 +183,8 @@ public class Node {
      * @param node the node we're at.
      * @param parentNode the node which we were at before.
      * @param goalNode the node we want to get to.
-     * @param the list of nodes that have been opened.
-     * @param the list of nodes that have been closed.
+     * @param openList list of nodes that have been opened.
+     * @param closedList list of nodes that have been closed.
      * @return true if node we're at is the goal node.
      */
     private boolean addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
@@ -197,8 +201,8 @@ public class Node {
     /**
      * A method to check if a node is valid.
      * @param node the node we're currently at.
-     * @param the list of nodes that have been opened.
-     * @param the list of nodes that have been closed.
+     * @param openList list of nodes that have been opened.
+     * @param closedList list of nodes that have been closed.
      * @return true if the node is valid, false otherwise.
      */
     private boolean isValid(Node node, List<Node> openList, List<Node> closedList) {

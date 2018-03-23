@@ -6,6 +6,10 @@ import rp.warehouse.pc.management.providers.localisation.LocalisationProgressPro
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Contains the control elements, robot, and progress information
+ * @author dxj786
+ */
 public class LocaliserProgressPanel extends JPanel {
     private JButton nextRobot;
 

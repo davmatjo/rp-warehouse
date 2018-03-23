@@ -4,6 +4,10 @@ import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
 import rp.warehouse.pc.data.robot.Robot;
 
+/**
+ * Provides the positions of items being picked up
+ * @author dxj786
+ */
 public class ItemPoseProvider implements PoseProvider {
     private Robot robot;
 

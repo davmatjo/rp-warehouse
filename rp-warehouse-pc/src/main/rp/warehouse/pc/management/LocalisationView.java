@@ -7,6 +7,10 @@ import rp.warehouse.pc.management.panels.localisation.LocaliserProgressPanel;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A frame that visualises localisation progress and allows some degree of control
+ * @author dxj786
+ */
 public class LocalisationView extends JFrame {
     private LocaliserProgressPanel progressPanel;
 

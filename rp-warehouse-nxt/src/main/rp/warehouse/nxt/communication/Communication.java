@@ -13,6 +13,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * This class is for communicating with the PC using the given protocol
+ * @author dxj786
+ */
 public class Communication extends Thread {
     private static final HashMap<Integer, Movement.Direction> commandTranslate = new HashMap<>();
     private final DataInputStream fromPC;

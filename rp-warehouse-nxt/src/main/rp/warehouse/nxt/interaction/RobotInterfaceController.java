@@ -7,10 +7,11 @@ import rp.warehouse.nxt.communication.Communication;
 import rp.warehouse.nxt.communication.Protocol;
 
 /**
- * @author Harry Pratlett This class controls the interface on the robot and
- *         handles the button presses. The user can send an amount of items to
- *         pickup by using the arrow buttons and confirm it using the middle
- *         button. This is all reflected by the display.
+ * @author Harry Pratlett
+ * This class controls the interface on the robot and
+ * handles the button presses. The user can send an amount of items to
+ * pickup by using the arrow buttons and confirm it using the middle
+ * button. This is all reflected by the display.
  */
 
 public class RobotInterfaceController {

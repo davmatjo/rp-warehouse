@@ -1,5 +1,9 @@
 package rp.warehouse.nxt.communication;
 
+/**
+ * This protocol class mirrors the PC class
+ * @author dxj786
+ */
 public class Protocol {
     public static final int WAITING = 0;
     public static final int OK = 1;

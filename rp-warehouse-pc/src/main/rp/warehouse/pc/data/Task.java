@@ -1,5 +1,9 @@
 package rp.warehouse.pc.data;
 
+/**
+ * Task that contains a number of items
+ * @author Megan
+ */
 public class Task {
 
     public final Item item;
@@ -7,10 +11,10 @@ public class Task {
     public final String jobID;
 
     /**
-     * Construcotr
-     * @param item
-     * @param count
-     * @param jobID
+     * Constructor
+     * @param item item
+     * @param count count
+     * @param jobID jobID this task belongs to
      */
     public Task(Item item, int count, String jobID) {
         this.item = item;
@@ -29,33 +33,30 @@ public class Task {
     }
 
     /**
-     * returns the item in the task
-     * @return
+     * @return the item in the task
      */
     public Item getItem() {
         return item;
     }
 
     /**
-     * returns the count of the item
-     * @return
+     * @return the count of the item
      */
     public int getCount() {
         return count;
     }
 
     /**
-     * returns the jo of the job in the taskbID of the job the task is in
-     * @return
+     * @return the jobID of the job the task is in
      */
     public String getJobID() {
         return jobID;
     }
 
-    @Override
     /**
-     * Returns the task as a string
+     * @return the task as a string
      */
+    @Override
     public String toString() {
         return "Job " + jobID + " | " + count + " of item " + item.toString();
     }

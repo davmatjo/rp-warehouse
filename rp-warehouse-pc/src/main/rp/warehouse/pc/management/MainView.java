@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Main warehouse MI frame
+ * @author dxj786
+ */
 public class MainView extends JFrame {
 
     /**

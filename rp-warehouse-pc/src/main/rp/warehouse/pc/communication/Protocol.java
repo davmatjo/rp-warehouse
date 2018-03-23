@@ -1,5 +1,9 @@
 package rp.warehouse.pc.communication;
 
+/**
+ * Protocol for communication
+ * @author dxj786
+ */
 public class Protocol {
     public static final int WAITING = 0;
     public static final int OK = 1;

@@ -14,6 +14,11 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A map visualisation for given robots that displays robots, items, and information about each robot floating next to it
+ * @author dxj786
+ * @see GridMapVisualisation
+ */
 public class WarehouseMapVisualisation extends GridMapVisualisation {
     private static final Logger logger = Logger.getLogger(WarehouseMapVisualisation.class);
     private final List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses;

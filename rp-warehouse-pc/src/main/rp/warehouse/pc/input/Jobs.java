@@ -4,6 +4,9 @@ package rp.warehouse.pc.input;
 
 import java.util.ArrayList;
 
+/**
+ * @author Megan
+ */
 public class Jobs {
 
     private ArrayList<Job> jobs = new ArrayList<>();

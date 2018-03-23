@@ -12,6 +12,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+/**
+ * Class to communicate with a given robot
+ * @author dxj786
+ */
 public class Communication implements Runnable {
     private static final Logger logger = Logger.getLogger(Communication.class);
     private final String name;
