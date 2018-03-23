@@ -13,6 +13,14 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Used to generate the arff files, do the prediction and put it in prediction.csv file which is then used by the selector
  * @author nikollevunlieva
@@ -85,8 +93,7 @@ public class Prediction {
 			s.setFile(new File("files/newTraining.arff"));
 			s.setInstances(tdata);
 			s.writeBatch();
-			
-			File file = new File("prediction.csv");
+
 			Files.write(Paths.get("prediction.csv"), classified, Charset.defaultCharset());
 			
 			log.debug("Finished");
