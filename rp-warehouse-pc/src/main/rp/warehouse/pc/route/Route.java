@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * This clas exists to help route planning, by storing the locations along with the instructions, we can save
+ * This class exists to help route planning, by storing the locations along with the instructions, we can save
  * computation when planning
  * @author dxj786
  */
