@@ -44,9 +44,6 @@ public class RobotsControl {
     private static List<Queue<Task>> listOfItems;
 
     /**
-     * For: Job Selection When the the items have been split between robots (number
-     * of robots should be passed to you by Job Selection) pass Queue of items for
-     * each of the robot.
      * <p>
      * If there are 3 robots, there should be 3 queues in the ArrayList and the size
      * of the Array should be 3
@@ -136,12 +133,6 @@ public class RobotsControl {
 
         // Shut down the pool to prevent new threads being created, and allow the program to end
         pool.shutdown();
-    }
-
-    public static void setRobotData(String[] _robotNames, String[] _robotIDs, RobotLocation[] _robotLocations) {
-//        robotNames =_robotNames;
-//        robotIDs = _robotIDs;
-//        robotLocations = _robotLocations;
     }
 }
 //

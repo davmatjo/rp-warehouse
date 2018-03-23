@@ -98,7 +98,7 @@ public class RewardCounter {
     /**
      * @param task
      *            - Task which is checked if it is cancelled
-     * @return
+     * @return - True present, false not present 
      */
     public static boolean checkIfCancelled(Task task) {
 
