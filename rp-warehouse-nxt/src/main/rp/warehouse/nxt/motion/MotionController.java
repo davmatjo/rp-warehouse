@@ -32,6 +32,7 @@ public class MotionController implements Movement {
 	 */
 	public MotionController(WheeledRobotConfiguration educatorBot, SensorPort port1, SensorPort port2) {
 		this.pilot = new WheeledRobotSystem(educatorBot).getPilot();
+		this.pilot.setTravelSpeed(0.18);
 		this.leftSensor = new LightSensor(port1);
 		this.rightSensor = new LightSensor(port2);
 		this.previousDirection = Direction.NORTH;
@@ -151,7 +152,6 @@ public class MotionController implements Movement {
 		boolean junction = false;
 
 		pilot.rotate(rotation);
-		pilot.setTravelSpeed(0.12);
 		pilot.forward();
 
 
@@ -162,7 +162,6 @@ public class MotionController implements Movement {
 
 			// checks if a junction has been reached
 			if (leftValue < leftLineLimit && rightValue < rightLineLimit) {
-				pilot.stop();
 				junction = true;
 			}
 			// check is robot has gone off the line and adjust
@@ -177,6 +176,7 @@ public class MotionController implements Movement {
 		}
 		// returns true once it has reached a junction
 		pilot.travel(0.08);
+		pilot.stop();
 		return true;
 	}
 

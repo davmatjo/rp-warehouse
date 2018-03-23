@@ -9,11 +9,11 @@ import rp.warehouse.pc.data.robot.utils.RobotLocation;
 import rp.warehouse.pc.route.Route;
 
 public class RobotPoseProvider implements PoseProvider, Runnable {
-    private Robot robot;
-    private final Object lock = new Object();
-    private Pose currentPose;
     private static final float INTERPOLATION = 0.005f;
-    private Rate r  = new Rate(16);
+    private final Object lock = new Object();
+    private Robot robot;
+    private Pose currentPose;
+    private Rate r = new Rate(16);
 
     public RobotPoseProvider(Robot robot) {
         this.robot = robot;
@@ -25,6 +25,7 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
 
     /**
      * Provides the current pose of the robot, interpolated based on time between readings
+     *
      * @return Pose of the robot, normalised for the grid
      */
     @Override
@@ -39,6 +40,10 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
         throw new RuntimeException("Cannot set pose here");
     }
 
+    /**
+     * Uses the current robot location information along with an interpolation value to give a current estimate of
+     * the position of the robot in the warehouse
+     */
     @Override
     public void run() {
         RobotLocation previous = robot.getLocation();
@@ -49,16 +54,14 @@ public class RobotPoseProvider implements PoseProvider, Runnable {
                 Route route = robot.getRoute();
                 boolean interpolate;
 
-                // Check to see if the robot is being told to wait, dropoff or pickup
-                try {
+                if (route == null || route.isEmpty()) {
+                    // We always interpolate if the robot has no route
+                    interpolate = true;
+                } else {
+                    // Check to see if the robot is being told to wait, dropoff or pickup
                     interpolate = !(route.peek() == Protocol.WAITING
                             || route.peek() == Protocol.DROPOFF
                             || route.peek() == Protocol.PICKUP);
-
-                } catch (NullPointerException e) {
-                    // We always interpolate if the robot has no route - this is necessary because the route is
-                    // sometimes null.
-                    interpolate = true;
                 }
 
                 // If the location reading has changed since the last tick, change the robot heading and pose

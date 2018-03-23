@@ -1,6 +1,5 @@
 package rp.warehouse.pc.management;
 
-import org.junit.jupiter.api.Test;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 import rp.warehouse.pc.data.Task;
@@ -13,14 +12,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * not a unit test, but attempts to set up a mocked environment for light gui testing
+ */
 class MainViewTest {
 
-    @Test
-    void showUI() {
+    public static void main(String[] args) {
+        showUI();
+    }
+
+    static void showUI() {
         Robot robot1 = mock(Robot.class);
 //        Robot robot2 = mock(Robot.class);
 //        Robot robot3 = mock(Robot.class);

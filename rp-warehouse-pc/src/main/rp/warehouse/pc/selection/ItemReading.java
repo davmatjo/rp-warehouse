@@ -1,7 +1,5 @@
 package rp.warehouse.pc.selection;
 
-import java.io.*;
-import java.util.*;
 import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Location;
 

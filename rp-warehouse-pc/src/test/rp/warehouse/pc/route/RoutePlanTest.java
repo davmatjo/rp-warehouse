@@ -21,10 +21,11 @@ class RoutePlanTest {
     @Test
     void planningToDropoffWhenDropoffBlockedWorks() {
         Robot mockedPlanningRobot = mock(Robot.class);
-        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(0, 2, 3));
+        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(6, 7, 3));
 
         Robot mockedStaticRobot = mock(Robot.class);
-        when(mockedStaticRobot.getLocation()).thenReturn(new RobotLocation(0, 0, 3));
+        when(mockedStaticRobot.getLocation()).thenReturn(new RobotLocation(4, 7, 3));
+        when(mockedStaticRobot.getPreviousLocation()).thenReturn(new RobotLocation(4, 7, 3));
 
         Route mockedPlan = mock(Route.class);
         when(mockedPlan.getLocation(Matchers.anyInt())).thenThrow(new IndexOutOfBoundsException());
@@ -34,7 +35,7 @@ class RoutePlanTest {
 
         Route route = RoutePlan.planDropOff(mockedPlanningRobot);
 
-        Assertions.assertEquals(Protocol.SOUTH, route.poll());
+        Assertions.assertEquals(Protocol.WEST, route.poll());
         Assertions.assertEquals(Protocol.WAITING, route.poll());
     }
 
@@ -45,6 +46,7 @@ class RoutePlanTest {
 
         Robot mockedStaticRobot = mock(Robot.class);
         when(mockedStaticRobot.getLocation()).thenReturn(new RobotLocation(0, 0, 3));
+        when(mockedStaticRobot.getPreviousLocation()).thenReturn(new RobotLocation(0, 0, 3));
 
         Route mockedPlan = mock(Route.class);
         when(mockedPlan.getLocation(Matchers.anyInt())).thenThrow(new IndexOutOfBoundsException());
@@ -52,7 +54,7 @@ class RoutePlanTest {
 
         RoutePlan.setRobots(new ArrayList<>(Arrays.asList(mockedPlanningRobot, mockedStaticRobot)));
 
-        Route route = RoutePlan.planDropOff(mockedPlanningRobot);
+        Route route = RoutePlan.plan(mockedPlanningRobot, new Location(0, 0));
 
         Assertions.assertEquals(Protocol.WAITING, route.poll());
     }
@@ -60,27 +62,25 @@ class RoutePlanTest {
     @Test
     void planningToDropoffGivesDropoffAtEnd() {
         Robot mockedPlanningRobot = mock(Robot.class);
-        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(0, 2, 3));
+        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(3, 7, 3));
 
         RoutePlan.setRobots(new ArrayList<>());
 
         Route route = RoutePlan.planDropOff(mockedPlanningRobot);
 
-        Assertions.assertEquals(route.poll(), Protocol.SOUTH);
-        Assertions.assertEquals(route.poll(), Protocol.SOUTH);
+        Assertions.assertEquals(route.poll(), Protocol.EAST);
         Assertions.assertEquals(route.poll(), Protocol.DROPOFF);
     }
 
     @Test
     void planningToPickupGivesPickupAtEnd() {
         Robot mockedPlanningRobot = mock(Robot.class);
-        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(2, 0, 3));
+        when(mockedPlanningRobot.getLocation()).thenReturn(new RobotLocation(1, 0, 3));
 
         RoutePlan.setRobots(new ArrayList<>());
 
         Route route = RoutePlan.plan(mockedPlanningRobot, new Location(0, 0));
 
-        Assertions.assertEquals(route.poll(), Protocol.WEST);
         Assertions.assertEquals(route.poll(), Protocol.WEST);
         Assertions.assertEquals(route.poll(), Protocol.PICKUP);
     }

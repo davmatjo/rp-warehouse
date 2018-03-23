@@ -1,7 +1,6 @@
 package rp.warehouse.pc.management.panels.main;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
-
 import rp.warehouse.pc.data.robot.Robot;
 import rp.warehouse.pc.data.robot.utils.RewardCounter;
 import rp.warehouse.pc.management.providers.main.RobotListenerManager;
@@ -9,7 +8,6 @@ import rp.warehouse.pc.management.providers.main.WarehouseInfoListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +19,10 @@ public class InfoPanel extends JPanel implements WarehouseInfoListener {
     private int jobsCompleted = 0;
     private int uncompleted = 0;
 
+    /**
+     * Creates a panel that contains various robot and warehouse information
+     * @param robots robots being modelled
+     */
     public InfoPanel(List<Robot> robots) {
         // Panel properties
         this.setLayout(new BorderLayout(0, 10));

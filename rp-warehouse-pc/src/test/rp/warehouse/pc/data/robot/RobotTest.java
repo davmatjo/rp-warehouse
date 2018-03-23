@@ -50,8 +50,7 @@ public class RobotTest {
         
         RewardCounter.setJobs(jobs);
         
-//        Item item = new Item("hel", 2.0f, 3.0f);
-//        Item item2 = new Item("hel", 2.0f, 3.0f);
+
         
         Queue<Task> items= new LinkedList<Task>();
         items.add(task1);
@@ -59,7 +58,7 @@ public class RobotTest {
         
         Communication mockedCommunications = mock(Communication.class);
         when(mockedCommunications.sendLoadingRequest(2)).thenReturn(2);
-        //ExecutorService mockedPool = mock(ExecutorService.class);
+
         ArrayList<Robot> robots = new ArrayList<>();
         try {
             robot = new Robot("0016531AFBE1", "ExpressBoi", items, mockedCommunications, new RobotLocation(0, 0, 3));
@@ -69,7 +68,6 @@ public class RobotTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        //robot.setComminications(mockedCommunications);
         RoutePlan.setRobots(robots);
         
     }
@@ -77,8 +75,7 @@ public class RobotTest {
     @Test
     public void idTest() {
         System.out.println("Test 1");
-        Communication mockedCommunications = mock(Communication.class);
-        RoutePlan mockedRoutePlan = mock(RoutePlan.class);
+
         
         Route mockedRoute = mock(Route.class);
         Queue<Integer> route = new  LinkedList<>();
@@ -90,51 +87,15 @@ public class RobotTest {
         route.add(Protocol.NORTH);
         route.add(Protocol.PICKUP);
         
-        when(mockedRoute.poll()).thenCallRealMethod();//thenReturn(route.poll());
+        when(mockedRoute.poll()).thenCallRealMethod();
         when(mockedRoute.peek()).thenReturn(route.peek());
         when(mockedRoute.isEmpty()).thenReturn(route.isEmpty());
-        //RoutePlan newPlan = PowerMockito.spy(new RoutePlan());
-        //PowerMockito.mockStatic(RoutePlan.class);
-        //Mockito.when(RoutePlan.plan(robot, new Location(3, 3))).thenReturn(mockedRoute);
+
         ExecutorService mockedPool = mock(ExecutorService.class);
         
         robot.run();
-//        Thread t = new Thread(robot);
-//        t.start();
-        System.out.println("Hell");
         
         Assertions.assertEquals(robot.getID(),"0016531AFBE1");
     }
-//    
-//    @Test
-//    public void routeTest() {
-//        System.out.println("Test 2");
-//        Communication mockedCommunications = mock(Communication.class);
-//        when(mockedCommunications.sendLoadingRequest(0)).thenReturn(0);
-//        
-//        ExecutorService mockedPool = mock(ExecutorService.class);
-//        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
-//        //setup();
-//        
-////        robot.cancelJob();
-////        robot.getLocation();
-////        robot.getTask();
-////        robot.toString();
-////        robot.run();
-//        
-//        Assertions.assertEquals(robot.getRoute(),null);
-//
-//    }
-//    
-//    @Test
-//    public void nameTest() {
-//        System.out.println("Test 3");
-//        Communication mockedCommunications = mock(Communication.class);
-//        
-//        ExecutorService mockedPool = mock(ExecutorService.class);
-//        //when(mockedPool.execute(mockedCommunications)).thenReturn(null);
-//        //setup();
-//        Assertions.assertEquals(robot.getName(),"ExpressBoi");   
-//    }
 
 }

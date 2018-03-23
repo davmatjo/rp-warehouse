@@ -1,7 +1,8 @@
 package rp.warehouse.pc.selection;
 
+import rp.warehouse.pc.data.Item;
+
 import java.util.HashMap;
-import rp.warehouse.pc.data.*;
 
 /**
  * Used in order to match the format when creating the ARFF. Has more methods
@@ -18,15 +19,11 @@ public class TrainedJob {
 	private HashMap<String, Item> itemList;
 	private boolean cancelled;
 
-	public TrainedJob(String id, HashMap<String, Item> il, int cancelled) {
-		this.jobID = id;
-		this.itemList = il;
-		if (cancelled == 1) {
-			this.cancelled = true;
-		} else {
-			this.cancelled = false;
-		}
-	}
+    TrainedJob(String id, HashMap<String, Item> il, int cancelled) {
+        this.jobID = id;
+        this.itemList = il;
+        this.cancelled = cancelled == 1;
+    }
 
 	/**
 	 * A method that adds picks to the pick map
@@ -42,13 +39,13 @@ public class TrainedJob {
 		}
 	}
 
-	public HashMap<String, Integer> getPicks() {
-		return picks;
-	}
+    public HashMap<String, Integer> getPicks() {
+        return picks;
+    }
 
-	public void setPicks(HashMap<String, Integer> picks) {
-		this.picks = picks;
-	}
+    public void setPicks(HashMap<String, Integer> picks) {
+        this.picks = picks;
+    }
 
 	/**
 	 *  A method that returns the total reward of the job extracted from the picks map
@@ -89,8 +86,8 @@ public class TrainedJob {
 		return total;
 	}
 
-	public boolean isCancelled() {
-		return this.cancelled;
-	}
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
 
 }

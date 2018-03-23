@@ -7,6 +7,10 @@ import rp.warehouse.pc.data.robot.Robot;
 public class ItemPoseProvider implements PoseProvider {
     private Robot robot;
 
+    /**
+     * create an item pose provider listening on a given robot
+     * @param robot robot to watch
+     */
     public ItemPoseProvider(Robot robot) {
         this.robot = robot;
     }

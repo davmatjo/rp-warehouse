@@ -89,6 +89,7 @@ public class RewardCounter {
     public synchronized static void addCancelledJob(Task task) {
         logger.debug("Job " + task.getJobID() + " cancelled");
         cancelledJobReference.add(task.getJobID());
+        uncompletedJobReference.remove(task.getJobID());
         for (WarehouseInfoListener listener : listeners) {
             listener.cancelledJobsChanged(getNumberJobsCancelled());
         }
@@ -97,7 +98,7 @@ public class RewardCounter {
     /**
      * @param task
      *            - Task which is checked if it is cancelled
-     * @return
+     * @return - True present, false not present 
      */
     public static boolean checkIfCancelled(Task task) {
 
@@ -119,6 +120,7 @@ public class RewardCounter {
         String jobId = task.getJobID();
         if (!checkIfCancelled(task) && jobReference.containsKey(jobId)) {
             logger.debug("Job " + jobId + " is valid");
+            
             if (uncompletedJobReference.containsKey(jobId)) {
 
                 int numberOfTaskDone = uncompletedJobReference.get(jobId);

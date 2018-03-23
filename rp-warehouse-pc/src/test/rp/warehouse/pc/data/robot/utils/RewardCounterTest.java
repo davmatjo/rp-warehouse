@@ -88,7 +88,7 @@ public class RewardCounterTest {
         RewardCounter.addCompletedJob(task2);
 
         Assertions.assertEquals(0, RewardCounter.getPointsEarned());
-        Assertions.assertEquals(1, RewardCounter.getNumberUncompletedJobs());
+        Assertions.assertEquals(0, RewardCounter.getNumberUncompletedJobs());
         Assertions.assertEquals(0, RewardCounter.getJobsDone());
         Assertions.assertEquals(1, RewardCounter.getNumberJobsCancelled());
 

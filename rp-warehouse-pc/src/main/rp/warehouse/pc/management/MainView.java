@@ -10,7 +10,10 @@ import java.util.List;
 
 public class MainView extends JFrame {
 
-
+    /**
+     * Creates the main gui for this application using a given list of robots
+     * @param robots list of robots to visualise
+     */
     public MainView(List<Robot> robots) {
         JPanel top = new JPanel();
         top.setLayout(new FlowLayout());

@@ -1,18 +1,14 @@
 package rp.warehouse.pc.selection;
 
+import org.apache.log4j.Logger;
+import rp.warehouse.pc.data.Task;
+import rp.warehouse.pc.input.Job;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import org.apache.log4j.Logger;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
-import rp.warehouse.pc.assignment.SimpleAssigner;
-import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.input.Job;
+import java.util.*;
 
 /**
  * The class that holds all the methods that do the sorting of the job

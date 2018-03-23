@@ -1,11 +1,12 @@
 package rp.warehouse.pc.selection;
 
-import java.io.*;
-import java.util.*;
-
 import rp.warehouse.pc.data.Item;
-import rp.warehouse.pc.data.Task;
-import rp.warehouse.pc.input.Job;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Used to read the jobs.csv appropriately in order to create the ARFF file.

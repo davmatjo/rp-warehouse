@@ -67,12 +67,19 @@ public class Communication extends Thread {
      */
     private void receiveCommand() throws IOException {
         while (open) {
+            // Read command from pc
             Integer command = fromPC.readInt();
+
+            // Movement command
             if (command >= Protocol.NORTH && command <= Protocol.WEST) {
                 robotMovement.move(commandTranslate.get(command));
                 sendCommand(1);
+
+            // Pickup and dropoff command
             } else if (command == Protocol.PICKUP) {
                 robotInterface.pickup(fromPC.readInt());
+
+            // Localisation
             } else if (command == Protocol.LOCALISE) {
                 float[] ranges = rangeFind.getRanges();
                 sendCommand(Protocol.LOCALISE);
@@ -80,6 +87,8 @@ public class Communication extends Thread {
                     System.out.println(range);
                     sendFloat(range);
                 }
+
+            // Set direction facing once localised
             } else if (command == Protocol.SETDIR) {
                 robotMovement.setDirection(fromPC.readInt());
             }
@@ -101,6 +110,10 @@ public class Communication extends Thread {
 
     }
 
+    /**
+     * Sends a float for localisation
+     * @param data float to send
+     */
     private void sendFloat(float data) {
         try {
             toPC.writeFloat(data);
