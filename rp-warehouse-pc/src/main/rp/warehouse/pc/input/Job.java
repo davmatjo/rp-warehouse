@@ -11,6 +11,11 @@ public class Job {
     private boolean cancelled = false;
     private ArrayList<Task> tasks;
 
+    /**
+     *
+     * @param name
+     * @param tasks
+     */
     public Job(String name, ArrayList<Task> tasks) {
 
         this.name = name;

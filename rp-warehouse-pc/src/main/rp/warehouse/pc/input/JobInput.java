@@ -21,15 +21,32 @@ public class JobInput {
     Jobs jobs = new Jobs();
     CancelledJobs cancelledJobs = new CancelledJobs();
 
+    /**
+     * returns the items
+     * @return
+     */
     public Items getItems() {
         return items;
     }
 
+    /**
+     * returns the jobs
+     * @return
+     */
     public Jobs getJobs() {
         return jobs;
     }
 
     //will be passed the location of the files as strings and recieve the files?
+
+    /**
+     * Assigns the paths of the files, runs all the methods to read in the files
+     * @param itemsPath
+     * @param jobsPath
+     * @param locationsPath
+     * @param cancellationsPath
+     * @throws FileNotFoundException
+     */
     public JobInput(String itemsPath,String jobsPath, String locationsPath, String cancellationsPath ) throws FileNotFoundException {
         this.itemsPath = itemsPath;
         this.jobsPath = jobsPath;
@@ -42,6 +59,10 @@ public class JobInput {
     }
 
 
+    /**
+     * Method to read in the Items file line by line, converts it into arraylist and creates Item objects using information
+     * @throws FileNotFoundException
+     */
     public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
@@ -69,6 +90,10 @@ public class JobInput {
 
     }
 
+    /**
+     * Method to read in the Locations file line by line, converts it into arraylist and creates locations objects using information
+     * @throws FileNotFoundException
+     */
     public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
@@ -101,6 +126,10 @@ public class JobInput {
 
     }
 
+    /**
+     * Method to read in the Jobs file line by line, converts it into arraylist and creates Job objects using information
+     * @throws FileNotFoundException
+     */
     public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
@@ -160,6 +189,10 @@ public class JobInput {
 
     }
 
+    /**
+     * Method to read in the Cancellations file line by line, converts it into arraylist and creates Cancellations objects using information
+     * @throws FileNotFoundException
+     */
     public void readCancellations() throws FileNotFoundException {
 
         //read in cancellations
