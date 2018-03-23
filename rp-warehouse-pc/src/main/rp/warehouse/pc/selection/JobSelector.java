@@ -14,36 +14,37 @@ import rp.warehouse.pc.assignment.SimpleAssigner;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
 
+/**
+ * The class that holds all the methods that do the sorting of the job
+ * arraylist.
+ * 
+ * @author nikollevunlieva
+ *
+ */
+
 public class JobSelector {
 
 	private ArrayList<Job> jobs;
 	private boolean cancelled;
-	private boolean predictedCancel;
-	private float value;
 	private final static Logger logger = Logger.getLogger(JobSelector.class);
 	
 	public JobSelector(ArrayList<Job> jobs, int cancelled, boolean predictedCancel, float value) {
 		this.jobs = jobs;
-		this.predictedCancel = predictedCancel;
-		if (cancelled == 1) {
-			this.cancelled = true;
-		} else {
-			this.cancelled = false;
-		}
-		this.value = value;
-	}
-
-	public void setPrediction(boolean prediction) {
-		this.predictedCancel = prediction;
-	}
-
-	public void setCancelled(boolean c) {
-		this.cancelled = c;
+	
 	}
 
 	public boolean isCancelled() {
 		return this.cancelled;
 	}
+	
+	/**
+	 * A method to calculate the total reward of a given job.
+	 * 
+	 * @param j
+	 *            job object
+	 * 
+	 * @return total reward
+	 */
 
 	public float totalReward(Job j) {
 		float total = 0;
@@ -55,6 +56,13 @@ public class JobSelector {
 		return total = 0;
 	}
 	
+	/**
+	 * A method to calculate the total number of items a job has
+	 * 
+	 * @param j
+	 *            job object
+	 * @return number of items
+	 */
 	
 	public int totalItems(Job j) {
 		int total = 0;
@@ -65,16 +73,35 @@ public class JobSelector {
 		return total;
 	}
 	
+	/**
+	 * A method that sorts the arraylist based on total reward divided by number of
+	 * tasks
+	 */
+	
 	public void sortByReward() {
 		logger.debug("Sorting jobs based on total reward.");
 		Collections.sort(jobs, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
 	}
+	
+	/**
+	 * A method that sorts an arraylist of jobs based on total reward but if 2 jobs
+	 * have the same reward the lighter one takes priority over the heavier
+	 * 
+	 * @param j
+	 *            any arraylist of jobs
+	 */
 	
 	public void sortByReward(ArrayList<Job> j) {
 		logger.debug("Sorting jobs based on total reward.");
 		Collections.sort(j, (a, b) -> (int)totalReward(b) / b.numOfTasks() - (int)totalReward(a) / a.numOfTasks());
 	}
 
+	/**
+	 * 
+	 * @param pfile the predictions file produced by WEKA
+	 * @return sorted arraylist of jobs where the potentially cancelled are at the bottom
+	 */
+	
 	public ArrayList<Job> sortPredicted(String pfile) {
 		BufferedReader reader;
 		ArrayList<Job> validJobs = new ArrayList<>(); //An ArrayList for the jobs that won't be potentially cancelled.

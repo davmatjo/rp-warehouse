@@ -7,17 +7,28 @@ import rp.warehouse.pc.data.Item;
 import rp.warehouse.pc.data.Task;
 import rp.warehouse.pc.input.Job;
 
+/**
+ * Used to read the jobs.csv appropriately in order to create the ARFF file.
+ * 
+ * There's 2 methods - one for reading the actual jobs.csv given at the
+ * demonstration and one for reading the training_jobs.csv and cancellations.csv
+ * and putting them together.
+ * 
+ * @author nikollevunlieva
+ *
+ */
+
 public class JobReading {
-	public static HashMap<String, TrainedJob> readTraining(String file, HashMap<String, Item> il) {
+	public static HashMap<String, TrainedJob> readTraining(String jobfile, HashMap<String, Item> il) {
 		
-		BufferedReader reader;
+		BufferedReader jobreader;
 		String coma = ",";
 		HashMap<String, TrainedJob> jobs = new HashMap<String, TrainedJob>();
 
 		try {
-			reader = new BufferedReader(new FileReader(file));
+			jobreader = new BufferedReader(new FileReader(jobfile));
 			String line;
-			while ((line = reader.readLine()) != null) {
+			while ((line = jobreader.readLine()) != null) {
 				String[] job = line.split(coma);
 				String jobID = job[0];
 				TrainedJob j = new TrainedJob(jobID, il, 0);
@@ -27,7 +38,7 @@ public class JobReading {
 				}
 				jobs.put(jobID, j);
 			}
-			reader.close();
+			jobreader.close();
 			return jobs;
 		} catch (FileNotFoundException e) {
 			System.out.println("File does not exist");
@@ -37,7 +48,7 @@ public class JobReading {
 			return null;
 		} 
 	}
-	public static HashMap<String, TrainedJob> readTraining(String jobfile, String cancfile, HashMap<String, Item> il) {
+	public static HashMap<String, TrainedJob> readTraining(String jfile, String cancfile, HashMap<String, Item> il) {
 		
 		BufferedReader jobreader;
 		BufferedReader cancreader;
@@ -46,7 +57,7 @@ public class JobReading {
 		HashMap<String, TrainedJob> jobs = new HashMap<String, TrainedJob>();
 		
 		try {
-			jobreader = new BufferedReader(new FileReader(jobfile));
+			jobreader = new BufferedReader(new FileReader(jfile));
 			cancreader = new BufferedReader(new FileReader(cancfile));
 			
 			String jobline;

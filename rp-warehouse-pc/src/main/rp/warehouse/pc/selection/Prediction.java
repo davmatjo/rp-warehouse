@@ -21,6 +21,12 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 
+/**
+ * Used to generate the arff files, do the prediction and put it in prediction.csv file which is then used by the selector
+ * @author nikollevunlieva
+ *
+ */
+
 public class Prediction {
 	public static void main(String[] args) {
 		Logger log = Logger.getRootLogger();
@@ -37,7 +43,7 @@ public class Prediction {
 		
 		log.debug("Started reading item files...");
 		
-		HashMap<String, Item> itemMap = ItemReading.parseItems(wrfile, lfile);
+		HashMap<String, Item> itemMap = ItemReading.readItems(wrfile, lfile);
 		log.debug("Successfully read " + itemMap.size() + " items!");
 		
 		log.debug("Creating WEKA training set ARFF.");

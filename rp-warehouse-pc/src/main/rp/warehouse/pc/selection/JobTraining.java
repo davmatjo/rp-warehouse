@@ -7,6 +7,12 @@ import java.io.*;
 import weka.core.*;
 import weka.core.converters.ConverterUtils.DataSource;
 
+/**
+ * Used to convert from .cvs to .arff file. Made to match the read methods in JobReading
+ * @author nikollevunlieva
+ *
+ */
+
 public class JobTraining {
 	public static void makeARFF(String jfile, String cfile, HashMap<String, Item> il, String arffFile) {
 		try {
