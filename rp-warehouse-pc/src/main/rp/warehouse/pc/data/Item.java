@@ -7,12 +7,25 @@ public class Item {
     private float weight;
     private Location location;
 
+    /**
+     * Assigns names/rewards/weight when the item is made
+     * @param name
+     * @param reward
+     * @param weight
+     */
     public Item(String name, Float reward, Float weight) {
         this.name = name;
         this.reward = reward;
         this.weight = weight;
     }
 
+    /**
+     * Constructor that also takes in the location of an item
+     * @param name
+     * @param reward
+     * @param weight
+     * @param location
+     */
     public Item(String name, Float reward, Float weight, Location location) {
         this.name = name;
         this.reward = reward;
@@ -20,37 +33,50 @@ public class Item {
         this.location = location;
     }
 
-    public Item(Item item) {
-        this.name = item.name;
-        this.reward = item.reward;
-        this.weight = item.weight;
-        this.location = new Location(item.location);
-    }
-
-    //method to return the items reward
-    public Float getReward() {
-        return reward;
-    }
-
-    //method to return the item's weight
-    public float getWeight() {
-        return weight;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    //method to set the location of the item
+    /**
+     * sets the Location of the item accordingly
+     * @param location
+     */
     public void setLocation(Location location) {
         this.location = location;
     }
 
+    /**
+     * returns the reward of the item
+     * @return
+     */
+    public Float getReward() {
+        return reward;
+    }
+
+    /**
+     * returns the items
+     * @return
+     */
+    public float getWeight() {
+        return weight;
+    }
+
+    /**
+     * returns the location of the item
+     * @return
+     */
+    public Location getLocation() {
+        return location;
+    }
+
     @Override
+    /**
+     * returns the item as a string
+     */
     public String toString() {
         return "at " + location + " of weight " + weight + " with reward " + reward;
     }
 
+    /**
+     * returns the name of the item
+     * @return
+     */
     public String getName() {
         return name;
     }

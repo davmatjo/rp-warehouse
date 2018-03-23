@@ -14,23 +14,49 @@ import java.util.Scanner;
 
 public class JobInput {
 
-    private static String home = System.getProperty("user.home");
-    //create the objects that will hold the items/jobs/etc
-    private Items items = new Items();
-    private Jobs jobs = new Jobs();
-    private CancelledJobs cancelledJobs = new CancelledJobs();
     //locations where the files to be read are stored
-    private String itemsLocation;
-    private String jobsLocation;
-    private String locationsLocation;
-    private String cancellationsLocation;
+    private String itemsPath;
+    private String jobsPath;
+    private String locationsPath;
+    private String cancellationsPath;
+    private static String home = System.getProperty("user.home");
+
+    //create the objects that will hold the items/jobs/etc
+    Items items = new Items();
+    Jobs jobs = new Jobs();
+    CancelledJobs cancelledJobs = new CancelledJobs();
+
+    /**
+     * returns the items
+     * @return
+     */
+    public Items getItems() {
+        return items;
+    }
+
+    /**
+     * returns the jobs
+     * @return
+     */
+    public Jobs getJobs() {
+        return jobs;
+    }
 
     //will be passed the location of the files as strings and recieve the files?
-    public JobInput(String itemsLocation, String jobsLocation, String locationsLocation, String cancellationsLocation) throws FileNotFoundException {
-        this.itemsLocation = itemsLocation;
-        this.jobsLocation = jobsLocation;
-        this.locationsLocation = locationsLocation;
-        this.cancellationsLocation = cancellationsLocation;
+
+    /**
+     * Assigns the paths of the files, runs all the methods to read in the files
+     * @param itemsPath
+     * @param jobsPath
+     * @param locationsPath
+     * @param cancellationsPath
+     * @throws FileNotFoundException
+     */
+    public JobInput(String itemsPath,String jobsPath, String locationsPath, String cancellationsPath ) throws FileNotFoundException {
+        this.itemsPath = itemsPath;
+        this.jobsPath = jobsPath;
+        this.locationsPath = locationsPath;
+        this.cancellationsPath = cancellationsPath;
         readItems();
         readLocations();
         readJobs();
@@ -41,10 +67,14 @@ public class JobInput {
         return jobs;
     }
 
-    private void readItems() throws FileNotFoundException {
+    /**
+     * Method to read in the Items file line by line, converts it into arraylist and creates Item objects using information
+     * @throws FileNotFoundException
+     */
+    public void readItems() throws FileNotFoundException {
 
         //read in items, create the items and store them in the items class
-        Scanner scanner = new Scanner(new File(itemsLocation));
+        Scanner scanner = new Scanner(new File(itemsPath));
 
         //for every line
         while (scanner.hasNext()) {
@@ -68,10 +98,14 @@ public class JobInput {
 
     }
 
-    private void readLocations() throws FileNotFoundException {
+    /**
+     * Method to read in the Locations file line by line, converts it into arraylist and creates locations objects using information
+     * @throws FileNotFoundException
+     */
+    public void readLocations() throws FileNotFoundException {
 
         //read in locations, create the locations and add them to the appropriate item
-        Scanner scanner = new Scanner(new File(locationsLocation));
+        Scanner scanner = new Scanner(new File(locationsPath));
 
         //for every line
         while (scanner.hasNext()) {
@@ -100,10 +134,14 @@ public class JobInput {
 
     }
 
-    private void readJobs() throws FileNotFoundException {
+    /**
+     * Method to read in the Jobs file line by line, converts it into arraylist and creates Job objects using information
+     * @throws FileNotFoundException
+     */
+    public void readJobs() throws FileNotFoundException {
 
         //read in jobs, create the jobs and store them in the jobs class
-        Scanner scanner = new Scanner(new File(jobsLocation));
+        Scanner scanner = new Scanner(new File(jobsPath));
 //        scanner.useDelimiter(",");
 
         //for every line
@@ -157,10 +195,14 @@ public class JobInput {
 
     }
 
+    /**
+     * Method to read in the Cancellations file line by line, converts it into arraylist and creates Cancellations objects using information
+     * @throws FileNotFoundException
+     */
     public void readCancellations() throws FileNotFoundException {
 
         //read in cancellations
-        Scanner scanner = new Scanner(new File(cancellationsLocation));
+        Scanner scanner = new Scanner(new File(cancellationsPath));
 
         //for every line
         while (scanner.hasNext()) {
