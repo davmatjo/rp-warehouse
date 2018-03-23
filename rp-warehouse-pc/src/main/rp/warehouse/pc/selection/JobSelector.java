@@ -105,6 +105,8 @@ public class JobSelector {
             jobs.addAll(cancelledJobs);
 
             reader.close();
+
+            validJobs.forEach((a) -> System.out.println(a.getItems()));
             return validJobs;
 
         } catch (FileNotFoundException e) {

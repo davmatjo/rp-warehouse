@@ -40,6 +40,13 @@ public class Node {
         } else return printCoordinates(node.getParent()) + ", " + node.toString();
     }
 
+    /**
+     * Plans a route from a given start node to a given end node, avoiding blocked locations.
+     * @param start start node
+     * @param end end node
+     * @param pickup whether this plan is for pickup or dropoff
+     * @return A route that goes from the start to end locations
+     */
     Route plan(Node start, Node end, boolean pickup) {
 
         List<Node> openList = new ArrayList<Node>();
@@ -87,6 +94,14 @@ public class Node {
         return returnNodesBackwards(node.getParent(), nodes);
     }
 
+    /**
+     * Uses the A* algorithm to find the shortest route from the current node to the goal node
+     * @param currentNode current node
+     * @param goalNode goal node
+     * @param openList list of nodes open for consideration
+     * @param closedList list of closed nodes
+     * @return the final node, which stores all previous nodes in the route
+     */
     private Node navigate(Node currentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
 
         openList.remove(currentNode);
@@ -102,6 +117,7 @@ public class Node {
         possibleNodes.add(new Node(currentNode.getX(), currentNode.getY() - 1, robot));
         possibleNodes.add(new Node(currentNode.getX() - 1, currentNode.getY(), robot));
 
+        // Add the possible nodes to the open list, if the node is the goal node but blocked, we just return the route
         for (Node node : possibleNodes) {
             if (addToOpenList(node, currentNode, goalNode, openList, closedList)) {
                 return currentNode;
@@ -147,6 +163,15 @@ public class Node {
 
     }
 
+    /**
+     * Attempts to add the node to the open list, checking whether it's valid.
+     * @param node Node in consideration
+     * @param parentNode node considered previously
+     * @param goalNode the node we are planning to
+     * @param openList list of open nodes
+     * @param closedList list of closed nodes
+     * @return true if we need to finish route planning because we are next to the goal node and the goal node is blocked
+     */
     private boolean addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
         node.setG_cost(parentNode.getG_cost() + 1);
         node.setParent(parentNode);
@@ -158,6 +183,13 @@ public class Node {
         } else return node.equals(goalNode);
     }
 
+    /**
+     * Checks blocked locations to see whether a node is considered valid for traversal
+     * @param node node in question
+     * @param openList list of open nodes
+     * @param closedList list of closed nodes
+     * @return true if the node is valid
+     */
     private boolean isValid(Node node, List<Node> openList, List<Node> closedList) {
 
         List<Location> blockedNodes = Warehouse.getBlockedLocations();
@@ -166,6 +198,7 @@ public class Node {
 
         boolean nodeNotBlocked = true;
 
+        // @Ali - this could be changed to use equals method - david
         for (Location blockedNode : blockedNodes) {
             if (node.getX() == blockedNode.getX() && node.getY() == blockedNode.getY()) {
                 nodeNotBlocked = false;
@@ -192,6 +225,11 @@ public class Node {
 
     }
 
+    /**
+     * Returns all the predicted locations blocked by other robots at a given point in time
+     * @param tick number of steps into the future
+     * @return HashSet containing all predicted blocked locations
+     */
     private HashSet<Location> getTempBlockedLocations(int tick) {
         HashSet<Location> blocked = new HashSet<>();
         if (tick > 3) {

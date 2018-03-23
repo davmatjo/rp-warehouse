@@ -7,5 +7,9 @@ import java.util.stream.Stream;
 
 public interface LocalisationListener {
 
+    /**
+     * Notify any listeners of new possible points for localisation
+     * @param points possible points
+     */
     void newPoints(List<Stream<RobotLocation>> points);
 }

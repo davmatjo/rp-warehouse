@@ -7,7 +7,6 @@ import rp.robotics.mapping.IGridMap;
 import rp.robotics.mapping.LineMap;
 import rp.robotics.visualisation.GridMapVisualisation;
 import rp.warehouse.pc.data.robot.utils.RobotLocation;
-import rp.warehouse.pc.localisation.implementation.Localiser;
 import rp.warehouse.pc.management.providers.localisation.LocalisationListener;
 
 import java.awt.*;
@@ -16,14 +15,19 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class LocaliserMapVisualisation extends GridMapVisualisation implements LocalisationListener {
-    private Localiser localiser;
     private Color[] directionColours = new Color[]{Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA};
     private List<Stream<RobotLocation>> possiblePoints = new ArrayList<>();
 
-    LocaliserMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, Localiser localiser) {
+    /**
+     * Creates a visualisation of the waehouse map that also shows possible locations during localisation
+     * @param _gridMap gridMap
+     * @param _lineMap lineMap
+     * @param _scaleFactor scale of map
+     * @see GridMapVisualisation
+     * @see rp.robotics.visualisation.MapVisualisationComponent
+     */
+    LocaliserMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor) {
         super(_gridMap, _lineMap, _scaleFactor);
-
-        this.localiser = localiser;
     }
 
     @Override
@@ -37,7 +41,7 @@ public class LocaliserMapVisualisation extends GridMapVisualisation implements L
     private void renderPossiblePoints(Graphics2D g2) {
         int i = 0;
 
-        for (Stream<RobotLocation> points : localiser.getCurrentLocations()) {
+        for (Stream<RobotLocation> points : possiblePoints) {
 
             g2.setPaint(directionColours[i]);
             g2.setStroke(new BasicStroke(3));

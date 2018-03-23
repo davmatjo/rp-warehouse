@@ -9,10 +9,15 @@ import java.awt.*;
 public class LocaliserProgressPanel extends JPanel {
     private JButton nextRobot;
 
-
+    /**
+     * Creates a panel that contains a progress bar, robot name, and button to move to the next robot
+     * @param localiser localiser to model
+     * @param name name of robot being localised
+     */
     public LocaliserProgressPanel(Localiser localiser, String name) {
         this.setLayout(new BorderLayout());
 
+        // Create progress bar and ProgressProvider to update it
         JProgressBar progressBar = new JProgressBar(0, 100);
         LocalisationProgressProvider provider = new LocalisationProgressProvider(progressBar);
         localiser.addListener(provider);
@@ -20,6 +25,7 @@ public class LocaliserProgressPanel extends JPanel {
         nextRobot = new JButton("Next robot");
         nextRobot.setEnabled(false);
 
+        // Allows anything waiting on the gui to continue
         nextRobot.addActionListener((e) -> {
             synchronized (localiser) {
                 localiser.notify();
@@ -33,6 +39,9 @@ public class LocaliserProgressPanel extends JPanel {
         this.add(nextRobot, BorderLayout.EAST);
     }
 
+    /**
+     * Called when localisation is finished to activate the button
+     */
     public void finishedLocalising() {
         nextRobot.setEnabled(true);
     }

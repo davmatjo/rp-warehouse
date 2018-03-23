@@ -18,6 +18,13 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
     private static final Logger logger = Logger.getLogger(WarehouseMapVisualisation.class);
     private final List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses;
 
+    /**
+     * Creates a map visualisation for some given robots
+     * @param _gridMap gridMap
+     * @param _lineMap lineMap
+     * @param _scaleFactor scale factor
+     * @param robots list of robots with their locations to visualise
+     */
     WarehouseMapVisualisation(IGridMap _gridMap, LineMap _lineMap, float _scaleFactor, List<Map.Entry<Robot, RobotPoseProvider>> robots) {
         super(_gridMap, _lineMap, _scaleFactor);
         this.robotsPoses = robots;
@@ -72,14 +79,22 @@ public class WarehouseMapVisualisation extends GridMapVisualisation {
 
     }
 
+    /**
+     * Renders strings for some robots that follow them around the map
+     * @param g2 Graphics2D
+     */
     private void renderRelativeText(Graphics2D g2) {
         g2.setPaint(new Color(13, 71, 161));
         g2.setStroke(new BasicStroke(3));
+
         for (Map.Entry<Robot, RobotPoseProvider> robotPose : robotsPoses) {
+
             Pose current = robotPose.getValue().getPose();
+
             float x = scale(current.getX()) + X_MARGIN + 15;
             float y = (float) scale(flipY(current.getY())) + Y_MARGIN - 30;
             g2.drawString(robotPose.getKey().getName(), x, y);
+
             g2.drawString(robotPose.getKey().getTask().count + " to pick up", x, y + 15);
         }
     }

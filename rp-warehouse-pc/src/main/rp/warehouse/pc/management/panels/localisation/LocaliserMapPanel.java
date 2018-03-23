@@ -8,14 +8,19 @@ import java.awt.*;
 
 public class LocaliserMapPanel extends JPanel {
 
+    /**
+     * Creates a panel that contains a LocaliserMapVisualisation
+     * @param localiser localiser being visualised
+     */
     public LocaliserMapPanel(Localiser localiser) {
-        LocaliserMapVisualisation mapVisualisation = new LocaliserMapVisualisation(Warehouse.build(), Warehouse.build(), 200f, localiser);
+        LocaliserMapVisualisation mapVisualisation = new LocaliserMapVisualisation(Warehouse.build(), Warehouse.build(), 200f);
 
         this.add(mapVisualisation);
         mapVisualisation.setPreferredSize(new Dimension(800, 580));
 
         localiser.addListener(mapVisualisation);
 
+        // Makes the background unified
         this.setBackground(Color.WHITE);
     }
 }

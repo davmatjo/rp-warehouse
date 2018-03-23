@@ -19,6 +19,10 @@ public class InfoPanel extends JPanel implements WarehouseInfoListener {
     private int jobsCompleted = 0;
     private int uncompleted = 0;
 
+    /**
+     * Creates a panel that contains various robot and warehouse information
+     * @param robots robots being modelled
+     */
     public InfoPanel(List<Robot> robots) {
         // Panel properties
         this.setLayout(new BorderLayout(0, 10));

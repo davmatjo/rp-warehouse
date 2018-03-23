@@ -16,7 +16,10 @@ import java.util.Map;
 
 public class WarehouseMapPanel extends JPanel {
 
-
+    /**
+     * Creates a JPanel that contains a map that visualises the state of given robots
+     * @param robots robots to visualise
+     */
     public WarehouseMapPanel(List<Robot> robots) {
         List<Map.Entry<Robot, RobotPoseProvider>> robotsPoses = new ArrayList<>();
         for (Robot robot : robots) {
@@ -28,6 +31,8 @@ public class WarehouseMapPanel extends JPanel {
         this.add(mapVisualisation);
         mapVisualisation.setPreferredSize(new Dimension(800, 580));
 
+        // Items in this simulation are added as if they were robots with a different width and height, as there is
+        // always one item per robot, we can just use a pose provider
         for (Robot robot : robots) {
             mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.22f, 0.12f), new RobotPoseProvider(robot)));
             mapVisualisation.addRobot(new MobileRobot(new MobileRobotConfiguration(0.07f, 0.07f), new ItemPoseProvider(robot)));

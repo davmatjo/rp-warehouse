@@ -10,6 +10,11 @@ import java.awt.*;
 public class LocalisationView extends JFrame {
     private LocaliserProgressPanel progressPanel;
 
+    /**
+     * Creates a frame to visualise a given localiser for a robot with a given name
+     * @param localiser localiser to visualise
+     * @param robotName name of the robot
+     */
     public LocalisationView(Localiser localiser, String robotName) {
         super("Localising");
 
@@ -27,6 +32,9 @@ public class LocalisationView extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * Informs the gui that localisation is complete
+     */
     public void finishedLocalising() {
         progressPanel.finishedLocalising();
     }
