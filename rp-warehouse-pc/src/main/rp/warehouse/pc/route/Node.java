@@ -21,10 +21,20 @@ public class Node {
     private int f_cost;
     private Node parent;
 
+    /**
+     * A method to add the robots
+     * @param robots the list of Robots to be set
+     */
     static void setRobots(List<Robot> robots) {
         robotList = robots;
     }
 
+    /**
+     * The overloaded constructor to create a Node object
+     * @param x the x-coordinate of the node
+     * @param y the y-coordinate of the node
+     * @param robot the robot of the node
+     */
     Node(int x, int y, Robot robot) {
         this.robot = robot;
         this.x = x;
@@ -34,6 +44,10 @@ public class Node {
 
     }
 
+    /**
+     * A method which was used for testing purpouses, to print the coordinates of the nodes.
+     * @param node the goal node with all parent pointer set for the nodes before it, including itself.
+     */
     private String printCoordinates(Node node) {
         if (node.getParent() == null) {
             return node.toString();
@@ -41,11 +55,11 @@ public class Node {
     }
 
     /**
-     * Plans a route from a given start node to a given end node, avoiding blocked locations.
-     * @param start start node
-     * @param end end node
-     * @param pickup whether this plan is for pickup or dropoff
-     * @return A route that goes from the start to end locations
+     * The method used to return a new Route for the Robot to use
+     * @param start the starting location of the Robot
+     * @param end the ending (goal) location of the Robot
+     * @param pickup whether pickup is true or false
+     * @return returns a new Route object based on the given parameters.
      */
     Route plan(Node start, Node end, boolean pickup) {
 
@@ -61,9 +75,8 @@ public class Node {
 
     /**
      * Returns an array list of all the nodes in the path in the correct order
-     *
-     * @param node
-     * @return
+     * @param node the final (goal) node in the path, but with all parent pointer set, including its parent pointer
+     * @return returns the nodes in the path in the correct order
      */
     private ArrayList<Node> returnNodes(Node node) {
         ArrayList<Node> nodes = new ArrayList<Node>();
@@ -77,10 +90,9 @@ public class Node {
 
     /**
      * Returns an array list of all the nodes in the path but in reverse order
-     *
-     * @param node
-     * @param nodes
-     * @return
+     * @param node the final (goal) node in the path, but with all parent pointer set, including its parent pointer
+     * @param nodes an initially empty, but later filled, array list of all the nodes, in reverse order.
+     * @return returns the nodes in the route but in the reverse order.
      */
     private ArrayList<Node> returnNodesBackwards(Node node, ArrayList<Node> nodes) {
 
@@ -95,12 +107,12 @@ public class Node {
     }
 
     /**
-     * Uses the A* algorithm to find the shortest route from the current node to the goal node
-     * @param currentNode current node
-     * @param goalNode goal node
-     * @param openList list of nodes open for consideration
-     * @param closedList list of closed nodes
-     * @return the final node, which stores all previous nodes in the route
+     * A method which finds the Route for a robot from its starting node to its ending (goal) node
+     * @param currentNode the node the robot is currently at.
+     * @param goalNode the node the robot wants to go to.
+     * @param the list of nodes that have been opened.
+     * @param the list of nodes that have been closed.
+     * @return returns the the final (goal) node in the path, but with all parent pointer set, including its parent pointer.
      */
     private Node navigate(Node currentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
 
@@ -117,7 +129,6 @@ public class Node {
         possibleNodes.add(new Node(currentNode.getX(), currentNode.getY() - 1, robot));
         possibleNodes.add(new Node(currentNode.getX() - 1, currentNode.getY(), robot));
 
-        // Add the possible nodes to the open list, if the node is the goal node but blocked, we just return the route
         for (Node node : possibleNodes) {
             if (addToOpenList(node, currentNode, goalNode, openList, closedList)) {
                 return currentNode;
@@ -164,13 +175,13 @@ public class Node {
     }
 
     /**
-     * Attempts to add the node to the open list, checking whether it's valid.
-     * @param node Node in consideration
-     * @param parentNode node considered previously
-     * @param goalNode the node we are planning to
-     * @param openList list of open nodes
-     * @param closedList list of closed nodes
-     * @return true if we need to finish route planning because we are next to the goal node and the goal node is blocked
+     * A method to add a specified node to the open list.
+     * @param node the node we're at.
+     * @param parentNode the node which we were at before.
+     * @param goalNode the node we want to get to.
+     * @param the list of nodes that have been opened.
+     * @param the list of nodes that have been closed.
+     * @return true if node we're at is the goal node.
      */
     private boolean addToOpenList(Node node, Node parentNode, Node goalNode, List<Node> openList, List<Node> closedList) {
         node.setG_cost(parentNode.getG_cost() + 1);
@@ -184,11 +195,11 @@ public class Node {
     }
 
     /**
-     * Checks blocked locations to see whether a node is considered valid for traversal
-     * @param node node in question
-     * @param openList list of open nodes
-     * @param closedList list of closed nodes
-     * @return true if the node is valid
+     * A method to check if a node is valid.
+     * @param node the node we're currently at.
+     * @param the list of nodes that have been opened.
+     * @param the list of nodes that have been closed.
+     * @return true if the node is valid, false otherwise.
      */
     private boolean isValid(Node node, List<Node> openList, List<Node> closedList) {
 
@@ -198,7 +209,6 @@ public class Node {
 
         boolean nodeNotBlocked = true;
 
-        // @Ali - this could be changed to use equals method - david
         for (Location blockedNode : blockedNodes) {
             if (node.getX() == blockedNode.getX() && node.getY() == blockedNode.getY()) {
                 nodeNotBlocked = false;
@@ -226,9 +236,8 @@ public class Node {
     }
 
     /**
-     * Returns all the predicted locations blocked by other robots at a given point in time
-     * @param tick number of steps into the future
-     * @return HashSet containing all predicted blocked locations
+     * A method to get the temporarily-blocked locations being used by other Robots
+     * @return returns the HashSet of temporarily-blocked locations
      */
     private HashSet<Location> getTempBlockedLocations(int tick) {
         HashSet<Location> blocked = new HashSet<>();
@@ -260,51 +269,95 @@ public class Node {
         }
     }
 
-
+    /**
+     * A method to get the x-coordinate of the node.
+     * @return returns x
+     */
     public int getX() {
         return x;
     }
-
+    
+    /**
+     * A method to get the y-coordinate of the node.
+     * @return returns y
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * A method to get the heuristic of the node.
+     * @return returns the heuristic.
+     */
     private int getH_cost() {
         return h_cost;
     }
 
+    /**
+     * A method to set the heuristic of the node.
+     */
     private void setH_cost(int h_cost) {
         this.h_cost = h_cost;
     }
 
+    /**
+     * A method to get the g-cost of the node.
+     * @return returns the g-cost.
+     */
     private int getG_cost() {
         return g_cost;
     }
 
+    /**
+     * A method to set the g-cost of the node
+     */
     private void setG_cost(int g_cost) {
         this.g_cost = g_cost;
     }
 
+    /**
+     * A method to compute the f-cost of the node - it sums the g-cost and the h-cost (heuristic)
+     */
     private void computeF_Cost() {
         f_cost = g_cost + h_cost;
     }
 
+    /**
+     * A method to get the f-cost of the node
+     * @return returns the f-cost of the node
+     */
     private int getF_Cost() {
         return f_cost;
     }
 
+    /**
+     * A method to get the parent of the current node
+     * @return returns the parent node (the node before)
+     */
     private Node getParent() {
         return parent;
     }
 
+    /**
+     * A method to set the parent node of the current node
+     * @param parent the previous node we were at
+     */
     private void setParent(Node parent) {
         this.parent = parent;
     }
 
+    /**
+     * A method to convert the node into a Location object equivalent
+     * @return returns a Location equivalent of the node
+     */
     public Location toLocation() {
         return new Location(this.x, this.y);
     }
 
+    /**
+     * A method to print the node value to the console
+     * @return returns the x and y coordinate, seperated by a comma ONLY.
+     */
     public String toString() {
         return x + "," + y;
     }
